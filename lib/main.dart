@@ -20,10 +20,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-const windowX = 16.0;
-const windowY = 512.0 - 136.0 - 32.0;
-
 class MyGameWidget extends StatelessWidget {
+  const MyGameWidget({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -31,14 +30,20 @@ class MyGameWidget extends StatelessWidget {
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
       GameWidget(game: MyGame()),
       Positioned(
-        top: windowY,
-        left: windowX,
+        top: 512 - 136 - 32,
+        left: 16,
         child: Image.asset(
           "images/window.png",
           height: 136,
           width: 480,
-          centerSlice: Rect.fromLTRB(15, 15, 35, 35),
+          centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
         ),
+      ),
+      const Positioned(
+        top: 512 - 136 - 32 + 12,
+        left: 16 + 16,
+        child: Text("あいうえお\nかきくけこ\nさしす\nたち",
+            style: TextStyle(color: Colors.white, fontSize: 24, height: 1.1)),
       ),
     ]));
   }
