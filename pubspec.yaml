@@ -35,8 +35,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-  flame: ^1.18.0
+  tiled: ^0.10.2
 
+  flame: any
+  logger: ^2.3.0
+  flame_tiled: ^1.20.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -89,3 +92,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/audio/
+    - assets/images/
+    - assets/tiles/
