@@ -31,10 +31,7 @@ class MyGameWidget extends StatelessWidget {
     return Scaffold(
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
       GameWidget(game: MyGame()),
-      Container(
-        color: Colors.blue,
-        child: const MessaeWindowWidget(),
-      ),
+      const MessaeWindowWidget(),
     ]));
   }
 }
@@ -60,24 +57,25 @@ class MessaeWindowState extends State<MessaeWindowWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.transparent,
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
-      Positioned(
-        top: 0,
-        left: 16,
-        child: Image.asset(
-          "images/window.png",
-          height: 136,
-          width: 480,
-          centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
-        ),
-      ),
-      Positioned(
-        top: 12,
-        left: 16 + 16,
-        child: Text(message,
-            style: const TextStyle(
-                color: Colors.white, fontSize: 24, height: 1.1)),
-      ),
-    ]));
+          Positioned(
+            top: 0,
+            left: 16,
+            child: Image.asset(
+              "assets/images/window.png",
+              height: 136,
+              width: 480,
+              centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
+            ),
+          ),
+          Positioned(
+            top: 12,
+            left: 16 + 16,
+            child: Text(message,
+                style: const TextStyle(
+                    color: Colors.white, fontSize: 24, height: 1.1)),
+          ),
+        ]));
   }
 }
