@@ -7,6 +7,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyGameWidget(),
+      home: const MyGameWidget(),
     );
   }
 }
@@ -29,8 +31,38 @@ class MyGameWidget extends StatelessWidget {
     return Scaffold(
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
       GameWidget(game: MyGame()),
+      Container(
+        color: Colors.blue,
+        child: const MessaeWindowWidget(),
+      ),
+    ]));
+  }
+}
+
+class MessaeWindowWidget extends StatefulWidget {
+  const MessaeWindowWidget({super.key});
+
+  @override
+  MessaeWindowState createState() => MessaeWindowState();
+}
+
+class MessaeWindowState extends State<MessaeWindowWidget> {
+  late String message;
+
+  MessaeWindowState() {
+    setMessage("あいうえお\nかきくけこ\nさしす\nたち");
+  }
+
+  void setMessage(String msg) {
+    message = msg;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Stack(alignment: Alignment.topLeft, children: <Widget>[
       Positioned(
-        top: 512 - 136 - 32,
+        top: 0,
         left: 16,
         child: Image.asset(
           "images/window.png",
@@ -39,11 +71,12 @@ class MyGameWidget extends StatelessWidget {
           centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
         ),
       ),
-      const Positioned(
-        top: 512 - 136 - 32 + 12,
+      Positioned(
+        top: 12,
         left: 16 + 16,
-        child: Text("あいうえお\nかきくけこ\nさしす\nたち",
-            style: TextStyle(color: Colors.white, fontSize: 24, height: 1.1)),
+        child: Text(message,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 24, height: 1.1)),
       ),
     ]));
   }
