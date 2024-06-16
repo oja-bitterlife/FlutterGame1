@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Game/GameMain.dart';
-import 'UI_Widgets/MessageWindow.dart';
+import 'Game/game_main.dart';
+import 'UI_Widgets/message_window.dart';
 
 void main() {
   runApp(const MyApp());
