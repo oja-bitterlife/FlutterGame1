@@ -1,8 +1,7 @@
 import 'package:flame/game.dart';
-import 'logger.dart';
+import '../logger.dart';
 
 import 'package:flame_tiled/flame_tiled.dart';
-
 
 class MyGame extends FlameGame {
   late TiledMap map;
@@ -35,4 +34,7 @@ class MyGame extends FlameGame {
     await add(tiledMap);
   }
 
+  GameWidget getWidget() {
+    return GameWidget(game: this);
+  }
 }
