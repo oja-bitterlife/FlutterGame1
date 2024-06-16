@@ -9,7 +9,7 @@ class MessaeWindowWidget extends StatefulWidget {
 
 class MessageWindowState extends State<MessaeWindowWidget> {
   String _message = ""; // 最初は空(メッセージ無し)
-  bool _isVisible = true;
+  bool _isVisible = false;
 
   // ウインドウ位置定義
   static const windowW = 480.0;
@@ -21,13 +21,18 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   void show(msg) {
     _message = msg;
     _isVisible = true;
+    setState(() {});
   }
 
   // メッセージ非表示
-  void clear() {
-    _message = "";
+  void hide() {
     _isVisible = false;
+    _message = "";
+    setState(() {});
   }
+
+  // メッセージ状態取得
+  bool get isVisible => _isVisible;
 
   @override
   Widget build(BuildContext context) {

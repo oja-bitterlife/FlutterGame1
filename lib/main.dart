@@ -31,8 +31,11 @@ class MyGameWidget extends StatelessWidget {
     return Scaffold(
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
       MyGame().getWidget(), // GameScreen
-      const MessaeWindowWidget(
-          key: GlobalObjectKey<MessageWindowState>("MessageWindow")), // GameUI
+      const IgnorePointer(
+          // クリックを奪わないように
+          child: MessaeWindowWidget(
+              key: GlobalObjectKey<MessageWindowState>(
+                  "MessageWindow"))), // GameUI
     ]));
   }
 }
