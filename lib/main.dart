@@ -3,7 +3,7 @@ import 'package:flame/game.dart';
 import 'my_game.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,10 +1,8 @@
 import 'package:flame/game.dart';
 import 'logger.dart';
 
-import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
-import 'package:flutter/material.dart';
 
 class MyGame extends FlameGame {
   late TiledMap map;
@@ -37,8 +35,4 @@ class MyGame extends FlameGame {
     await add(tiledMap);
   }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
-  }
 }
