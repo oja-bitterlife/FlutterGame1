@@ -36,7 +36,7 @@ class MyGame extends FlameGame {
     await add(tiledMap);
 
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.setMessage("あいうえお\nかきくけこ\nさしす\nたち");
+    msgWin.currentState?.show("あいうえお\nかきくけこ\nさしす\nたち");
   }
 
   // @override
