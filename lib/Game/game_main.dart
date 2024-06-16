@@ -1,5 +1,7 @@
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
 import '../logger.dart';
+import '../UI_Widgets/message_window.dart';
 
 import 'package:flame_tiled/flame_tiled.dart';
 
@@ -32,7 +34,15 @@ class MyGame extends FlameGame {
     final TiledComponent tiledMap =
         await TiledComponent.load("map.tmx", Vector2(32.0, 32.0));
     await add(tiledMap);
+
+    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    msgWin.currentState?.setMessage("あいうえお\nかきくけこ\nさしす\nたち");
   }
+
+  // @override
+  // void update(double dt) {
+  //   super.update(dt);
+  // }
 
   GameWidget getWidget() {
     return GameWidget(game: this);

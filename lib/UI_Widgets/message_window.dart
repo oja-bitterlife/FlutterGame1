@@ -4,15 +4,14 @@ class MessaeWindowWidget extends StatefulWidget {
   const MessaeWindowWidget({super.key});
 
   @override
-  MessaeWindowState createState() => MessaeWindowState();
+  MessageWindowState createState() => MessageWindowState();
 }
 
-class MessaeWindowState extends State<MessaeWindowWidget> {
-  late String message;
+class MessageWindowState extends State<MessaeWindowWidget> {
+  String message = ""; // 最初は空(メッセージ無し)
 
-  MessaeWindowState() {
-    setMessage("あいうえお\nかきくけこ\nさしす\nたち");
-  }
+  static const windowX = 16.0;
+  static const windowY = 512.0 - 136.0 - 32.0;
 
   void setMessage(String msg) {
     message = msg;
@@ -24,8 +23,8 @@ class MessaeWindowState extends State<MessaeWindowWidget> {
         backgroundColor: Colors.transparent,
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
           Positioned(
-            top: 0,
-            left: 16,
+            top: windowY,
+            left: windowX,
             child: Image.asset(
               "assets/images/window.png",
               height: 136,
@@ -34,8 +33,8 @@ class MessaeWindowState extends State<MessaeWindowWidget> {
             ),
           ),
           Positioned(
-            top: 12,
-            left: 16 + 16,
+            top: windowY + 12,
+            left: windowX + 16,
             child: Text(message,
                 style: const TextStyle(
                     color: Colors.white, fontSize: 24, height: 1.1)),
