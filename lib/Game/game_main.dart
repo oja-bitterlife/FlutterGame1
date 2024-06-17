@@ -20,10 +20,6 @@ class MyGame extends FlameGame with TapCallbacks {
     final playerSheet = SpriteSheet.fromColumnsAndRows(
         image: await images.load('sample20160312.png'), columns: 18, rows: 12);
 
-    final TiledComponent tiledMap =
-        await TiledComponent.load("map.tmx", Vector2(32.0, 32.0));
-    await add(tiledMap);
-
     final player = SpriteAnimationComponent(
       animation: SpriteAnimation.fromFrameData(
           playerSheet.image,
@@ -35,9 +31,14 @@ class MyGame extends FlameGame with TapCallbacks {
           ])),
       anchor: Anchor.bottomCenter,
       size: Vector2(48, 64),
+      priority: 1,
     );
     await add(player);
     player.position = Vector2(64, 448);
+
+    final TiledComponent tiledMap =
+        await TiledComponent.load("map.tmx", Vector2(32.0, 32.0), priority: 0);
+    await add(tiledMap);
 
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
