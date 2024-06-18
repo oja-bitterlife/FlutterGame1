@@ -14,9 +14,11 @@ class MyGame extends FlameGame with TapCallbacks {
 
     // log.d("onLoad");
 
-    add(await PlayerComponent.create(this));
-    add(await MapComponent.load());
+    // 画面構築
+    add(await PlayerComponent.create());
+    add(await MapComponent.create());
 
+    // メッセージ表示お試し
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
   }

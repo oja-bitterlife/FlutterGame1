@@ -1,4 +1,4 @@
-import 'package:flame/game.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/Sprite.dart';
 import 'package:flame/components.dart';
 import 'priorities.dart';
@@ -12,11 +12,11 @@ class PlayerComponent extends SpriteAnimationComponent {
           priority: Priority.player.index,
         );
 
-  static Future<PlayerComponent> create(FlameGame gameRef) async {
+  static Future<PlayerComponent> create() async {
     PlayerComponent self = PlayerComponent();
 
     final playerSheet = SpriteSheet.fromColumnsAndRows(
-        image: await gameRef.images.load('sample20160312.png'),
+        image: await Flame.images.load('sample20160312.png'),
         columns: 18,
         rows: 12);
 
