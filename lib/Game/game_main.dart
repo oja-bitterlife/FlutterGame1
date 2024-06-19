@@ -8,6 +8,8 @@ import 'player.dart';
 import 'map.dart';
 
 class MyGame extends FlameGame with TapCallbacks {
+  late PlayerComponent player;
+
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -15,7 +17,8 @@ class MyGame extends FlameGame with TapCallbacks {
     // log.d("onLoad");
 
     // 画面構築
-    add(await PlayerComponent.create());
+    player = await PlayerComponent.create();
+    add(player);
     add(await MapComponent.create());
 
     // メッセージ表示お試し
@@ -29,6 +32,8 @@ class MyGame extends FlameGame with TapCallbacks {
 
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
+
+    player.setDir(PlayerDir.left);
   }
 
   // @override

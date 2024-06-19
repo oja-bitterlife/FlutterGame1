@@ -3,7 +3,20 @@ import 'package:flame/Sprite.dart';
 import 'package:flame/components.dart';
 import 'priorities.dart';
 
+enum PlayerDir {
+  down(0),
+  left(1),
+  right(2),
+  up(3),
+  ;
+
+  final int id;
+  const PlayerDir(this.id);
+}
+
 class PlayerComponent extends SpriteAnimationComponent {
+  List<SpriteAnimation> walkAnim = [];
+
   PlayerComponent()
       : super(
           position: Vector2(240, 288), // 初期座標
@@ -20,15 +33,23 @@ class PlayerComponent extends SpriteAnimationComponent {
         columns: 18,
         rows: 12);
 
-    self.animation = SpriteAnimation.fromFrameData(
-        playerSheet.image,
-        SpriteAnimationData([
-          playerSheet.createFrameData(8, 6, stepTime: 0.5),
-          playerSheet.createFrameData(8, 7, stepTime: 0.5),
-          playerSheet.createFrameData(8, 8, stepTime: 0.5),
-          playerSheet.createFrameData(8, 7, stepTime: 0.5),
-        ]));
+    for (int i = 0; i < 4; i++) {
+      self.walkAnim.add(SpriteAnimation.fromFrameData(
+          playerSheet.image,
+          SpriteAnimationData([
+            playerSheet.createFrameData(8 + i, 6, stepTime: 0.5),
+            playerSheet.createFrameData(8 + i, 7, stepTime: 0.5),
+            playerSheet.createFrameData(8 + i, 8, stepTime: 0.5),
+            playerSheet.createFrameData(8 + i, 7, stepTime: 0.5),
+          ])));
+    }
+
+    self.animation = self.walkAnim[PlayerDir.down.id];
 
     return self;
+  }
+
+  void setDir(PlayerDir dir) {
+    animation = walkAnim[dir.id];
   }
 }
