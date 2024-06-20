@@ -1,5 +1,5 @@
 import 'package:flame/flame.dart';
-import 'package:flame/Sprite.dart';
+import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
 import 'priorities.dart';
 
