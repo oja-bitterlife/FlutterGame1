@@ -48,7 +48,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
 
     // メッセージウインドウ表示中でなく、移動中でもない
-    if (msgWin.currentState!.isVisible && !player.isMoving()) {
+    if (!msgWin.currentState!.isVisible && !player.isMoving()) {
       // キーボードで動かせる
       switch (event.logicalKey) {
         case LogicalKeyboardKey.arrowLeft:

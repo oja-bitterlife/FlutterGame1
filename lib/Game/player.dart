@@ -1,8 +1,9 @@
+import 'dart:ui';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
 import 'priorities.dart';
-import 'dart:ui';
+import '../logger.dart';
 
 enum PlayerDir {
   down(0),
@@ -16,7 +17,7 @@ enum PlayerDir {
 }
 
 class PlayerMoveComponent extends PlayerComponent {
-  static const needMoveTime = 1.0;
+  static const needMoveTime = 0.5;
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
@@ -25,13 +26,14 @@ class PlayerMoveComponent extends PlayerComponent {
     setDir(dir);
 
     transTime = 0;
-    srcPos = position;
+    srcPos = position.clone();
 
+    const double blockSize = 32;
     moveValue = switch (dir) {
-      PlayerDir.down => Vector2(0, 48),
-      PlayerDir.left => Vector2(-48, 0),
-      PlayerDir.right => Vector2(48, 0),
-      PlayerDir.up => Vector2(0, -48),
+      PlayerDir.down => Vector2(0, blockSize),
+      PlayerDir.left => Vector2(-blockSize, 0),
+      PlayerDir.right => Vector2(blockSize, 0),
+      PlayerDir.up => Vector2(0, -blockSize),
     };
   }
 
