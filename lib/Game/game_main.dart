@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import '../UI_Widgets/message_window.dart';
 import 'player.dart';
 import 'map.dart';
-import '../logger.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late PlayerComponent player;
@@ -23,10 +22,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     player = await PlayerComponent.create();
     add(player);
     add(await MapComponent.create());
-
-    // メッセージ表示お試し
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
   }
 
   @override
@@ -34,7 +29,11 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     super.onTapDown(event);
 
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.hide();
+    if (!msgWin.currentState!.isVisible) {
+      msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
+    } else {
+      msgWin.currentState?.hide();
+    }
   }
 
   @override
@@ -50,16 +49,16 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // キーボードで動かす
     switch (event.logicalKey) {
       case LogicalKeyboardKey.arrowLeft:
-        player.setDir(PlayerDir.left);
+        player.setMove(PlayerDir.left);
         return KeyEventResult.handled;
       case LogicalKeyboardKey.arrowRight:
-        player.setDir(PlayerDir.right);
+        player.setMove(PlayerDir.right);
         return KeyEventResult.handled;
       case LogicalKeyboardKey.arrowUp:
-        player.setDir(PlayerDir.up);
+        player.setMove(PlayerDir.up);
         return KeyEventResult.handled;
       case LogicalKeyboardKey.arrowDown:
-        player.setDir(PlayerDir.down);
+        player.setMove(PlayerDir.down);
         return KeyEventResult.handled;
     }
 

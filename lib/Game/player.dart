@@ -49,6 +49,10 @@ class PlayerComponent extends SpriteAnimationComponent {
     return self;
   }
 
+  void setMove(PlayerDir dir) {
+    setDir(dir);
+  }
+
   void setDir(PlayerDir dir) {
     animation = walkAnim[dir.id];
   }
