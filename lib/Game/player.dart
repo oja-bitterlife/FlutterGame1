@@ -23,11 +23,14 @@ class PlayerMoveComponent extends PlayerComponent {
 
   // 移動開始
   void setMove(PlayerDir dir) {
+    // 方向をまず変えておく
     setDir(dir);
 
+    // 移動アニメリセット
     transTime = 0;
     srcPos = position.clone();
 
+    // 移動先設定
     const double blockSize = 32;
     moveValue = switch (dir) {
       PlayerDir.down => Vector2(0, blockSize),
@@ -37,6 +40,7 @@ class PlayerMoveComponent extends PlayerComponent {
     };
   }
 
+  // 移動中チェック
   bool isMoving() {
     return transTime < needMoveTime;
   }
@@ -62,6 +66,7 @@ class PlayerMoveComponent extends PlayerComponent {
 class PlayerComponent extends SpriteAnimationComponent {
   List<SpriteAnimation> walkAnim = [];
 
+  // 画像ロードはasyncなのでコンストラクタが使えない
   static late Image image;
   static Future<void> load() async {
     image = await Flame.images.load('sample20160312.png');
@@ -74,6 +79,7 @@ class PlayerComponent extends SpriteAnimationComponent {
           size: Vector2(48, 48),
           priority: Priority.player.index,
         ) {
+    // イメージから歩きアニメスプライト切り出し
     var playerSheet =
         SpriteSheet.fromColumnsAndRows(image: image, columns: 18, rows: 12);
 
@@ -91,6 +97,7 @@ class PlayerComponent extends SpriteAnimationComponent {
     animation = walkAnim[PlayerDir.down.id];
   }
 
+  // 表示切り替え
   void setDir(PlayerDir dir) {
     animation = walkAnim[dir.id];
   }

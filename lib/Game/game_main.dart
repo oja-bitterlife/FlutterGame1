@@ -50,19 +50,21 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // メッセージウインドウ表示中でなく、移動中でもない
     if (!msgWin.currentState!.isVisible && !player.isMoving()) {
       // キーボードで動かせる
-      switch (event.logicalKey) {
-        case LogicalKeyboardKey.arrowLeft:
-          player.setMove(PlayerDir.left);
-          return KeyEventResult.handled;
-        case LogicalKeyboardKey.arrowRight:
-          player.setMove(PlayerDir.right);
-          return KeyEventResult.handled;
-        case LogicalKeyboardKey.arrowUp:
-          player.setMove(PlayerDir.up);
-          return KeyEventResult.handled;
-        case LogicalKeyboardKey.arrowDown:
-          player.setMove(PlayerDir.down);
-          return KeyEventResult.handled;
+      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+        player.setMove(PlayerDir.left);
+        return KeyEventResult.handled;
+      }
+      if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+        player.setMove(PlayerDir.right);
+        return KeyEventResult.handled;
+      }
+      if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
+        player.setMove(PlayerDir.up);
+        return KeyEventResult.handled;
+      }
+      if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
+        player.setMove(PlayerDir.down);
+        return KeyEventResult.handled;
       }
     }
 
