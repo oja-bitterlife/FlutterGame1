@@ -10,16 +10,18 @@ import 'player.dart';
 import 'map.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
-  late PlayerComponent player;
+  late PlayerMoveComponent player;
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
     // log.d("onLoad");
+    // 画像読み込み
+    await PlayerComponent.load();
 
     // 画面構築
-    player = await PlayerComponent.create();
+    player = PlayerMoveComponent();
     add(player);
     add(await MapComponent.create());
   }
