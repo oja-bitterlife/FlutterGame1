@@ -12,6 +12,8 @@ import 'map.dart';
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late PlayerMoveComponent player;
 
+  PlayerDir keyPressed = PlayerDir.none;
+
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -45,36 +47,54 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-
     // メッセージウインドウ表示中でなく、移動中でもない
-    if (!msgWin.currentState!.isVisible && !player.isMoving()) {
-      // キーボードで動かせる
-      if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
-        player.setMove(PlayerDir.left);
-        return KeyEventResult.handled;
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+        keyPressed = PlayerDir.left;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
-        player.setMove(PlayerDir.right);
-        return KeyEventResult.handled;
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+        keyPressed = PlayerDir.right;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowUp)) {
-        player.setMove(PlayerDir.up);
-        return KeyEventResult.handled;
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+        keyPressed = PlayerDir.up;
       }
-      if (keysPressed.contains(LogicalKeyboardKey.arrowDown)) {
-        player.setMove(PlayerDir.down);
-        return KeyEventResult.handled;
+      if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+        keyPressed = PlayerDir.down;
+      }
+    } else if (event is KeyUpEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
+          keyPressed == PlayerDir.left) {
+        keyPressed = PlayerDir.none;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
+          keyPressed == PlayerDir.right) {
+        keyPressed = PlayerDir.none;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowUp &&
+          keyPressed == PlayerDir.up) {
+        keyPressed = PlayerDir.none;
+      }
+      if (event.logicalKey == LogicalKeyboardKey.arrowDown &&
+          keyPressed == PlayerDir.down) {
+        keyPressed = PlayerDir.none;
       }
     }
 
-    return KeyEventResult.ignored;
+    return super.onKeyEvent(event, keysPressed);
   }
 
-  // @override
-  // void update(double dt) {
-  //   super.update(dt);
-  // }
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    // 動ける状態なら動く
+    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    if (keyPressed != PlayerDir.none &&
+        !msgWin.currentState!.isVisible &&
+        !player.isMoving()) {
+      player.setMove(keyPressed);
+    }
+  }
 
   GameWidget getWidget() {
     return GameWidget(game: this);
