@@ -30,11 +30,15 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
 
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    if (!msgWin.currentState!.isVisible) {
-      msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
-    } else {
-      msgWin.currentState?.hide();
+    // 移動中でない
+    if (!player.isMoving()) {
+      // 調べることができる
+      const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+      if (!msgWin.currentState!.isVisible) {
+        msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
+      } else {
+        msgWin.currentState?.hide();
+      }
     }
   }
 
@@ -43,25 +47,23 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
 
-    // メッセージウインドウ表示中は動かさない
-    if (msgWin.currentState!.isVisible) {
-      return KeyEventResult.ignored;
-    }
-
-    // キーボードで動かす
-    switch (event.logicalKey) {
-      case LogicalKeyboardKey.arrowLeft:
-        player.setMove(PlayerDir.left);
-        return KeyEventResult.handled;
-      case LogicalKeyboardKey.arrowRight:
-        player.setMove(PlayerDir.right);
-        return KeyEventResult.handled;
-      case LogicalKeyboardKey.arrowUp:
-        player.setMove(PlayerDir.up);
-        return KeyEventResult.handled;
-      case LogicalKeyboardKey.arrowDown:
-        player.setMove(PlayerDir.down);
-        return KeyEventResult.handled;
+    // メッセージウインドウ表示中でなく、移動中でもない
+    if (msgWin.currentState!.isVisible && !player.isMoving()) {
+      // キーボードで動かせる
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.arrowLeft:
+          player.setMove(PlayerDir.left);
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowRight:
+          player.setMove(PlayerDir.right);
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowUp:
+          player.setMove(PlayerDir.up);
+          return KeyEventResult.handled;
+        case LogicalKeyboardKey.arrowDown:
+          player.setMove(PlayerDir.down);
+          return KeyEventResult.handled;
+      }
     }
 
     return KeyEventResult.ignored;

@@ -17,7 +17,6 @@ enum PlayerDir {
 
 class PlayerMoveComponent extends PlayerComponent {
   static const needMoveTime = 1.0;
-  bool isMoving = false;
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
@@ -25,7 +24,6 @@ class PlayerMoveComponent extends PlayerComponent {
   void setMove(PlayerDir dir) {
     setDir(dir);
 
-    isMoving = true;
     transTime = 0;
     srcPos = position;
 
@@ -37,18 +35,21 @@ class PlayerMoveComponent extends PlayerComponent {
     };
   }
 
+  bool isMoving() {
+    return transTime < needMoveTime;
+  }
+
   @override
   void update(double dt) {
     super.update(dt);
 
     // 移動中でなかった
-    if (!isMoving) return;
+    if (!isMoving()) return;
 
     // 移動中
     transTime += dt;
     if (transTime > needMoveTime) {
       transTime = needMoveTime;
-      isMoving = false; // 移動完了
     }
 
     // 座標更新
