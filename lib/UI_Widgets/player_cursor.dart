@@ -29,6 +29,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   void show(Vector2 pos) {
     cursorPos.setFrom(pos);
     isVisible = true;
+    setState(() {}); // 更新
   }
 
   void hide() {

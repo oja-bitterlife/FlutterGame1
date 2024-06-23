@@ -25,4 +25,13 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   GameWidget createWidget() {
     return GameWidget(key: const GlobalObjectKey("game"), game: this);
   }
+
+  // スタート時初期化
+  @override
+  void onMount() {
+    super.onMount();
+
+    // 移動が終わった状態から開始
+    player.moveFinishCallback();
+  }
 }

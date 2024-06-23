@@ -22,11 +22,6 @@ class MovePlayerComponent extends PlayerComponent {
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
-  // 移動終わりたてにしておく
-  MovePlayerComponent() {
-    moveFinishCallback();
-  }
-
   // 移動開始
   void setMove(PlayerDir dir) {
     // 方向をまず変えておく
@@ -72,11 +67,11 @@ class MovePlayerComponent extends PlayerComponent {
     position = (moveValue * transTime / needMoveTime) + srcPos;
   }
 
-  // 移動が終わったらカーソル表示
+  // 移動が終わったときの処理
   void moveFinishCallback() {
+    // 操作カーソル表示
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
     cursor.currentState?.show(position);
-    log.info("moved");
   }
 }
 
