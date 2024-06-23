@@ -21,14 +21,14 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   void show(msg) {
     _message = msg;
     _isVisible = true;
-    setState(() {});
+    // setState(() {});
   }
 
   // メッセージ非表示
   void hide() {
     _isVisible = false;
     _message = "";
-    setState(() {});
+    // setState(() {});
   }
 
   // メッセージ状態取得
