@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart' show GlobalObjectKey;
 import 'package:my_app/UI_Widgets/player_cursor.dart';
 import 'priorities.dart';
 import '../logger.dart';
