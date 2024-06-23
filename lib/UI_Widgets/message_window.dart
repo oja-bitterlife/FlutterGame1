@@ -38,26 +38,24 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   Widget build(BuildContext context) {
     return Visibility(
         visible: _isVisible,
-        child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Stack(alignment: Alignment.topLeft, children: <Widget>[
-              Positioned(
-                top: windowY,
-                left: windowX,
-                child: Image.asset(
-                  "assets/images/window.png",
-                  width: windowW,
-                  height: windowH,
-                  centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
-                ),
-              ),
-              Positioned(
-                top: windowY + 12,
-                left: windowX + 16,
-                child: Text(_message,
-                    style: const TextStyle(
-                        color: Colors.white, fontSize: 24, height: 1.1)),
-              ),
-            ])));
+        child: Stack(alignment: Alignment.topLeft, children: <Widget>[
+          Positioned(
+            top: windowY,
+            left: windowX,
+            child: Image.asset(
+              "assets/images/window.png",
+              width: windowW,
+              height: windowH,
+              centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
+            ),
+          ),
+          Positioned(
+            top: windowY + 16,
+            left: windowX + 16,
+            child: Text(_message,
+                style: const TextStyle(
+                    color: Colors.white, fontSize: 24, height: 1.1)),
+          ),
+        ]));
   }
 }

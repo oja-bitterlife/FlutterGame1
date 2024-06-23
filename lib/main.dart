@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/UI_Widgets/player_cursor.dart';
 import 'Game/game_main.dart';
 import 'UI_Widgets/message_window.dart';
 
@@ -28,14 +29,19 @@ class MyGameWidget extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(alignment: Alignment.topLeft, children: <Widget>[
-      MyGame().getWidget(), // GameScreen
+    return Stack(alignment: Alignment.topLeft, children: <Widget>[
+      // GameScreen
+      MyGame().getWidget(),
+      // ----------------------------------------------------------------------
+      // ↓ GameUI
+      // メッセージウインドウ
       const IgnorePointer(
           // クリックを奪わないように
           child: MessaeWindowWidget(
-              key: GlobalObjectKey<MessageWindowState>(
-                  "MessageWindow"))), // GameUI
-    ]));
+              key: GlobalObjectKey<MessageWindowState>("MessageWindow"))),
+      // アクションカーソル
+      const PlayerCursorWidget(
+          key: GlobalObjectKey<PlayerCursorState>("PlayerCursor")),
+    ]);
   }
 }
