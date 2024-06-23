@@ -12,8 +12,6 @@ import 'map.dart';
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late PlayerMoveComponent player;
 
-  PlayerDir keyPressed = PlayerDir.none;
-
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -45,55 +43,16 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   }
 
   @override
-  KeyEventResult onKeyEvent(
-      KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // メッセージウインドウ表示中でなく、移動中でもない
-    if (event is KeyDownEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-        keyPressed = PlayerDir.left;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-        keyPressed = PlayerDir.right;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-        keyPressed = PlayerDir.up;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-        keyPressed = PlayerDir.down;
-      }
-    } else if (event is KeyUpEvent) {
-      if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-          keyPressed == PlayerDir.left) {
-        keyPressed = PlayerDir.none;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-          keyPressed == PlayerDir.right) {
-        keyPressed = PlayerDir.none;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.arrowUp &&
-          keyPressed == PlayerDir.up) {
-        keyPressed = PlayerDir.none;
-      }
-      if (event.logicalKey == LogicalKeyboardKey.arrowDown &&
-          keyPressed == PlayerDir.down) {
-        keyPressed = PlayerDir.none;
-      }
-    }
-
-    return super.onKeyEvent(event, keysPressed);
-  }
-
-  @override
   void update(double dt) {
     super.update(dt);
 
     // 動ける状態なら動く
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    if (keyPressed != PlayerDir.none &&
-        !msgWin.currentState!.isVisible &&
-        !player.isMoving()) {
-      player.setMove(keyPressed);
-    }
+    // const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    // if (keyPressed != PlayerDir.hide &&
+    //     !msgWin.currentState!.isVisible &&
+    //     !player.isMoving()) {
+    //   player.setMove(keyPressed);
+    // }
   }
 
   GameWidget getWidget() {

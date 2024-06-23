@@ -1,13 +1,11 @@
 import 'dart:ui';
 import 'package:flame/flame.dart';
-import 'package:flame/palette.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
 import 'priorities.dart';
 import '../logger.dart';
 
 enum PlayerDir {
-  none(-1),
   down(0),
   left(1),
   right(2),
@@ -25,8 +23,6 @@ class PlayerMoveComponent extends PlayerComponent {
 
   // 移動開始
   void setMove(PlayerDir dir) {
-    if (dir == PlayerDir.none) return; // なにもしない
-
     // 方向をまず変えておく
     setDir(dir);
 
@@ -43,15 +39,6 @@ class PlayerMoveComponent extends PlayerComponent {
       PlayerDir.up => Vector2(0, -blockSize),
       _ => Vector2(0, 0),
     };
-  }
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-    if (!isMoving()) {
-      canvas.drawRect(
-          size.toRect().translate(0, -48), BasicPalette.white.paint());
-    }
   }
 
   // 移動中チェック
@@ -77,7 +64,7 @@ class PlayerMoveComponent extends PlayerComponent {
   }
 }
 
-class PlayerComponent extends SpriteAnimationComponent {
+class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
   List<SpriteAnimation> walkAnim = [];
 
   // 画像ロードはasyncなのでコンストラクタが使えない
@@ -113,7 +100,6 @@ class PlayerComponent extends SpriteAnimationComponent {
 
   // 表示切り替え
   void setDir(PlayerDir dir) {
-    if (dir == PlayerDir.none) return; // エラー
     animation = walkAnim[dir.id];
   }
 }
