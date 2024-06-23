@@ -1,12 +1,13 @@
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
+import 'package:flutter/material.dart';
 
 import '../logger.dart';
 import 'player.dart';
 import 'map.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
-  late PlayerMoveComponent player;
+  late MovePlayerComponent player;
 
   @override
   Future<void> onLoad() async {
@@ -16,12 +17,12 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     await PlayerComponent.load();
 
     // 画面構築
-    player = PlayerMoveComponent();
+    player = MovePlayerComponent();
     add(player);
     add(await MapComponent.create());
   }
 
-  GameWidget getWidget() {
-    return GameWidget(game: this);
+  GameWidget createWidget() {
+    return GameWidget(key: const GlobalObjectKey("game"), game: this);
   }
 }

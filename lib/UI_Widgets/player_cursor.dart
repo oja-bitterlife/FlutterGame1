@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import '../Game/player.dart';
+import '../Game/my_game.dart';
 import '../logger.dart';
 
+enum PlayerCursorType {
+  move(0),
+  find(1),
+  ;
+
+  final int id;
+  const PlayerCursorType(this.id);
+}
+
 class PlayerCursorWidget extends StatefulWidget {
-  const PlayerCursorWidget({super.key});
+  final MyGame myGame;
+  const PlayerCursorWidget({super.key, required this.myGame});
 
   @override
   PlayerCursorState createState() => PlayerCursorState();
@@ -33,7 +45,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 44,
               child: IconButton(
                   onPressed: () {
-                    log.info("left");
+                    onButton(PlayerCursorType.move, PlayerDir.left);
                   },
                   icon: const Icon(Icons.arrow_circle_left_outlined),
                   color: Colors.white,
@@ -43,7 +55,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 44,
               child: IconButton(
                   onPressed: () {
-                    log.info("right");
+                    onButton(PlayerCursorType.move, PlayerDir.right);
                   },
                   icon: const Icon(Icons.arrow_circle_right_outlined),
                   color: Colors.white,
@@ -53,7 +65,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 88,
               child: IconButton(
                   onPressed: () {
-                    log.info("up");
+                    onButton(PlayerCursorType.move, PlayerDir.up);
                   },
                   icon: const Icon(Icons.arrow_circle_up_outlined),
                   color: Colors.white,
@@ -63,11 +75,15 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 4,
               child: IconButton(
                   onPressed: () {
-                    log.info("find");
+                    onButton(PlayerCursorType.find, PlayerDir.down);
                   },
                   icon: const Icon(Icons.find_in_page_outlined),
                   color: Colors.white,
                   iconSize: 32)),
         ]));
+  }
+
+  void onButton(PlayerCursorType type, PlayerDir dir) {
+    widget.myGame.player.setDir(dir);
   }
 }

@@ -16,14 +16,14 @@ enum PlayerDir {
   const PlayerDir(this.id);
 }
 
-class PlayerMoveComponent extends PlayerComponent {
+class MovePlayerComponent extends PlayerComponent {
   // 移動中表示用データ
   static const needMoveTime = 0.5;
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
   // 移動終わりたてにしておく
-  PlayerMoveComponent() {
+  MovePlayerComponent() {
     moveFinishCallback();
   }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../Game/my_game.dart';
 
 class MessaeWindowWidget extends StatefulWidget {
-  const MessaeWindowWidget({super.key});
+  final MyGame myGame;
+  const MessaeWindowWidget({super.key, required this.myGame});
 
   @override
   MessageWindowState createState() => MessageWindowState();
