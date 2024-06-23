@@ -28,7 +28,7 @@ class PlayerMoveComponent extends PlayerComponent {
 
     // 移動アニメリセット
     transTime = 0;
-    srcPos = position.clone();
+    srcPos.setFrom(position);
 
     // 移動先設定
     const double blockSize = 32;
@@ -37,7 +37,6 @@ class PlayerMoveComponent extends PlayerComponent {
       PlayerDir.left => Vector2(-blockSize, 0),
       PlayerDir.right => Vector2(blockSize, 0),
       PlayerDir.up => Vector2(0, -blockSize),
-      _ => Vector2(0, 0),
     };
   }
 

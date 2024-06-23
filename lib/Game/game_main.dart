@@ -2,9 +2,9 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter/services.dart';
+import 'package:my_app/UI_Widgets/player_cursor.dart';
 
-// import '../logger.dart';
+import '../logger.dart';
 import '../UI_Widgets/message_window.dart';
 import 'player.dart';
 import 'map.dart';
@@ -45,6 +45,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   void update(double dt) {
     super.update(dt);
+
+    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+    cursor.currentState?.show(player.position);
 
     // 動ける状態なら動く
     // const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");

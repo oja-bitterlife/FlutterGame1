@@ -38,8 +38,8 @@ dependencies:
   tiled: ^0.10.2
 
   flame: any
-  logger: ^2.3.0
   flame_tiled: ^1.20.2
+  simple_logger: ^1.9.0+3
 dev_dependencies:
   flutter_test:
     sdk: flutter

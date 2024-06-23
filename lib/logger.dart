@@ -1,3 +1,3 @@
-import 'package:logger/logger.dart';
+import 'package:simple_logger/simple_logger.dart';
 
-final log = Logger();
+final log = SimpleLogger()..setLevel(Level.ALL, includeCallerInfo: true);
