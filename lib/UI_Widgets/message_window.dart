@@ -54,7 +54,11 @@ class MessageWindowState extends State<MessaeWindowWidget> {
             left: windowX + 16,
             child: Text(_message,
                 style: const TextStyle(
-                    color: Colors.white, fontSize: 24, height: 1.1)),
+                    decoration: TextDecoration.none,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                    fontSize: 24,
+                    height: 1.1)),
           ),
         ]));
   }
