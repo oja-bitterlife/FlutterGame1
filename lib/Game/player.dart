@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart' show GlobalObjectKey;
+import 'package:my_app/UI_Widgets/player_cursor.dart';
 import 'priorities.dart';
 import '../logger.dart';
 
@@ -17,9 +19,15 @@ enum PlayerDir {
 }
 
 class PlayerMoveComponent extends PlayerComponent {
+  // 移動中表示用データ
   static const needMoveTime = 0.5;
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
+
+  // 移動終わりたてにしておく
+  PlayerMoveComponent() {
+    moveFinishCallback();
+  }
 
   // 移動開始
   void setMove(PlayerDir dir) {
@@ -38,6 +46,9 @@ class PlayerMoveComponent extends PlayerComponent {
       PlayerDir.right => Vector2(blockSize, 0),
       PlayerDir.up => Vector2(0, -blockSize),
     };
+
+    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+    cursor.currentState?.hide();
   }
 
   // 移動中チェック
@@ -56,10 +67,18 @@ class PlayerMoveComponent extends PlayerComponent {
     transTime += dt;
     if (transTime > needMoveTime) {
       transTime = needMoveTime;
+      moveFinishCallback();
     }
 
     // 座標更新
     position = (moveValue * transTime / needMoveTime) + srcPos;
+  }
+
+  // 移動が終わったらカーソル表示
+  void moveFinishCallback() {
+    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+    cursor.currentState?.show(position);
+    log.info("moved");
   }
 }
 

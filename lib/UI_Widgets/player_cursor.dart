@@ -17,22 +17,22 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   void show(Vector2 pos) {
     cursorPos.setFrom(pos);
     isVisible = true;
-    if (isBuilded) setState(() {}); // Build中に実行するとエラーになる
+    // if (isBuilded) setState(() {}); // Build中に実行するとエラーになる
   }
 
   void hide() {
     isVisible = false;
-    if (isBuilded) setState(() {}); // Build中に実行するとエラーになる
+    // if (isBuilded) setState(() {}); // Build中に実行するとエラーになる
   }
 
   @override
   Widget build(BuildContext context) {
     // Build中を判別できるように
-    isBuilded = false;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // Build終了コールバックで完了フラグを立てておく
-      isBuilded = true;
-    });
+    // isBuilded = false;
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   // Build終了コールバックで完了フラグを立てておく
+    //   isBuilded = true;
+    // });
 
     return Visibility(
         visible: isVisible,
