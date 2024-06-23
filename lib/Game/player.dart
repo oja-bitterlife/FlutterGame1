@@ -1,5 +1,3 @@
-import 'dart:ui';
-import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' show GlobalObjectKey;
@@ -86,9 +84,9 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
   List<SpriteAnimation> walkAnim = [];
 
   // 画像ロードはasyncなのでコンストラクタが使えない
-  static late Image image;
+  static late Sprite playerImage;
   static Future<void> load() async {
-    image = await Flame.images.load('sample20160312.png');
+    playerImage = await Sprite.load('sample20160312.png');
   }
 
   PlayerComponent()
@@ -99,8 +97,8 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
           priority: Priority.player.index,
         ) {
     // イメージから歩きアニメスプライト切り出し
-    var playerSheet =
-        SpriteSheet.fromColumnsAndRows(image: image, columns: 18, rows: 12);
+    var playerSheet = SpriteSheet.fromColumnsAndRows(
+        image: playerImage.image, columns: 18, rows: 12);
 
     for (int i = 0; i < 4; i++) {
       walkAnim.add(SpriteAnimation.fromFrameData(

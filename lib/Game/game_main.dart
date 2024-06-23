@@ -12,7 +12,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   Future<void> onLoad() async {
     super.onLoad();
 
-    // log.d("onLoad");
     // 画像読み込み
     await PlayerComponent.load();
 
@@ -20,22 +19,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     player = PlayerMoveComponent();
     add(player);
     add(await MapComponent.create());
-  }
-
-  @override
-  void onTapDown(TapDownEvent event) {
-    super.onTapDown(event);
-
-    // 移動中でない
-    // if (!player.isMoving()) {
-    //   // 調べることができる
-    //   const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    //   if (!msgWin.currentState!.isVisible) {
-    //     msgWin.currentState?.show("あいうえお\nかきくけ\nさしす\nたち");
-    //   } else {
-    //     msgWin.currentState?.hide();
-    //   }
-    // }
   }
 
   GameWidget getWidget() {
