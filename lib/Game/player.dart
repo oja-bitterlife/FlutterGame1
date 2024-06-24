@@ -79,7 +79,8 @@ class MovePlayerComponent extends PlayerComponent {
 
     // プレイヤーの四方向チェック
     int blockX = position.x.round() ~/ MapComponent.blockSize;
-    int blockY = position.y.round() ~/ MapComponent.blockSize;
+    int blockY = (position.y - MapComponent.blockSize * 0.5).round() ~/
+        MapComponent.blockSize;
     cursor.currentState!
       ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
       ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
@@ -94,6 +95,7 @@ class MovePlayerComponent extends PlayerComponent {
     int eventType = (findGame() as MyGame).map.check(blockX, blockY);
 
     if (eventType == 1) return PlayerCursorType.none;
+    if (eventType == 2) return PlayerCursorType.find;
 
     return PlayerCursorType.move;
   }
