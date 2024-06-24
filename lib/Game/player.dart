@@ -92,12 +92,14 @@ class MovePlayerComponent extends PlayerComponent {
   }
 
   PlayerCursorType checkEvent(int blockX, int blockY) {
-    int eventType = (findGame() as MyGame).map.check(blockX, blockY);
-
-    if (eventType == 1) return PlayerCursorType.none;
-    if (eventType == 2) return PlayerCursorType.find;
-
-    return PlayerCursorType.move;
+    switch ((findGame() as MyGame).map.check(blockX, blockY)) {
+      case MapEventType.event:
+        return PlayerCursorType.find;
+      case MapEventType.wall:
+        return PlayerCursorType.none;
+      default:
+        return PlayerCursorType.move;
+    }
   }
 }
 

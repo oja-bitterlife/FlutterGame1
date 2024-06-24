@@ -5,6 +5,16 @@ import 'package:flame_tiled/flame_tiled.dart';
 import '../my_logger.dart';
 import 'priorities.dart';
 
+enum MapEventType {
+  floor(0),
+  wall(1),
+  event(2),
+  ;
+
+  final int id;
+  const MapEventType(this.id);
+}
+
 class MapComponent extends Component {
   static const int blockSize = 32;
   late TiledComponent tiled;
@@ -19,13 +29,13 @@ class MapComponent extends Component {
     return self;
   }
 
-  int check(int blockX, int blockY) {
+  MapEventType check(int blockX, int blockY) {
     var gid = tiled.tileMap.getTileData(layerId: 0, x: blockX, y: blockY);
     log.info(gid?.tile);
 
-    if (gid?.tile == 218) return 2; // 宝箱
-//    return 1; // 移動不可
+    if (gid?.tile == 218) return MapEventType.event; // 宝箱
+//    return MapEventType.wall; // 移動不可
 
-    return 0; // なにもない(床)
+    return MapEventType.floor; // なにもない(床)
   }
 }
