@@ -28,6 +28,33 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   Vector2 cursorPos = Vector2.zero();
   bool isVisible = true;
 
+  // プレイヤの各方向(PlayerDir)のカーソルタイプ
+  List<PlayerCursorType> PlayerCursorData = [
+    PlayerCursorType.move,
+    PlayerCursorType.move,
+    PlayerCursorType.move,
+    PlayerCursorType.move,
+  ];
+  // 一つの方向のカーソルタイプを設定する
+  void setCursorType(PlayerCursorType type, PlayerDir dir) {
+    setState(() {
+      PlayerCursorData[dir.id] = type;
+    });
+  }
+
+  // 一つの方向のカーソルタイプを設定し、それ以外はリセットする
+  void setCursorOnce(PlayerCursorType type, PlayerDir dir) {
+    resetCursorType();
+    setCursorType(type, dir);
+  }
+
+  // 全ての方向のカーソルタイプをリセットする
+  void resetCursorType() {
+    setState(() {
+      PlayerCursorData.fillRange(0, 4, PlayerCursorType.move);
+    });
+  }
+
   // 表示座標の設定
   void show(Vector2 pos) {
     setState(() {
@@ -54,9 +81,11 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 44,
               child: IconButton(
                   onPressed: () {
-                    onPlayerCursor(PlayerCursorType.move, PlayerDir.left);
+                    onPlayerCursor(
+                        PlayerCursorData[PlayerDir.left.id], PlayerDir.left);
                   },
-                  icon: const Icon(Icons.arrow_circle_left_outlined),
+                  icon: getIcon(
+                      PlayerCursorData[PlayerDir.left.id], PlayerDir.left),
                   color: Colors.white,
                   iconSize: 32)),
           Positioned(
@@ -64,9 +93,11 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 44,
               child: IconButton(
                   onPressed: () {
-                    onPlayerCursor(PlayerCursorType.move, PlayerDir.right);
+                    onPlayerCursor(
+                        PlayerCursorData[PlayerDir.right.id], PlayerDir.right);
                   },
-                  icon: const Icon(Icons.arrow_circle_right_outlined),
+                  icon: getIcon(
+                      PlayerCursorData[PlayerDir.right.id], PlayerDir.right),
                   color: Colors.white,
                   iconSize: 32)),
           Positioned(
@@ -74,9 +105,11 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 88,
               child: IconButton(
                   onPressed: () {
-                    onPlayerCursor(PlayerCursorType.move, PlayerDir.up);
+                    onPlayerCursor(
+                        PlayerCursorData[PlayerDir.up.id], PlayerDir.up);
                   },
-                  icon: const Icon(Icons.arrow_circle_up_outlined),
+                  icon:
+                      getIcon(PlayerCursorData[PlayerDir.up.id], PlayerDir.up),
                   color: Colors.white,
                   iconSize: 32)),
           Positioned(
@@ -84,12 +117,29 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
               top: cursorPos.y - 4,
               child: IconButton(
                   onPressed: () {
-                    onPlayerCursor(PlayerCursorType.find, PlayerDir.down);
+                    onPlayerCursor(
+                        PlayerCursorData[PlayerDir.down.id], PlayerDir.down);
                   },
-                  icon: const Icon(Icons.find_in_page_outlined),
+                  icon: getIcon(
+                      PlayerCursorData[PlayerDir.down.id], PlayerDir.down),
                   color: Colors.white,
                   iconSize: 32)),
         ]));
+  }
+
+  Icon getIcon(PlayerCursorType type, PlayerDir dir) {
+    if (type == PlayerCursorType.move) {
+      return switch (dir) {
+        PlayerDir.up => const Icon(Icons.arrow_circle_up_outlined),
+        PlayerDir.down => const Icon(Icons.arrow_circle_down_outlined),
+        PlayerDir.left => const Icon(Icons.arrow_circle_left_outlined),
+        PlayerDir.right => const Icon(Icons.arrow_circle_right_outlined),
+      };
+    }
+    if (type == PlayerCursorType.find) {
+      return const Icon(Icons.find_in_page_outlined);
+    }
+    return const Icon(Icons.no_adult_content);
   }
 
   // カーソルが押された時の処理
