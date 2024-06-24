@@ -36,11 +36,9 @@ class MyGameWidget extends StatelessWidget {
       // ----------------------------------------------------------------------
       // ↓ GameUI
       // メッセージウインドウ
-      IgnorePointer(
-          // クリックを奪わないように
-          child: MessaeWindowWidget(
-              key: const GlobalObjectKey<MessageWindowState>("MessageWindow"),
-              myGame: myGame)),
+      MessaeWindowWidget(
+          key: const GlobalObjectKey<MessageWindowState>("MessageWindow"),
+          myGame: myGame),
       // アクションカーソル
       PlayerCursorWidget(
           key: const GlobalObjectKey<PlayerCursorState>("PlayerCursor"),

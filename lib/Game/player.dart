@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
@@ -58,19 +60,20 @@ class MovePlayerComponent extends PlayerComponent {
     // 移動中でなかった
     if (!isMoving()) return;
 
-    // 移動中
-    transTime += dt;
-    if (transTime > needMoveTime) {
-      transTime = needMoveTime;
-      moveFinishCallback();
-    }
+    // 移動中処理
+    // ------------------------------------------------------------------------
+    transTime = min(transTime + dt, needMoveTime); // 行き過ぎないように
 
     // 座標更新
     position = (moveValue * transTime / needMoveTime) + srcPos;
+
+    // 移動が終わったときの処理(positionを確定させてから)
+    if (!isMoving()) {
+      startIdle(); // 待機開始
+    }
   }
 
-  // 移動が終わったときの処理
-  void moveFinishCallback() {
+  void startIdle() {
     // 操作カーソル表示
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
     cursor.currentState?.show(position);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:my_app/UI_Widgets/message_window.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -94,6 +95,17 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   // カーソルが押された時の処理
   void onPlayerCursor(PlayerCursorType type, PlayerDir dir) {
     hide(); // アクション中は隠す
-    widget.myGame.player.setMove(dir);
+
+    switch (type) {
+      case PlayerCursorType.move:
+        // 移動
+        widget.myGame.player.setMove(dir);
+      case PlayerCursorType.find:
+        // 移動せず方向だけ変える
+        widget.myGame.player.setDir(dir);
+        // メッセージ表示
+        const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+        msgWin.currentState?.show("あいうえお");
+    }
   }
 }

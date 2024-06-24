@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
+import 'package:my_app/UI_Widgets/message_window.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -32,7 +33,15 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   void onMount() {
     super.onMount();
 
-    // 移動が終わった状態から開始
-    player.moveFinishCallback();
+    // 待機状態で開始
+    player.startIdle();
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    super.onTapDown(event);
+
+    // ゲーム画面のタップ処理。たぶん今回は使わない
+    log.info("onGameTap");
   }
 }

@@ -45,29 +45,41 @@ class MessageWindowState extends State<MessaeWindowWidget> {
     return Visibility(
         visible: _isVisible,
         // 9-patchウインドウ
-        child: Stack(alignment: Alignment.topLeft, children: <Widget>[
-          Positioned(
-            top: windowY,
-            left: windowX,
-            child: Image.asset(
-              "assets/images/window.png",
-              width: windowW,
-              height: windowH,
-              centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
-            ),
-          ),
-          // テキスト
-          Positioned(
-            top: windowY + 16,
-            left: windowX + 16,
-            child: Text(_message,
-                style: const TextStyle(
-                    decoration: TextDecoration.none,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                    fontSize: 24,
-                    height: 1.1)),
-          ),
-        ]));
+        child: GestureDetector(
+            onTap: () {
+              onScreenTap();
+            },
+            child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Stack(alignment: Alignment.topLeft, children: <Widget>[
+                  Positioned(
+                    top: windowY,
+                    left: windowX,
+                    child: Image.asset(
+                      "assets/images/window.png",
+                      width: windowW,
+                      height: windowH,
+                      centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
+                    ),
+                  ),
+                  // テキスト
+                  Positioned(
+                    top: windowY + 16,
+                    left: windowX + 16,
+                    child: Text(_message,
+                        style: const TextStyle(
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                            fontSize: 24,
+                            height: 1.1)),
+                  ),
+                ]))));
+  }
+
+  // メッセージウインドウ表示中に画面がタップされた時の処理
+  void onScreenTap() {
+    hide();
+    widget.myGame.player.startIdle();
   }
 }
