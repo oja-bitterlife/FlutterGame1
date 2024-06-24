@@ -8,6 +8,7 @@ import '../Game/player.dart';
 import '../Game/my_game.dart';
 
 enum PlayerCursorType {
+  none(-1),
   move(0),
   find(1),
   ;
@@ -30,28 +31,15 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
 
   // プレイヤの各方向(PlayerDir)のカーソルタイプ
   List<PlayerCursorType> PlayerCursorData = [
-    PlayerCursorType.move,
-    PlayerCursorType.move,
-    PlayerCursorType.move,
-    PlayerCursorType.move,
+    PlayerCursorType.none,
+    PlayerCursorType.none,
+    PlayerCursorType.none,
+    PlayerCursorType.none,
   ];
   // 一つの方向のカーソルタイプを設定する
   void setCursorType(PlayerCursorType type, PlayerDir dir) {
     setState(() {
       PlayerCursorData[dir.id] = type;
-    });
-  }
-
-  // 一つの方向のカーソルタイプを設定し、それ以外はリセットする
-  void setCursorOnce(PlayerCursorType type, PlayerDir dir) {
-    resetCursorType();
-    setCursorType(type, dir);
-  }
-
-  // 全ての方向のカーソルタイプをリセットする
-  void resetCursorType() {
-    setState(() {
-      PlayerCursorData.fillRange(0, 4, PlayerCursorType.move);
     });
   }
 
@@ -76,54 +64,66 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
         visible: isVisible,
         // 上下左右カーソル表示
         child: Stack(alignment: Alignment.topLeft, children: <Widget>[
-          Positioned(
-              left: cursorPos.x - 64,
-              top: cursorPos.y - 44,
-              child: IconButton(
-                  onPressed: () {
-                    onPlayerCursor(
-                        PlayerCursorData[PlayerDir.left.id], PlayerDir.left);
-                  },
-                  icon: getIcon(
-                      PlayerCursorData[PlayerDir.left.id], PlayerDir.left),
-                  color: Colors.white,
-                  iconSize: 32)),
-          Positioned(
-              left: cursorPos.x + 16,
-              top: cursorPos.y - 44,
-              child: IconButton(
-                  onPressed: () {
-                    onPlayerCursor(
-                        PlayerCursorData[PlayerDir.right.id], PlayerDir.right);
-                  },
-                  icon: getIcon(
-                      PlayerCursorData[PlayerDir.right.id], PlayerDir.right),
-                  color: Colors.white,
-                  iconSize: 32)),
-          Positioned(
-              left: cursorPos.x - 24,
-              top: cursorPos.y - 88,
-              child: IconButton(
-                  onPressed: () {
-                    onPlayerCursor(
-                        PlayerCursorData[PlayerDir.up.id], PlayerDir.up);
-                  },
-                  icon:
-                      getIcon(PlayerCursorData[PlayerDir.up.id], PlayerDir.up),
-                  color: Colors.white,
-                  iconSize: 32)),
-          Positioned(
-              left: cursorPos.x - 24,
-              top: cursorPos.y - 4,
-              child: IconButton(
-                  onPressed: () {
-                    onPlayerCursor(
-                        PlayerCursorData[PlayerDir.down.id], PlayerDir.down);
-                  },
-                  icon: getIcon(
-                      PlayerCursorData[PlayerDir.down.id], PlayerDir.down),
-                  color: Colors.white,
-                  iconSize: 32)),
+          Visibility(
+              visible:
+                  PlayerCursorData[PlayerDir.left.id] != PlayerCursorType.none,
+              child: Positioned(
+                  left: cursorPos.x - 64,
+                  top: cursorPos.y - 44,
+                  child: IconButton(
+                      onPressed: () {
+                        onPlayerCursor(PlayerCursorData[PlayerDir.left.id],
+                            PlayerDir.left);
+                      },
+                      icon: getIcon(
+                          PlayerCursorData[PlayerDir.left.id], PlayerDir.left),
+                      color: Colors.white,
+                      iconSize: 32))),
+          Visibility(
+              visible:
+                  PlayerCursorData[PlayerDir.right.id] != PlayerCursorType.none,
+              child: Positioned(
+                  left: cursorPos.x + 16,
+                  top: cursorPos.y - 44,
+                  child: IconButton(
+                      onPressed: () {
+                        onPlayerCursor(PlayerCursorData[PlayerDir.right.id],
+                            PlayerDir.right);
+                      },
+                      icon: getIcon(PlayerCursorData[PlayerDir.right.id],
+                          PlayerDir.right),
+                      color: Colors.white,
+                      iconSize: 32))),
+          Visibility(
+              visible:
+                  PlayerCursorData[PlayerDir.up.id] != PlayerCursorType.none,
+              child: Positioned(
+                  left: cursorPos.x - 24,
+                  top: cursorPos.y - 88,
+                  child: IconButton(
+                      onPressed: () {
+                        onPlayerCursor(
+                            PlayerCursorData[PlayerDir.up.id], PlayerDir.up);
+                      },
+                      icon: getIcon(
+                          PlayerCursorData[PlayerDir.up.id], PlayerDir.up),
+                      color: Colors.white,
+                      iconSize: 32))),
+          Visibility(
+              visible:
+                  PlayerCursorData[PlayerDir.down.id] != PlayerCursorType.none,
+              child: Positioned(
+                  left: cursorPos.x - 24,
+                  top: cursorPos.y - 4,
+                  child: IconButton(
+                      onPressed: () {
+                        onPlayerCursor(PlayerCursorData[PlayerDir.down.id],
+                            PlayerDir.down);
+                      },
+                      icon: getIcon(
+                          PlayerCursorData[PlayerDir.down.id], PlayerDir.down),
+                      color: Colors.white,
+                      iconSize: 32))),
         ]));
   }
 
@@ -156,6 +156,8 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
         // メッセージ表示
         const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
         msgWin.currentState?.show("あいうえお");
+      case PlayerCursorType.none:
+        log.shout("あってはいけないエラー");
     }
   }
 }

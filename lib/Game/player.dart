@@ -7,7 +7,9 @@ import 'package:my_app/UI_Widgets/player_cursor.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
+import 'my_game.dart';
 import 'priorities.dart';
+import 'map.dart';
 
 enum PlayerDir {
   down(0),
@@ -36,12 +38,11 @@ class MovePlayerComponent extends PlayerComponent {
     srcPos.setFrom(position);
 
     // 移動先設定
-    const double blockSize = 32;
     moveValue = switch (dir) {
-      PlayerDir.down => Vector2(0, blockSize),
-      PlayerDir.left => Vector2(-blockSize, 0),
-      PlayerDir.right => Vector2(blockSize, 0),
-      PlayerDir.up => Vector2(0, -blockSize),
+      PlayerDir.down => Vector2(0, MapComponent.blockSize.toDouble()),
+      PlayerDir.left => Vector2(-MapComponent.blockSize.toDouble(), 0),
+      PlayerDir.right => Vector2(MapComponent.blockSize.toDouble(), 0),
+      PlayerDir.up => Vector2(0, -MapComponent.blockSize.toDouble()),
     };
 
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
@@ -74,9 +75,27 @@ class MovePlayerComponent extends PlayerComponent {
   }
 
   void startIdle() {
-    // 操作カーソル表示
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+
+    // プレイヤーの四方向チェック
+    int blockX = position.x.round() ~/ MapComponent.blockSize;
+    int blockY = position.y.round() ~/ MapComponent.blockSize;
+    cursor.currentState!
+      ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
+      ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
+      ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
+      ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
+
+    // 操作カーソル表示
     cursor.currentState?.show(position);
+  }
+
+  PlayerCursorType checkEvent(int blockX, int blockY) {
+    int eventType = (findGame() as MyGame).map.check(blockX, blockY);
+
+    if (eventType == 1) return PlayerCursorType.none;
+
+    return PlayerCursorType.move;
   }
 }
 
