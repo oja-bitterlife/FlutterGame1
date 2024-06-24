@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
 import 'package:my_app/UI_Widgets/player_cursor.dart';
+
+// ignore: unused_import
+import '../my_logger.dart';
 import 'priorities.dart';
-import '../logger.dart';
 
 enum PlayerDir {
   down(0),

@@ -2,7 +2,8 @@ import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 
-import '../logger.dart';
+// ignore: unused_import
+import '../my_logger.dart';
 import 'player.dart';
 import 'map.dart';
 

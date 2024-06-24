@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+// ignore: unused_import
+import '../my_logger.dart';
 import '../Game/my_game.dart';
 
 class MessaeWindowWidget extends StatefulWidget {
@@ -21,16 +24,17 @@ class MessageWindowState extends State<MessaeWindowWidget> {
 
   // メッセージ表示
   void show(msg) {
-    _message = msg;
-    _isVisible = true;
-    // setState(() {});
+    setState(() {
+      _message = msg;
+      _isVisible = true;
+    });
   }
 
   // メッセージ非表示
   void hide() {
-    _isVisible = false;
-    _message = "";
-    // setState(() {});
+    setState(() {
+      _isVisible = false;
+    });
   }
 
   // メッセージ状態取得
@@ -40,6 +44,7 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   Widget build(BuildContext context) {
     return Visibility(
         visible: _isVisible,
+        // 9-patchウインドウ
         child: Stack(alignment: Alignment.topLeft, children: <Widget>[
           Positioned(
             top: windowY,
@@ -51,6 +56,7 @@ class MessageWindowState extends State<MessaeWindowWidget> {
               centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
             ),
           ),
+          // テキスト
           Positioned(
             top: windowY + 16,
             left: windowX + 16,

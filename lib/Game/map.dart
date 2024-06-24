@@ -1,5 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+
+// ignore: unused_import
+import '../my_logger.dart';
 import 'priorities.dart';
 
 class MapComponent extends Component {
