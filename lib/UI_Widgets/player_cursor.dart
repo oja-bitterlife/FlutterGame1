@@ -30,7 +30,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   bool isVisible = true;
 
   // プレイヤの各方向(PlayerDir)のカーソルタイプ
-  List<PlayerCursorType> PlayerCursorData = [
+  List<PlayerCursorType> playerCursorData = [
     PlayerCursorType.none,
     PlayerCursorType.none,
     PlayerCursorType.none,
@@ -39,8 +39,9 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   // 一つの方向のカーソルタイプを設定する
   void setCursorType(PlayerCursorType type, PlayerDir dir) {
     setState(() {
-      PlayerCursorData[dir.id] = type;
+      playerCursorData[dir.id] = type;
     });
+    log.info(playerCursorData);
   }
 
   // 表示座標の設定
@@ -64,64 +65,64 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
         visible: isVisible,
         // 上下左右カーソル表示
         child: Stack(alignment: Alignment.topLeft, children: <Widget>[
-          Visibility(
-              visible:
-                  PlayerCursorData[PlayerDir.left.id] != PlayerCursorType.none,
-              child: Positioned(
-                  left: cursorPos.x - 64,
-                  top: cursorPos.y - 44,
+          Positioned(
+              left: cursorPos.x - 64,
+              top: cursorPos.y - 44,
+              child: Visibility(
+                  visible: playerCursorData[PlayerDir.left.id] !=
+                      PlayerCursorType.none,
                   child: IconButton(
                       onPressed: () {
-                        onPlayerCursor(PlayerCursorData[PlayerDir.left.id],
+                        onPlayerCursor(playerCursorData[PlayerDir.left.id],
                             PlayerDir.left);
                       },
                       icon: getIcon(
-                          PlayerCursorData[PlayerDir.left.id], PlayerDir.left),
+                          playerCursorData[PlayerDir.left.id], PlayerDir.left),
                       color: Colors.white,
                       iconSize: 32))),
-          Visibility(
-              visible:
-                  PlayerCursorData[PlayerDir.right.id] != PlayerCursorType.none,
-              child: Positioned(
-                  left: cursorPos.x + 16,
-                  top: cursorPos.y - 44,
+          Positioned(
+              left: cursorPos.x + 16,
+              top: cursorPos.y - 44,
+              child: Visibility(
+                  visible: playerCursorData[PlayerDir.right.id] !=
+                      PlayerCursorType.none,
                   child: IconButton(
                       onPressed: () {
-                        onPlayerCursor(PlayerCursorData[PlayerDir.right.id],
+                        onPlayerCursor(playerCursorData[PlayerDir.right.id],
                             PlayerDir.right);
                       },
-                      icon: getIcon(PlayerCursorData[PlayerDir.right.id],
+                      icon: getIcon(playerCursorData[PlayerDir.right.id],
                           PlayerDir.right),
                       color: Colors.white,
                       iconSize: 32))),
-          Visibility(
-              visible:
-                  PlayerCursorData[PlayerDir.up.id] != PlayerCursorType.none,
-              child: Positioned(
-                  left: cursorPos.x - 24,
-                  top: cursorPos.y - 88,
+          Positioned(
+              left: cursorPos.x - 24,
+              top: cursorPos.y - 88,
+              child: Visibility(
+                  visible: playerCursorData[PlayerDir.up.id] !=
+                      PlayerCursorType.none,
                   child: IconButton(
                       onPressed: () {
                         onPlayerCursor(
-                            PlayerCursorData[PlayerDir.up.id], PlayerDir.up);
+                            playerCursorData[PlayerDir.up.id], PlayerDir.up);
                       },
                       icon: getIcon(
-                          PlayerCursorData[PlayerDir.up.id], PlayerDir.up),
+                          playerCursorData[PlayerDir.up.id], PlayerDir.up),
                       color: Colors.white,
                       iconSize: 32))),
-          Visibility(
-              visible:
-                  PlayerCursorData[PlayerDir.down.id] != PlayerCursorType.none,
-              child: Positioned(
-                  left: cursorPos.x - 24,
-                  top: cursorPos.y - 4,
+          Positioned(
+              left: cursorPos.x - 24,
+              top: cursorPos.y - 4,
+              child: Visibility(
+                  visible: playerCursorData[PlayerDir.down.id] !=
+                      PlayerCursorType.none,
                   child: IconButton(
                       onPressed: () {
-                        onPlayerCursor(PlayerCursorData[PlayerDir.down.id],
+                        onPlayerCursor(playerCursorData[PlayerDir.down.id],
                             PlayerDir.down);
                       },
                       icon: getIcon(
-                          PlayerCursorData[PlayerDir.down.id], PlayerDir.down),
+                          playerCursorData[PlayerDir.down.id], PlayerDir.down),
                       color: Colors.white,
                       iconSize: 32))),
         ]));

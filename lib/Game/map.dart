@@ -30,11 +30,13 @@ class MapComponent extends Component {
   }
 
   MapEventType check(int blockX, int blockY) {
-    var gid = tiled.tileMap.getTileData(layerId: 0, x: blockX, y: blockY);
+    // var layer = tiled.tileMap.getLayer("walk-flag");
+
+    var gid = tiled.tileMap.getTileData(layerId: 4, x: blockX, y: blockY);
     log.info(gid?.tile);
 
-    if (gid?.tile == 218) return MapEventType.event; // 宝箱
-//    return MapEventType.wall; // 移動不可
+    // // if (gid?.tile == 218) return MapEventType.event; // 宝箱
+    if (gid?.tile != 0) return MapEventType.wall; // 移動不可
 
     return MapEventType.floor; // なにもない(床)
   }
