@@ -38,19 +38,28 @@ class MapComponent extends Component {
             ?.tile !=
         0) return MapEventType.wall; // 移動不可
 
+    var event = checkEvent(blockX, blockY);
+    if (event != null) return MapEventType.event;
+
+    return MapEventType.floor; // なにもない(床)
+  }
+
+  // イベントチェック
+  String? checkEvent(int blockX, int blockY) {
     // イベントチェック
     var eventLayerIndex =
         tiled.tileMap.map.layers.indexOf(tiled.tileMap.getLayer("event")!);
     var eventGid = tiled.tileMap
         .getTileData(layerId: eventLayerIndex, x: blockX, y: blockY);
+
+    // イベントタイルが存在した
     if (eventGid?.tile != 0) {
       // タイル情報のeventを読む
       var eventTile = tiled.tileMap.map.tilesets[0].tiles[eventGid!.tile - 1];
-      String? event =
-          eventTile.properties["event"]?.value as String?; // eventプロパティを持ってる？
-      if (event != null) return MapEventType.event;
+      return eventTile.properties["event"]?.value as String?;
     }
 
-    return MapEventType.floor; // なにもない(床)
+    // イベントは存在しなかった
+    return null;
   }
 }
