@@ -41,7 +41,6 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
     setState(() {
       playerCursorData[dir.id] = type;
     });
-    log.info(playerCursorData);
   }
 
   // 表示座標の設定

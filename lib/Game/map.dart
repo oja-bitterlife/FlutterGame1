@@ -30,13 +30,26 @@ class MapComponent extends Component {
   }
 
   MapEventType check(int blockX, int blockY) {
-    // var layer = tiled.tileMap.getLayer("walk-flag");
+    // 移動不可チェック
+    var walkFlagLayerIndex =
+        tiled.tileMap.map.layers.indexOf(tiled.tileMap.getLayer("walk-flag")!);
+    if (tiled.tileMap
+            .getTileData(layerId: walkFlagLayerIndex, x: blockX, y: blockY)
+            ?.tile !=
+        0) return MapEventType.wall; // 移動不可
 
-    var gid = tiled.tileMap.getTileData(layerId: 4, x: blockX, y: blockY);
-    log.info(gid?.tile);
-
-    // // if (gid?.tile == 218) return MapEventType.event; // 宝箱
-    if (gid?.tile != 0) return MapEventType.wall; // 移動不可
+    // イベントチェック
+    var eventLayerIndex =
+        tiled.tileMap.map.layers.indexOf(tiled.tileMap.getLayer("event")!);
+    var eventGid = tiled.tileMap
+        .getTileData(layerId: eventLayerIndex, x: blockX, y: blockY);
+    if (eventGid?.tile != 0) {
+      // タイル情報のeventを読む
+      var eventTile = tiled.tileMap.map.tilesets[0].tiles[eventGid!.tile - 1];
+      String? event =
+          eventTile.properties["event"]?.value as String?; // eventプロパティを持ってる？
+      if (event != null) return MapEventType.event;
+    }
 
     return MapEventType.floor; // なにもない(床)
   }
