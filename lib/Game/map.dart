@@ -16,7 +16,7 @@ enum MapEventType {
 }
 
 class MapComponent extends Component {
-  static const int blockSize = 32;
+  static int blockSize = 32;
   late TiledComponent tiled;
 
   static Future<MapComponent> create() async {
