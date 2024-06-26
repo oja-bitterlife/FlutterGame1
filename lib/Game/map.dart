@@ -30,15 +30,17 @@ class TiledManager {
     // プレイヤの下に表示
     final underPlayer = imageBatch.compileMapLayer(
         tileMap: self.tiled.tileMap, layerNames: ['UnderPlayer']);
-    underPlayer.priority = Priority.mapUnder.index;
-    underPlayer.scale = Vector2.all(2);
+    underPlayer
+      ..priority = Priority.mapUnder.index
+      ..scale = Vector2.all(2);
     myGame.add(underPlayer);
 
     // プレイヤの上に表示
     final overPlayer = imageBatch.compileMapLayer(
         tileMap: self.tiled.tileMap, layerNames: ['OverPlayer']);
-    overPlayer.priority = Priority.mapOver.index;
-    overPlayer.scale = Vector2.all(2);
+    overPlayer
+      ..priority = Priority.mapOver.index
+      ..scale = Vector2.all(2);
     myGame.add(overPlayer);
 
     return self;
