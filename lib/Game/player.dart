@@ -39,10 +39,10 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 移動先設定
     moveValue = switch (dir) {
-      PlayerDir.down => Vector2(0, MapComponent.blockSize.toDouble()),
-      PlayerDir.left => Vector2(-MapComponent.blockSize.toDouble(), 0),
-      PlayerDir.right => Vector2(MapComponent.blockSize.toDouble(), 0),
-      PlayerDir.up => Vector2(0, -MapComponent.blockSize.toDouble()),
+      PlayerDir.down => Vector2(0, TiledManager.blockSize.toDouble()),
+      PlayerDir.left => Vector2(-TiledManager.blockSize.toDouble(), 0),
+      PlayerDir.right => Vector2(TiledManager.blockSize.toDouble(), 0),
+      PlayerDir.up => Vector2(0, -TiledManager.blockSize.toDouble()),
     };
 
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
@@ -78,9 +78,9 @@ class MovePlayerComponent extends PlayerComponent {
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
 
     // プレイヤーの四方向チェック
-    int blockX = position.x.round() ~/ MapComponent.blockSize;
-    int blockY = (position.y - MapComponent.blockSize * 0.5).round() ~/
-        MapComponent.blockSize;
+    int blockX = position.x.round() ~/ TiledManager.blockSize;
+    int blockY = (position.y - TiledManager.blockSize * 0.5).round() ~/
+        TiledManager.blockSize;
     cursor.currentState!
       ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
       ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)

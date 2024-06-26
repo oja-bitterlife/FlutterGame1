@@ -1,4 +1,5 @@
 enum Priority {
-  map,
+  mapUnder,
   player,
+  mapOver,
 }

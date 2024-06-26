@@ -1,9 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
 import 'priorities.dart';
+import 'my_game.dart';
 
 enum MapEventType {
   floor(0),
@@ -15,16 +17,29 @@ enum MapEventType {
   const MapEventType(this.id);
 }
 
-class MapComponent extends Component {
+class TiledManager {
   static int blockSize = 32;
   late TiledComponent tiled;
 
-  static Future<MapComponent> create() async {
-    MapComponent self = MapComponent();
+  static Future<TiledManager> create(MyGame myGame) async {
+    TiledManager self = TiledManager();
 
-    self.add(self.tiled = await TiledComponent.load(
-        "map.tmx", Vector2(blockSize.toDouble(), blockSize.toDouble()),
-        priority: Priority.map.index));
+    self.tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
+    var imageBatch = ImageBatchCompiler();
+
+    // プレイヤの下に表示
+    final underPlayer = imageBatch.compileMapLayer(
+        tileMap: self.tiled.tileMap, layerNames: ['UnderPlayer']);
+    underPlayer.priority = Priority.mapUnder.index;
+    underPlayer.scale = Vector2.all(2);
+    myGame.add(underPlayer);
+
+    // プレイヤの上に表示
+    final overPlayer = imageBatch.compileMapLayer(
+        tileMap: self.tiled.tileMap, layerNames: ['OverPlayer']);
+    overPlayer.priority = Priority.mapOver.index;
+    overPlayer.scale = Vector2.all(2);
+    myGame.add(overPlayer);
 
     return self;
   }
@@ -47,16 +62,16 @@ class MapComponent extends Component {
   // イベントチェック
   String? checkEvent(int blockX, int blockY) {
     // イベントチェック
-    var eventLayerIndex =
-        tiled.tileMap.map.layers.indexOf(tiled.tileMap.getLayer("event")!);
-    var eventGid = tiled.tileMap
-        .getTileData(layerId: eventLayerIndex, x: blockX, y: blockY);
+    var eventGid =
+        tiled.tileMap.getLayer<TileLayer>("event")!.tileData![blockY][blockX];
 
     // イベントタイルが存在した
-    if (eventGid?.tile != 0) {
+    if (eventGid.tile != 0) {
       // タイル情報のeventを読む
-      var eventTile = tiled.tileMap.map.tilesets[0].tiles[eventGid!.tile - 1];
-      return eventTile.properties["event"]?.value as String?;
+      return tiled.tileMap.map
+          .tileByGid(eventGid.tile)!
+          .properties["event"]!
+          .value as String?;
     }
 
     // イベントは存在しなかった

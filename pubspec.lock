@@ -241,6 +241,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.20.2"
+  flame_tiled_utils:
+    dependency: "direct main"
+    description:
+      name: flame_tiled_utils
+      sha256: "71501d2b112dff5a424b47db51768901dcb940e678eb156e64a0c38d560ae808"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   flutter:
     dependency: "direct main"
     description: flutter

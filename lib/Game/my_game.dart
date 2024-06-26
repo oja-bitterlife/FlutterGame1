@@ -9,7 +9,7 @@ import 'map.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late MovePlayerComponent player;
-  late MapComponent map;
+  late TiledManager map;
 
   @override
   Future<void> onLoad() async {
@@ -17,10 +17,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 画像読み込み
     await PlayerComponent.load();
+    add(player = MovePlayerComponent());
 
     // 画面構築
-    add(player = MovePlayerComponent());
-    add(map = await MapComponent.create());
+    map = await TiledManager.create(this);
   }
 
   GameWidget createWidget() {
