@@ -62,8 +62,9 @@ class TiledManager {
   // イベントチェック
   String? checkEvent(int blockX, int blockY) {
     // イベントチェック
-    var eventGid =
-        tiled.tileMap.getLayer<TileLayer>("event")!.tileData![blockY][blockX];
+    var eventGid = tiled.tileMap
+        .getLayer<TileLayer>("UnderPlayerEvent")!
+        .tileData![blockY][blockX];
 
     // イベントタイルが存在した
     if (eventGid.tile != 0) {
