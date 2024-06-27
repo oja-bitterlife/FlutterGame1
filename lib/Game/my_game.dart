@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import '../my_logger.dart';
 import 'player.dart';
 import 'map.dart';
+import 'events/eventManager.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late MovePlayerComponent player;
   late TiledManager map;
+  late Eventmanager eventManager;
 
   @override
   Future<void> onLoad() async {
@@ -21,6 +23,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 画面構築
     map = await TiledManager.create(this);
+
+    // event管理
+    eventManager = Eventmanager(this);
   }
 
   GameWidget createWidget() {

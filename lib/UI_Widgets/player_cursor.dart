@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import 'package:my_app/UI_Widgets/message_window.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -151,11 +150,10 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
         // 移動
         widget.myGame.player.setMove(dir);
       case PlayerCursorType.find:
-        // 移動せず方向だけ変える
+        // 方向を変えてからイベント
         widget.myGame.player.setDir(dir);
-        // メッセージ表示
-        const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-        msgWin.currentState?.show("あいうえお");
+        // イベント再生
+        widget.myGame.eventManager.onFind();
       case PlayerCursorType.none:
         log.shout("あってはいけないエラー");
     }
