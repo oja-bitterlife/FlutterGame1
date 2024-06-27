@@ -78,9 +78,8 @@ class MovePlayerComponent extends PlayerComponent {
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
 
     // プレイヤーの四方向チェック
-    int blockX = position.x.round() ~/ TiledManager.blockSize;
-    int blockY = (position.y - TiledManager.blockSize * 0.5).round() ~/
-        TiledManager.blockSize;
+    int blockX = getBlockX();
+    int blockY = getBlockY();
     cursor.currentState!
       ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
       ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
@@ -92,7 +91,7 @@ class MovePlayerComponent extends PlayerComponent {
   }
 
   PlayerCursorType checkEvent(int blockX, int blockY) {
-    switch ((findGame() as MyGame).map.check(blockX, blockY)) {
+    switch ((findGame() as MyGame).map.checkEventType(blockX, blockY)) {
       case MapEventType.event:
         return PlayerCursorType.find;
       case MapEventType.wall:
@@ -105,6 +104,7 @@ class MovePlayerComponent extends PlayerComponent {
 
 class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
   List<SpriteAnimation> walkAnim = [];
+  PlayerDir dir = PlayerDir.down;
 
   // 画像ロードはasyncなのでコンストラクタが使えない
   static late Sprite playerImage;
@@ -134,11 +134,41 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
           ])));
     }
 
-    animation = walkAnim[PlayerDir.down.id];
+    animation = walkAnim[dir.id];
   }
 
   // 表示切り替え
   void setDir(PlayerDir dir) {
+    this.dir = dir;
     animation = walkAnim[dir.id];
+  }
+
+  int getBlockX() {
+    return position.x.round() ~/ TiledManager.blockSize;
+  }
+
+  int getFowardBlockX() {
+    return getBlockX() +
+        switch (dir) {
+          PlayerDir.up => 0,
+          PlayerDir.down => 0,
+          PlayerDir.left => -1,
+          PlayerDir.right => 1,
+        };
+  }
+
+  int getBlockY() {
+    return (position.y - TiledManager.blockSize * 0.5).round() ~/
+        TiledManager.blockSize;
+  }
+
+  int getFowardBlockY() {
+    return getBlockY() +
+        switch (dir) {
+          PlayerDir.up => -1,
+          PlayerDir.down => 1,
+          PlayerDir.left => 0,
+          PlayerDir.right => 0,
+        };
   }
 }

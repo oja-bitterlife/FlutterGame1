@@ -46,7 +46,7 @@ class TiledManager {
     return self;
   }
 
-  MapEventType check(int blockX, int blockY) {
+  MapEventType checkEventType(int blockX, int blockY) {
     // 移動不可チェック
     var walkFlagLayerIndex =
         tiled.tileMap.map.layers.indexOf(tiled.tileMap.getLayer("walk-flag")!);
@@ -55,14 +55,14 @@ class TiledManager {
             ?.tile !=
         0) return MapEventType.wall; // 移動不可
 
-    var event = checkEvent(blockX, blockY);
+    var event = getEvent(blockX, blockY);
     if (event != null) return MapEventType.event;
 
     return MapEventType.floor; // なにもない(床)
   }
 
   // イベントチェック
-  String? checkEvent(int blockX, int blockY) {
+  String? getEvent(int blockX, int blockY) {
     // イベントチェック
     var eventGid = tiled.tileMap
         .getLayer<TileLayer>("UnderPlayerEvent")!

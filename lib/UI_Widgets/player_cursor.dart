@@ -152,7 +152,6 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
       case PlayerCursorType.find:
         // 方向を変えてからイベント
         widget.myGame.player.setDir(dir);
-        // イベント再生
         widget.myGame.eventManager.onFind();
       case PlayerCursorType.none:
         log.shout("あってはいけないエラー");
