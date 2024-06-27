@@ -9,9 +9,7 @@ class Eventmanager {
   late MyGame myGame;
   Eventmanager(this.myGame);
 
-  void onFind() {
-    int blockX = myGame.player.getFowardBlockX();
-    int blockY = myGame.player.getFowardBlockY();
+  void onFind(int blockX, int blockY) {
     log.info(myGame.map.getEvent(blockX, blockY));
 
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
