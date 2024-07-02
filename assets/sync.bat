@@ -1,0 +1,1 @@
+xcopy * ..\build\flutter_assets\assets /d /s /y /f
