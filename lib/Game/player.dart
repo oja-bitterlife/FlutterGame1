@@ -28,6 +28,8 @@ class MovePlayerComponent extends PlayerComponent {
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
+  MovePlayerComponent(super.myGame);
+
   // 移動開始
   void setMove(PlayerDir dir) {
     // 方向をまず変えておく
@@ -70,39 +72,15 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 移動が終わったときの処理(positionを確定させてから)
     if (!isMoving()) {
-      startIdle(); // 待機開始
-    }
-  }
-
-  void startIdle() {
-    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
-
-    // プレイヤーの四方向チェック
-    int blockX = getBlockX();
-    int blockY = getBlockY();
-    cursor.currentState!
-      ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
-      ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
-      ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
-      ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
-
-    // 操作カーソル表示
-    cursor.currentState?.show(position);
-  }
-
-  PlayerCursorType checkEvent(int blockX, int blockY) {
-    switch ((findGame() as MyGame).map.checkEventType(blockX, blockY)) {
-      case MapEventType.event:
-        return PlayerCursorType.find;
-      case MapEventType.wall:
-        return PlayerCursorType.none;
-      default:
-        return PlayerCursorType.move;
+      myGame.startIdle(); // 待機開始
     }
   }
 }
 
 class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
+  final MyGame myGame;
+
+  // 歩きアニメ
   List<SpriteAnimation> walkAnim = [];
   PlayerDir dir = PlayerDir.down;
 
@@ -112,7 +90,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
     playerImage = await Sprite.load('sample20160312.png');
   }
 
-  PlayerComponent()
+  PlayerComponent(this.myGame)
       : super(
           position: Vector2(240, 288), // 初期座標
           anchor: Anchor.bottomCenter,
