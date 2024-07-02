@@ -14,16 +14,19 @@ class Eventmanager {
 
   static Future<Eventmanager> create(MyGame myGame) async {
     var self = Eventmanager(myGame);
-    var toml = await rootBundle.loadString("assets/data/event.toml");
-    self.data = TomlDocument.parse(toml).toMap();
+    self.data = TomlDocument.parse(
+            await rootBundle.loadString("assets/data/event.toml", cache: false))
+        .toMap();
     return self;
   }
+
+  Future<void> reload() async {}
 
   void onFind(int blockX, int blockY) {
     log.info(myGame.map.getEvent(blockX, blockY));
 
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    log.info(data["level1"]["MessageEvent"]["message"]);
-    // msgWin.currentState?.show(data[]);
+    // log.info(data["level1"]["MessageEvent"]["message"]);
+    msgWin.currentState?.show(data["level1"]["MessageEvent"]["message"][0]);
   }
 }

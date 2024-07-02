@@ -19,13 +19,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 画像読み込み
     await PlayerComponent.load();
-    add(player = MovePlayerComponent());
 
-    // 画面構築
-    map = await TiledManager.create(this);
-
-    // event管理
-    eventManager = await Eventmanager.create(this);
+    // 初期化
+    await init();
   }
 
   GameWidget createWidget() {
@@ -47,5 +43,23 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // ゲーム画面のタップ処理。たぶん今回は使わない
     log.info("onGameTap");
+  }
+
+  Future<void> init() async {
+    add(player = MovePlayerComponent());
+
+    // 画面構築
+    map = await TiledManager.create(this);
+    add(map.underPlayer);
+    add(map.overPlayer);
+
+    // event管理
+    eventManager = await Eventmanager.create(this);
+  }
+
+  // 最初からやり直す
+  Future<void> restart() async {
+    removeAll(children);
+    init();
   }
 }

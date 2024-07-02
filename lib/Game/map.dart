@@ -21,6 +21,10 @@ class TiledManager {
   static int blockSize = 32;
   late TiledComponent tiled;
 
+  // 表示コンポーネント
+  late final PositionComponent underPlayer;
+  late final PositionComponent overPlayer;
+
   static Future<TiledManager> create(MyGame myGame) async {
     TiledManager self = TiledManager();
 
@@ -28,20 +32,20 @@ class TiledManager {
     var imageBatch = ImageBatchCompiler();
 
     // プレイヤの下に表示
-    final underPlayer = imageBatch.compileMapLayer(
+    self.underPlayer = imageBatch.compileMapLayer(
         tileMap: self.tiled.tileMap, layerNames: ['UnderPlayer']);
-    underPlayer
+    self.underPlayer
       ..priority = Priority.mapUnder.index
       ..scale = Vector2.all(2);
-    myGame.add(underPlayer);
+    // myGame.add(underPlayer);
 
     // プレイヤの上に表示
-    final overPlayer = imageBatch.compileMapLayer(
+    self.overPlayer = imageBatch.compileMapLayer(
         tileMap: self.tiled.tileMap, layerNames: ['OverPlayer']);
-    overPlayer
+    self.overPlayer
       ..priority = Priority.mapOver.index
       ..scale = Vector2.all(2);
-    myGame.add(overPlayer);
+    // myGame.add(overPlayer);
 
     return self;
   }
