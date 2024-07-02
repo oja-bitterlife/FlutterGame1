@@ -45,13 +45,14 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     log.info("onGameTap");
   }
 
+  // 画面構築
   Future<void> init() async {
     add(player = MovePlayerComponent());
 
     // 画面構築
     map = await TiledManager.create(this);
-    add(map.underPlayer);
-    add(map.overPlayer);
+    add(map.underComponent);
+    add(map.overComponent);
 
     // event管理
     eventManager = await Eventmanager.create(this);
@@ -59,7 +60,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   // 最初からやり直す
   Future<void> restart() async {
-    removeAll(children);
+    removeAll(children); // 一旦全部消す
     init();
   }
 }
