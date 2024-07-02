@@ -7,10 +7,7 @@ import '../Game/my_game.dart';
 
 class Menu extends StatelessWidget {
   final MyGame myGame;
-  Menu({super.key, required this.myGame});
-
-  Vector2 cursorPos = Vector2.zero();
-  bool isVisible = true;
+  const Menu({super.key, required this.myGame});
 
   @override
   Widget build(BuildContext context) {
