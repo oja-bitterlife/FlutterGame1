@@ -7,9 +7,10 @@ import 'package:flutter/services.dart';
 import '../../my_logger.dart';
 
 class Eventmanager {
+  late MyGame myGame;
+
   late Map data;
 
-  late MyGame myGame;
   Eventmanager(this.myGame);
 
   static Future<Eventmanager> create(MyGame myGame) async {

@@ -18,6 +18,8 @@ enum MapEventType {
 }
 
 class TiledManager {
+  MyGame myGame;
+
   static int blockSize = 32;
   late TiledComponent tiled;
 
@@ -25,8 +27,10 @@ class TiledManager {
   late final PositionComponent underComponent;
   late final PositionComponent overComponent;
 
+  TiledManager(this.myGame);
+
   static Future<TiledManager> create(MyGame myGame) async {
-    TiledManager self = TiledManager();
+    TiledManager self = TiledManager(myGame);
 
     self.tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
     var imageBatch = ImageBatchCompiler();
@@ -37,7 +41,6 @@ class TiledManager {
     self.underComponent
       ..priority = Priority.mapUnder.index
       ..scale = Vector2.all(2);
-    // myGame.add(underPlayer);
 
     // プレイヤの上に表示
     self.overComponent = imageBatch.compileMapLayer(
@@ -45,7 +48,6 @@ class TiledManager {
     self.overComponent
       ..priority = Priority.mapOver.index
       ..scale = Vector2.all(2);
-    // myGame.add(overPlayer);
 
     return self;
   }
