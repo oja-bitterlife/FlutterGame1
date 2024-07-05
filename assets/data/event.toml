@@ -1,5 +1,5 @@
 [level1.MessageEvent]
 message = [
-    "宝箱の中には扉の鍵が入っていた!",
+    "宝箱の中には扉の鍵が入っていた",
 ]
 callback = "getDoorKey"
