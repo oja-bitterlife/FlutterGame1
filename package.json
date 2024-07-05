@@ -1,0 +1,12 @@
+{
+    "watch":{
+        "assets_data": {
+            "patterns": ["assets/data"],
+            "extensions": "*"
+        }
+    },
+    "scripts": {
+      "assets_data": "xcopy assets\\data\\* build\\flutter_assets\\assets /d /s /y /f",
+      "watch": "chcp 65001 && npm-watch"
+    }
+}
