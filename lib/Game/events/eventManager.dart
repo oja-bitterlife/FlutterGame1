@@ -1,23 +1,19 @@
-import 'package:flutter/material.dart';
+import 'package:my_app/Game/events/level1.dart';
+import 'package:my_app/Game/events/level_event.dart';
 import '../my_game.dart';
-import '../../UI_Widgets/message_window.dart';
-import 'package:toml/toml.dart';
-import 'package:flutter/services.dart';
 
 import '../../my_logger.dart';
 
 class Eventmanager {
   late MyGame myGame;
 
-  late Map data;
+  late LevelEvent event;
 
   Eventmanager(this.myGame);
 
   static Future<Eventmanager> create(MyGame myGame) async {
     var self = Eventmanager(myGame);
-    self.data = TomlDocument.parse(
-            await rootBundle.loadString("assets/data/event.toml", cache: false))
-        .toMap();
+    self.event = await Level1.create();
     return self;
   }
 
@@ -25,9 +21,10 @@ class Eventmanager {
 
   void onFind(int blockX, int blockY) {
     log.info(myGame.map.getEvent(blockX, blockY));
+    event.checkMsgEvent();
+  }
 
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    // log.info(data["level1"]["MessageEvent"]["message"]);
-    msgWin.currentState?.show(data["level1"]["MessageEvent"]["message"][0]);
+  void onBeforIdle(int blockX, int blockY) {
+    log.info(myGame.map.getEvent(blockX, blockY));
   }
 }
