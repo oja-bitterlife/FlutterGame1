@@ -20,12 +20,13 @@ class Eventmanager {
   Future<void> reload() async {}
 
   void onFind(int blockX, int blockY) {
-    log.info(myGame.map.getEvent(blockX, blockY));
-    event.msgEvent();
+    String? type = myGame.map.getEvent(blockX, blockY);
+    if (type! == "treasure") {
+      event.msgEvent(type);
+    }
   }
 
   bool onBeforIdle(int blockX, int blockY) {
-    log.info(myGame.map.getEvent(blockX, blockY));
-    return event.idleEvent();
+    return event.idleEvent(blockX, blockY);
   }
 }
