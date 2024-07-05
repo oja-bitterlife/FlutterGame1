@@ -13,6 +13,11 @@ class LevelEvent {
         ?.show(msgEventData["level1"]["MessageEvent"]["message"][0]);
   }
 
+  bool checkNextMsg() {
+    // myGame.startIdle();
+    return false;
+  }
+
   bool idleEvent(int blockX, int blockY) {
     bool isDead = true;
     if (blockX == 7) {

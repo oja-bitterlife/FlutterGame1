@@ -29,4 +29,10 @@ class Eventmanager {
   bool onBeforIdle(int blockX, int blockY) {
     return event.idleEvent(blockX, blockY);
   }
+
+  void checkNextMsg() {
+    if (!event.checkNextMsg()) {
+      myGame.startIdle();
+    }
+  }
 }
