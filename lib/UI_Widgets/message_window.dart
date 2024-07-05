@@ -80,6 +80,6 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   // メッセージウインドウ表示中に画面がタップされた時の処理
   void onScreenTap() {
     hide();
-    widget.myGame.eventManager.checkNextMsg();
+    widget.myGame.eventManager.nextMsg();
   }
 }

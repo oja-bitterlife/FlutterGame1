@@ -1,39 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:my_app/Game/my_game.dart';
 
-import '../../UI_Widgets/message_window.dart';
+// ignore: unused_import
 import '../../my_logger.dart';
 
-class LevelEvent {
+abstract class LevelEvent {
+  MyGame myGame;
   late Map msgEventData;
-  LevelEvent(this.msgEventData);
 
-  void msgEvent(String eventType) {
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState
-        ?.show(msgEventData["level1"]["MessageEvent"]["message"][0]);
-  }
+  LevelEvent(this.myGame, this.msgEventData);
 
-  bool checkNextMsg() {
-    // myGame.startIdle();
-    return false;
-  }
-
-  bool idleEvent(int blockX, int blockY) {
-    bool isDead = true;
-    if (blockX == 7) {
-      isDead = false;
-    } else if (blockY >= 10 && blockY <= 12) {
-      if (blockX >= 6 && blockX < 8) {
-        isDead = false;
-      }
-    }
-
-    if (isDead) {
-      const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-      msgWin.currentState?.show("罠だ！");
-    }
-
-    // 死んでたらイベント通知
-    return isDead;
-  }
+  void onFind(int blockX, int blockY);
+  bool checkIdleEvent(int blockX, int blockY); // eventが起こればtrueを返す
 }
