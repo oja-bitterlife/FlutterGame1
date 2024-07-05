@@ -7,13 +7,13 @@ class LevelEvent {
   late Map msgEventData;
   LevelEvent(this.msgEventData);
 
-  void checkMsgEvent() {
+  void msgEvent() {
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState
         ?.show(msgEventData["level1"]["MessageEvent"]["message"][0]);
   }
 
-  void checkIdleEvent() {
-    log.info("event check");
+  bool idleEvent() {
+    return false;
   }
 }

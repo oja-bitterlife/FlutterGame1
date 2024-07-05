@@ -21,10 +21,11 @@ class Eventmanager {
 
   void onFind(int blockX, int blockY) {
     log.info(myGame.map.getEvent(blockX, blockY));
-    event.checkMsgEvent();
+    event.msgEvent();
   }
 
-  void onBeforIdle(int blockX, int blockY) {
+  bool onBeforIdle(int blockX, int blockY) {
     log.info(myGame.map.getEvent(blockX, blockY));
+    return event.idleEvent();
   }
 }
