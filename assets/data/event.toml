@@ -1,6 +1,6 @@
-[level1.MessageEvent]
-message = [
+[level1.messageEvent]
+treasure = [
     "宝箱の中には扉の鍵が入っていた",
     "つづき",
 ]
-callback = "getDoorKey"
+

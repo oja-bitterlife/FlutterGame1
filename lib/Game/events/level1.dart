@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:toml/toml.dart';
 
 import '../../Game/my_game.dart';
-import '../../UI_Widgets/message_window.dart';
 import 'level_event.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
 
 class Level1 extends LevelEvent {
-  Level1(super.myGame, super.msgEventData);
+  Level1(super.myGame, super.eventData);
 
   static create(MyGame myGame) async {
     var self = Level1(
@@ -22,18 +20,16 @@ class Level1 extends LevelEvent {
   }
 
   @override
-  void onFind(int blockX, int blockY) {
-    var find = myGame.map.getEvent(blockX, blockY);
-
-    if (find == "treasure") {
-      // メッセージ表示
-      myGame.eventManager.startMsgList(
-          List<String>.from(msgEventData["level1"]["MessageEvent"]["message"]));
+  void onFind(String type, int blockX, int blockY) {
+    if (type == "treasure") {
+      startMessageEvent(type);
+    } else {
+      super.onFind(type, blockX, blockY);
     }
   }
 
   @override
-  bool checkIdleEvent(int blockX, int blockY) {
+  void onMoved(int blockX, int blockY) {
     // Level1は動ける位置を固定
     bool isDead = true;
     if (blockX == 7) {
@@ -45,10 +41,19 @@ class Level1 extends LevelEvent {
     }
 
     if (isDead) {
-      myGame.eventManager.startMsgList(["罠だ！"]);
+      addMessageEvent("trap", ["罠だ！"]);
+      return;
     }
 
-    // 死んでたらイベント通知
-    return isDead;
+    // idleに戻す
+    super.onMoved(blockX, blockY);
+  }
+
+  @override
+  void onMessageFinish(String type) {
+    log.info("finish event: $type");
+
+    // idleに戻す
+    super.onMessageFinish(type);
   }
 }
