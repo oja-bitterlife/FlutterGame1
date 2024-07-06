@@ -15,7 +15,7 @@ class Level1 extends LevelEvent {
         myGame,
         TomlDocument.parse(await rootBundle.loadString("assets/data/event.toml",
                 cache: false))
-            .toMap());
+            .toMap()["level1"]);
     return self;
   }
 

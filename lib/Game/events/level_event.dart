@@ -39,17 +39,17 @@ class MessageEvent {
 
 abstract class LevelEvent {
   final MyGame myGame;
-  final Map eventData;
+  final Map levelEventData;
 
   MessageEvent? messageEvent;
 
-  LevelEvent(this.myGame, this.eventData);
+  LevelEvent(this.myGame, this.levelEventData);
 
   // tomlデータのイベント再生
   void startMessageEvent(String type) {
     // メッセージイベントは同じ構造であること
-    messageEvent = MessageEvent(this, type,
-        List<String>.from(eventData["level1"]["messageEvent"][type]));
+    messageEvent = MessageEvent(
+        this, type, List<String>.from(levelEventData["messageEvent"][type]));
     messageEvent?.startMessage();
   }
 
