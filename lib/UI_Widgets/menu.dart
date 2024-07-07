@@ -43,6 +43,7 @@ class Menu extends StatelessWidget {
             myGame.restart();
             Navigator.of(context).pop(); // メニューは閉じる
           },
+          subtitle: Text(myGame.db.getTime()),
         ),
       ],
     );

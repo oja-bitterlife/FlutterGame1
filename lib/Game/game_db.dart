@@ -1,5 +1,5 @@
-import 'package:flame/game.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 import 'player.dart';
 
@@ -24,11 +24,16 @@ class GameDB {
     box.put('playerDirID', playerDir.id);
     box.put('playerBlockX', playerBlockX);
     box.put('playerBlockY', playerBlockY);
+    box.put('time', DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
   }
 
   void load() {
     playerDir = PlayerDir.fromID(box.get('playerDirID'));
     playerBlockX = box.get('playerBlockX');
     playerBlockY = box.get('playerBlockY');
+  }
+
+  String getTime() {
+    return box.get('time', defaultValue: "----/--/-- --:--:--");
   }
 }
