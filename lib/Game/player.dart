@@ -20,6 +20,16 @@ enum PlayerDir {
 
   final int id;
   const PlayerDir(this.id);
+
+  static PlayerDir fromID(int id) {
+    return switch (id) {
+      0 => down,
+      1 => left,
+      2 => right,
+      3 => up,
+      _ => down, // とりあえず下
+    };
+  }
 }
 
 class MovePlayerComponent extends PlayerComponent {
@@ -72,6 +82,8 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 移動が終わったときの処理(positionを確定させてから)
     if (!isMoving()) {
+      myGame.db.playerBlockX = getBlockX();
+      myGame.db.playerBlockY = getBlockY();
       myGame.eventManager.onMoved(getBlockX(), getBlockY());
     }
   }
@@ -91,7 +103,8 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
 
   PlayerComponent(this.myGame)
       : super(
-          position: Vector2(getPosFromBlockX(7), getPosFromBlockY(9)), // 初期座標
+          position: Vector2(getPosFromBlockX(myGame.db.playerBlockX),
+              getPosFromBlockY(myGame.db.playerBlockY)), // 初期座標
           anchor: Anchor.bottomCenter,
           size: Vector2(48, 48),
           priority: Priority.player.index,
@@ -111,17 +124,16 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
           ])));
     }
 
-    dir = PlayerDir.down;
     animation = walkAnim[dir.id];
   }
 
   // 表示切り替え
   set dir(PlayerDir dir) {
-    myGame.db.gameData["player_dir"] = dir;
+    myGame.db.playerDir = dir;
     animation = walkAnim[dir.id];
   }
 
-  PlayerDir get dir => myGame.db.gameData["player_dir"];
+  PlayerDir get dir => myGame.db.playerDir;
 
   // 位置->ブロック座標
   int getBlockX() {

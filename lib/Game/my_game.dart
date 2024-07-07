@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 import '../UI_Widgets/player_cursor.dart';
-import 'db.dart';
+import 'game_db.dart';
 import 'player.dart';
 import 'map.dart';
 import 'events/event_manager.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
-  DB db = DB();
+  late GameDB db;
 
   late MovePlayerComponent player;
   late TiledManager map;
@@ -20,6 +20,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
+    // DBを開いておく
+    db = await GameDB.init();
 
     // 画像読み込み
     await PlayerComponent.load();

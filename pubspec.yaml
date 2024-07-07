@@ -40,10 +40,11 @@ dependencies:
   flame: any
   flame_tiled: ^1.20.2
   simple_logger: ^1.9.0+3
-  isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
   flame_tiled_utils: ^1.2.0
   toml: ^0.15.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

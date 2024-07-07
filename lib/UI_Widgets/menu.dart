@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/Game/game_db.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -23,6 +24,22 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
+            myGame.db = GameDB();
+            myGame.restart();
+            Navigator.of(context).pop(); // メニューは閉じる
+          },
+        ),
+        ListTile(
+          title: const Text('Save'),
+          onTap: () {
+            myGame.db.save();
+            Navigator.of(context).pop(); // メニューは閉じる
+          },
+        ),
+        ListTile(
+          title: const Text('Load'),
+          onTap: () {
+            myGame.db.load();
             myGame.restart();
             Navigator.of(context).pop(); // メニューは閉じる
           },
