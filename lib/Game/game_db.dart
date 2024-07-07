@@ -30,6 +30,5 @@ class GameDB {
     playerDir = PlayerDir.fromID(box.get('playerDirID'));
     playerBlockX = box.get('playerBlockX');
     playerBlockY = box.get('playerBlockY');
-    log.info(PlayerComponent.getPosFromBlockY(playerBlockY));
   }
 }

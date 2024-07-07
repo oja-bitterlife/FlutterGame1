@@ -84,7 +84,6 @@ class MovePlayerComponent extends PlayerComponent {
     if (!isMoving()) {
       myGame.db.playerBlockX = getBlockX();
       myGame.db.playerBlockY = getBlockY();
-      log.info("${myGame.db.playerBlockY}, ${position.y}");
       myGame.eventManager.onMoved(getBlockX(), getBlockY());
     }
   }
