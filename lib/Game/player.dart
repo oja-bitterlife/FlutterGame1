@@ -84,6 +84,7 @@ class MovePlayerComponent extends PlayerComponent {
     if (!isMoving()) {
       myGame.db.playerBlockX = getBlockX();
       myGame.db.playerBlockY = getBlockY();
+      log.info("${myGame.db.playerBlockY}, ${position.y}");
       myGame.eventManager.onMoved(getBlockX(), getBlockY());
     }
   }
@@ -172,6 +173,6 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
   }
 
   static double getPosFromBlockY(int blockY) {
-    return blockY * TiledManager.blockSize as double;
+    return (blockY + 1) * TiledManager.blockSize as double;
   }
 }
