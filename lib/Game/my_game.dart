@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 import '../UI_Widgets/player_cursor.dart';
+import '../UI_Widgets/message_window.dart';
 import 'game_db.dart';
 import 'player.dart';
 import 'map.dart';
@@ -63,6 +64,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // event管理
     eventManager = await EventManager.create(this);
+
+    // UIリセット
+    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    msgWin.currentState?.hide();
   }
 
   // 入力受付
