@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flame/game.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';

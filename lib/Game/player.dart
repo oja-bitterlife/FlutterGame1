@@ -33,7 +33,7 @@ class MovePlayerComponent extends PlayerComponent {
   // 移動開始
   void setMove(PlayerDir dir) {
     // 方向をまず変えておく
-    setDir(dir);
+    this.dir = dir;
 
     // 移動アニメリセット
     transTime = 0;
@@ -82,7 +82,6 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
 
   // 歩きアニメ
   List<SpriteAnimation> walkAnim = [];
-  PlayerDir dir = PlayerDir.down;
 
   // 画像ロードはasyncなのでコンストラクタが使えない
   static late Sprite playerImage;
@@ -92,7 +91,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
 
   PlayerComponent(this.myGame)
       : super(
-          position: Vector2(240, 288), // 初期座標
+          position: Vector2(getPosFromBlockX(7), getPosFromBlockY(9)), // 初期座標
           anchor: Anchor.bottomCenter,
           size: Vector2(48, 48),
           priority: Priority.player.index,
@@ -112,19 +111,29 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
           ])));
     }
 
+    dir = PlayerDir.down;
     animation = walkAnim[dir.id];
   }
 
   // 表示切り替え
-  void setDir(PlayerDir dir) {
-    this.dir = dir;
+  set dir(PlayerDir dir) {
+    myGame.db.gameData["player_dir"] = dir;
     animation = walkAnim[dir.id];
   }
 
+  PlayerDir get dir => myGame.db.gameData["player_dir"];
+
+  // 位置->ブロック座標
   int getBlockX() {
     return position.x.round() ~/ TiledManager.blockSize;
   }
 
+  int getBlockY() {
+    return (position.y - TiledManager.blockSize * 0.5).round() ~/
+        TiledManager.blockSize;
+  }
+
+  // 位置->向き先ブロック座標
   int getFowardBlockX() {
     return getBlockX() +
         switch (dir) {
@@ -135,11 +144,6 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
         };
   }
 
-  int getBlockY() {
-    return (position.y - TiledManager.blockSize * 0.5).round() ~/
-        TiledManager.blockSize;
-  }
-
   int getFowardBlockY() {
     return getBlockY() +
         switch (dir) {
@@ -148,5 +152,14 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
           PlayerDir.left => 0,
           PlayerDir.right => 0,
         };
+  }
+
+  // ブロック座標->位置
+  static double getPosFromBlockX(int blockX) {
+    return blockX * TiledManager.blockSize + TiledManager.blockSize * 0.5;
+  }
+
+  static double getPosFromBlockY(int blockY) {
+    return blockY * TiledManager.blockSize as double;
   }
 }

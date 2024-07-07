@@ -53,6 +53,8 @@ class Level1 extends LevelEvent {
   void onMessageFinish(String type) {
     log.info("finish event: $type");
 
+    // ログを表示する
+
     // idleに戻す
     super.onMessageFinish(type);
   }

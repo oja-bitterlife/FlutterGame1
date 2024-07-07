@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 import '../UI_Widgets/player_cursor.dart';
+import 'db.dart';
 import 'player.dart';
 import 'map.dart';
-import 'events/eventManager.dart';
+import 'events/event_manager.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
+  DB db = DB();
+
   late MovePlayerComponent player;
   late TiledManager map;
-  late Eventmanager eventManager;
+  late EventManager eventManager;
 
   @override
   Future<void> onLoad() async {
@@ -56,7 +59,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     add(map.overComponent);
 
     // event管理
-    eventManager = await Eventmanager.create(this);
+    eventManager = await EventManager.create(this);
   }
 
   // 入力受付

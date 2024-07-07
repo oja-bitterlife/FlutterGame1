@@ -6,15 +6,15 @@ import 'level1.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
-class Eventmanager {
+class EventManager {
   late MyGame myGame;
 
   late LevelEvent event;
 
-  Eventmanager(this.myGame);
+  EventManager(this.myGame);
 
-  static Future<Eventmanager> create(MyGame myGame) async {
-    var self = Eventmanager(myGame);
+  static Future<EventManager> create(MyGame myGame) async {
+    var self = EventManager(myGame);
 
     // とりあえずLevel1を作っていく
     self.event = await Level1.create(myGame);
