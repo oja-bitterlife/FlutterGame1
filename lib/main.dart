@@ -33,7 +33,7 @@ class MyGameWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('FlutterGame1'),
+          title: const Text('Lv.0: Tutorial'),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[

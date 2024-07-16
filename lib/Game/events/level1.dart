@@ -2,6 +2,8 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:my_app/Game/player.dart';
 import 'package:toml/toml.dart';
+import 'package:flutter/material.dart';
+import '../../UI_Widgets/message_window.dart';
 
 import '../../Game/my_game.dart';
 import '../../Game/priorities.dart';
@@ -64,7 +66,21 @@ class Level1 extends LevelEvent {
   void onMessageFinish(String type) {
     log.info("finish event: $type");
 
-    // ログを表示する
+    // ゲームオーバーに移行する
+    if (type == "trap") {
+      const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+      msgWin.currentState?.hide();
+
+      myGame.add(
+        TextComponent(
+            text: 'Game Over',
+            position: Vector2(80, 220),
+            textRenderer: TextPaint(
+                style: const TextStyle(fontSize: 64, color: Colors.white)),
+            priority: Priority.GameOver.index),
+      );
+      return;
+    }
 
     // idleに戻す
     super.onMessageFinish(type);
