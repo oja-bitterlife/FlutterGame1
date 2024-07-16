@@ -1,7 +1,10 @@
+import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
+import 'package:my_app/Game/player.dart';
 import 'package:toml/toml.dart';
 
 import '../../Game/my_game.dart';
+import '../../Game/priorities.dart';
 import 'level_event.dart';
 
 // ignore: unused_import
@@ -41,6 +44,14 @@ class Level1 extends LevelEvent {
     }
 
     if (isDead) {
+      var sp = myGame.trapSheet.getSprite(16, 5);
+      myGame.add(SpriteComponent(
+          sprite: sp,
+          position: Vector2(PlayerComponent.getPosFromBlockX(blockX) - 32,
+              PlayerComponent.getPosFromBlockY(blockY) - 64),
+          priority: Priority.eventOver.index,
+          scale: Vector2.all(2)));
+
       addMessageEvent("trap", ["罠だ！"]);
       return;
     }

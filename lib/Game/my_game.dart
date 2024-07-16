@@ -1,6 +1,8 @@
+import 'package:flame/cache.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
+import 'package:flame/sprite.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -17,6 +19,8 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late MovePlayerComponent player;
   late TiledManager map;
   late EventManager eventManager;
+
+  late SpriteSheet trapSheet;
 
   @override
   Future<void> onLoad() async {
@@ -68,6 +72,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // UIリセット
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
+
+    // 罠
+    var trapImg = await images.load("tdrpg_interior.png");
+    trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
   }
 
   // 入力受付
