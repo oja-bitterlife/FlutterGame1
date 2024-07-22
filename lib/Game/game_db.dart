@@ -11,7 +11,7 @@ class GameDB {
 
   // 管理対象データ
   PlayerDir playerDir = PlayerDir.down;
-  int playerBlockX = 7, playerBlockY = 8;
+  int playerBlockX = 7, playerBlockY = 14;
 
   static Future<GameDB> init() async {
     await Hive.initFlutter();

@@ -26,8 +26,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
-
     // DBを開いておく
     db = await GameDB.init();
 
@@ -47,8 +45,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   void onMount() {
     super.onMount();
 
-    // 待機状態で開始
-    startIdle();
+    // アクションから開始
+    log.info("on mount");
+    levelAction.startAction("onStart");
   }
 
   @override
@@ -79,9 +78,8 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     var trapImg = await images.load("tdrpg_interior.png");
     trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
 
-    // アクション開始から
+    // アクション設定
     levelAction = Level1Action(this);
-    levelAction.startAction("onStart");
   }
 
   // 入力受付
@@ -120,7 +118,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   // 最初からやり直す
   Future<void> restart() async {
     removeAll(children); // 一旦全部消す
-    init();
-    startIdle(); // onmount後で必要(init内ではダメ)
+    await init();
+
+    // アクションから開始
+    levelAction.startAction("onStart");
   }
 }

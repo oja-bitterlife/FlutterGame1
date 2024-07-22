@@ -1,5 +1,7 @@
 import 'package:my_app/Game/my_game.dart';
 import 'package:my_app/Game/player.dart';
+
+// ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
 abstract class LevelAction {
@@ -15,8 +17,10 @@ abstract class LevelAction {
 
   // アクションを開始する
   void startAction(String actionName) {
+    log.info("start action");
     this.actionName = actionName;
     actionStep = 0;
+    myGame.startIdle();
   }
 
   // アクションを終了して入力待ちにする
@@ -43,7 +47,7 @@ class Level1Action extends LevelAction {
     switch (actionStep) {
       case 0:
         myGame.player.setMove(PlayerDir.up);
-        if (myGame.player.getBlockY() < 6) {
+        if (myGame.player.getBlockY() < 14) {
           actionStep += 1;
         }
       default:
