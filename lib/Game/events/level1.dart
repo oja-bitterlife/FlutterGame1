@@ -39,7 +39,7 @@ class Level1Event extends LevelEvent {
     bool isDead = true;
     if (blockX == 7) {
       isDead = false;
-    } else if (blockY >= 8 && blockY <= 10) {
+    } else if (blockY <= 10) {
       if (blockX >= 6 && blockX <= 8) {
         isDead = false;
       }

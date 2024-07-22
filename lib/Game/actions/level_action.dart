@@ -17,7 +17,6 @@ abstract class LevelAction {
 
   // アクションを開始する
   void startAction(String actionName) {
-    log.info("start action");
     this.actionName = actionName;
     actionStep = 0;
     myGame.startIdle();
@@ -26,7 +25,6 @@ abstract class LevelAction {
   // アクションを終了して入力待ちにする
   void endAction() {
     actionName = null;
-    myGame.startIdle();
   }
 
   void playAction();
@@ -47,11 +45,12 @@ class Level1Action extends LevelAction {
     switch (actionStep) {
       case 0:
         myGame.player.setMove(PlayerDir.up);
-        if (myGame.player.getBlockY() < 14) {
+        if (myGame.player.getBlockY() < 12) {
           actionStep += 1;
         }
       default:
         endAction();
+        myGame.eventManager.event.startMessageEvent("start");
     }
   }
 }
