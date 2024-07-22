@@ -123,4 +123,11 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // アクションから開始
     levelAction.startAction("onStart");
   }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    map.updateTilemap();
+  }
 }

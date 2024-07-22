@@ -86,4 +86,13 @@ class TiledManager {
     // イベントは存在しなかった
     return null;
   }
+
+  void updateTilemap() {
+    if (myGame.db.items.containsKey("key")) {
+      const Gid gid = Gid(0, Flips.defaults());
+
+      TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
+      layer!.tileData![8][8] = gid;
+    }
+  }
 }

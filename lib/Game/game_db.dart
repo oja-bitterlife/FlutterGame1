@@ -12,6 +12,7 @@ class GameDB {
   // 管理対象データ
   PlayerDir playerDir = PlayerDir.down;
   int playerBlockX = 7, playerBlockY = 14;
+  Map<String, int> items = {};
 
   static Future<GameDB> init() async {
     await Hive.initFlutter();
@@ -24,6 +25,7 @@ class GameDB {
     box.put('playerDirID', playerDir.id);
     box.put('playerBlockX', playerBlockX);
     box.put('playerBlockY', playerBlockY);
+    box.put('items', items);
     box.put('time', DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
   }
 
