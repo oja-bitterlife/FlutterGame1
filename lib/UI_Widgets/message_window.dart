@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 // ignore: unused_import
@@ -16,6 +18,10 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   String _message = ""; // 最初は空(メッセージ無し)
   bool _isVisible = false;
 
+  // メッセージ文字列設定
+  static const int autoCRLength = 18; // 自動改行される文字数
+  static const double fontSize = 24; // フォントサイズ
+
   // ウインドウ位置定義
   static const windowW = 480.0;
   static const windowH = 136.0;
@@ -23,7 +29,18 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   static const windowY = 512.0 - windowH - 32.0;
 
   // メッセージ表示
-  void show(msg) {
+  void show(String msg, {bool isAutoCR = true}) {
+    // 自動改行(autoCRが0の時は改行しない)
+    if (autoCRLength > 0 && isAutoCR) {
+      List<String> parts = [];
+      for (int i = 0; i * autoCRLength < msg.length; i++) {
+        parts.add(msg.substring(
+            i * autoCRLength, min(msg.length, (i + 1) * autoCRLength)));
+      }
+      msg = parts.join("\n");
+    }
+
+    // 表示開始
     setState(() {
       _message = msg;
       _isVisible = true;
@@ -71,7 +88,7 @@ class MessageWindowState extends State<MessaeWindowWidget> {
                             decoration: TextDecoration.none,
                             fontWeight: FontWeight.normal,
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: fontSize,
                             height: 1.1)),
                   ),
                 ]))));
