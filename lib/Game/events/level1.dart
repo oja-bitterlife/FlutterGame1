@@ -12,11 +12,11 @@ import 'level_event.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
-class Level1 extends LevelEvent {
-  Level1(super.myGame, super.eventData);
+class Level1Event extends LevelEvent {
+  Level1Event(super.myGame, super.eventData);
 
   static create(MyGame myGame) async {
-    var self = Level1(
+    var self = Level1Event(
         myGame,
         TomlDocument.parse(await rootBundle.loadString("assets/data/event.toml",
                 cache: false))

@@ -17,7 +17,7 @@ class EventManager {
     var self = EventManager(myGame);
 
     // とりあえずLevel1を作っていく
-    self.event = await Level1.create(myGame);
+    self.event = await Level1Event.create(myGame);
 
     return self;
   }
