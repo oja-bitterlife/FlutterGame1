@@ -27,7 +27,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   Future<void> onLoad() async {
     // DBを開いておく
-    db = await GameDB.init();
+    db = await GameDB.init(this);
 
     // 画像読み込み
     await PlayerComponent.load();
@@ -116,12 +116,16 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   }
 
   // 最初からやり直す
-  Future<void> restart() async {
+  Future<void> restart(bool withStartAction) async {
     removeAll(children); // 一旦全部消す
     await init();
 
-    // アクションから開始
-    levelAction.startAction("onStart");
+    if (withStartAction) {
+      // 基本はアクションから開始
+      levelAction.startAction("onStart");
+    } else {
+      startIdle();
+    }
   }
 
   @override

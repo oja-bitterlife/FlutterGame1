@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:my_app/Game/my_game.dart';
 
 import 'player.dart';
 
@@ -7,18 +8,21 @@ import 'player.dart';
 import 'package:my_app/my_logger.dart';
 
 class GameDB {
+  late MyGame myGame;
   static late Box box;
+
+  GameDB(this.myGame);
 
   // 管理対象データ
   PlayerDir playerDir = PlayerDir.down;
   int playerBlockX = 7, playerBlockY = 14;
   Map<String, int> items = {};
 
-  static Future<GameDB> init() async {
+  static Future<GameDB> init(MyGame myGame) async {
     await Hive.initFlutter();
     box = await Hive.openBox('GameDB');
 
-    return GameDB();
+    return GameDB(myGame);
   }
 
   void save() {

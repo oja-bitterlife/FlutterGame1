@@ -24,8 +24,8 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.db = GameDB();
-            myGame.restart();
+            myGame.db = GameDB(myGame);
+            myGame.restart(true);
             Navigator.of(context).pop(); // メニューは閉じる
           },
         ),
@@ -40,7 +40,7 @@ class Menu extends StatelessWidget {
           title: const Text('Load'),
           onTap: () {
             myGame.db.load();
-            myGame.restart();
+            myGame.restart(false);
             Navigator.of(context).pop(); // メニューは閉じる
           },
           subtitle: Text(myGame.db.getTime()),
