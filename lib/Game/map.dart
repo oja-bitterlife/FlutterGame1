@@ -87,12 +87,15 @@ class TiledManager {
     return null;
   }
 
+  // タイルマップを状態に応じた表示にする
   void updateTilemap() {
     if (myGame.db.items.containsKey("key")) {
       const Gid gid = Gid(0, Flips.defaults());
 
       TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
       layer!.tileData![8][8] = gid;
+
+      log.info("map change");
     }
   }
 }

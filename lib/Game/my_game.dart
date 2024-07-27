@@ -119,6 +119,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   Future<void> restart(bool withStartAction) async {
     removeAll(children); // 一旦全部消す
     await init();
+    map.updateTilemap(); // マップを最新に
 
     if (withStartAction) {
       // 基本はアクションから開始
@@ -126,12 +127,5 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     } else {
       startIdle();
     }
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    map.updateTilemap();
   }
 }

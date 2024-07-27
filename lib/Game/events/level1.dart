@@ -32,6 +32,8 @@ class Level1Event extends LevelEvent {
       } else {
         // 鍵を入手
         myGame.db.items["key"] = 1;
+        myGame.map.updateTilemap(); // 宝箱更新
+
         startMessageEvent(type);
       }
     } else {

@@ -37,6 +37,7 @@ class GameDB {
     playerDir = PlayerDir.fromID(box.get('playerDirID'));
     playerBlockX = box.get('playerBlockX');
     playerBlockY = box.get('playerBlockY');
+    items = Map<String, int>.from(box.get('items'));
   }
 
   String getTime() {
