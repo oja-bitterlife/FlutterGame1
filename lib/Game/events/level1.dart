@@ -26,16 +26,15 @@ class Level1Event extends LevelEvent {
 
   @override
   void onFind(String type, int blockX, int blockY) {
+    log.info(type);
     if (type == "treasure") {
-      if (myGame.db.items.containsKey("key")) {
-        startMessageEvent("has_key");
-      } else {
-        // 鍵を入手
-        myGame.db.items["key"] = 1;
-        myGame.map.updateTilemap(); // 宝箱更新
+      // 鍵を入手
+      myGame.db.items["key"] = 1;
+      myGame.map.updateTilemap(); // 宝箱更新
 
-        startMessageEvent(type);
-      }
+      startMessageEvent(type);
+    } else if (type == "treasure_open") {
+      startMessageEvent(type);
     } else {
       super.onFind(type, blockX, blockY);
     }

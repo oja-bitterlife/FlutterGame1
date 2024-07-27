@@ -6,7 +6,7 @@ treasure = [
     "絶対に寄り道してはだめですよ？",
 ]
 
-has_key = [
+treasure_open = [
     "宝箱はからっぽだ……",
 ]
 

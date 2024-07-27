@@ -84,10 +84,12 @@ class TiledManager {
     // イベントタイルが存在した
     if (eventGid.tile != 0) {
       // タイル情報のeventを読む
-      return tiled.tileMap.map
+      String? s = tiled.tileMap.map
           .tileByGid(eventGid.tile)!
           .properties["event"]!
           .value as String?;
+
+      if (s != null) return s;
     }
 
     // イベントは存在しなかった
@@ -100,7 +102,7 @@ class TiledManager {
       const Gid gid = Gid(374, Flips.defaults());
 
       TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-      layer?.tileData![9][7] = gid;
+      layer?.tileData?[9][7] = gid;
 
       // 更新
       myGame.remove(eventComponent);
@@ -113,8 +115,6 @@ class TiledManager {
         ..scale = Vector2.all(2);
 
       myGame.add(eventComponent);
-
-      log.info("map change");
     }
   }
 }
