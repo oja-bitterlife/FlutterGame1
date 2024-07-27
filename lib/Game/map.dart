@@ -26,6 +26,7 @@ class TiledManager {
   // 表示コンポーネント
   late final PositionComponent underComponent;
   late final PositionComponent overComponent;
+  late PositionComponent eventComponent;
 
   TiledManager(this.myGame);
 
@@ -39,6 +40,12 @@ class TiledManager {
     self.underComponent = imageBatch.compileMapLayer(
         tileMap: self.tiled.tileMap, layerNames: ['UnderPlayer']);
     self.underComponent
+      ..priority = Priority.mapUnder.index
+      ..scale = Vector2.all(2);
+
+    self.eventComponent = imageBatch.compileMapLayer(
+        tileMap: self.tiled.tileMap, layerNames: ['UnderPlayerEvent']);
+    self.eventComponent
       ..priority = Priority.mapUnder.index
       ..scale = Vector2.all(2);
 
@@ -90,10 +97,22 @@ class TiledManager {
   // タイルマップを状態に応じた表示にする
   void updateTilemap() {
     if (myGame.db.items.containsKey("key")) {
-      const Gid gid = Gid(0, Flips.defaults());
+      const Gid gid = Gid(374, Flips.defaults());
 
       TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-      layer!.tileData![8][8] = gid;
+      layer?.tileData![9][7] = gid;
+
+      // 更新
+      myGame.remove(eventComponent);
+
+      var imageBatch = ImageBatchCompiler();
+      eventComponent = imageBatch.compileMapLayer(
+          tileMap: tiled.tileMap, layerNames: ['UnderPlayerEvent']);
+      eventComponent
+        ..priority = Priority.mapUnder.index
+        ..scale = Vector2.all(2);
+
+      myGame.add(eventComponent);
 
       log.info("map change");
     }

@@ -66,6 +66,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     map = await TiledManager.create(this);
     add(map.underComponent);
     add(map.overComponent);
+    add(map.eventComponent);
 
     // event管理
     eventManager = await EventManager.create(this);
