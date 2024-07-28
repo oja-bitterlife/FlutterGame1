@@ -9,7 +9,7 @@
   </tile>
   <tile id="373">
    <properties>
-    <property name="event" value="treasure_oepn"/>
+    <property name="event" value="treasure_open"/>
    </properties>
   </tile>
   <tile id="460">

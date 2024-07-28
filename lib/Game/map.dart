@@ -17,6 +17,19 @@ enum MapEventType {
   const MapEventType(this.id);
 }
 
+enum EventTile {
+  sensorUp(448),
+  sensorDown(461),
+  letter(509),
+  treasure(373),
+  treasureOpen(374),
+  bedside(715),
+  ;
+
+  final int id;
+  const EventTile(this.id);
+}
+
 class TiledManager {
   MyGame myGame;
 
@@ -98,13 +111,27 @@ class TiledManager {
 
   // タイルマップを状態に応じた表示にする
   void updateTilemap() {
+    bool isUpdate = false;
+
     if (myGame.db.items.containsKey("key")) {
-      const Gid gid = Gid(374, Flips.defaults());
-
       TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-      layer?.tileData?[9][7] = gid;
+      for (int y = 0; y < layer!.height; y++) {
+        for (int x = 0; x < layer.width; x++) {
+          if (layer.tileData?[y][x].tile == EventTile.treasure.id) {
+            // 宝箱を空いた状態に
+            layer.tileData?[y][x] =
+                Gid(EventTile.treasureOpen.id, const Flips.defaults());
 
-      // 更新
+            // 更新が必要
+            isUpdate = true;
+            break;
+          }
+        }
+      }
+    }
+
+    // 更新
+    if (isUpdate) {
       myGame.remove(eventComponent);
 
       var imageBatch = ImageBatchCompiler();
