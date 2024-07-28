@@ -47,13 +47,15 @@ abstract class LevelEvent {
 
   // tomlデータのイベント再生
   void startMessageEvent(String type) {
-    var event = Map<String, dynamic>.from(levelEventData["messageEvent"]);
-    if (event.containsKey(type)) {
+    // データを確認して開始
+    if (Map<String, dynamic>.from(levelEventData["messageEvent"])
+        .containsKey(type)) {
       // メッセージイベントは同じ構造であること
       messageEvent = MessageEvent(
           this, type, List<String>.from(levelEventData["messageEvent"][type]));
       messageEvent?.startMessage();
     } else {
+      // tomlに該当するイベントデータが無かった
       addMessageEvent(type, ["データにないイベントだ！"]);
     }
   }
