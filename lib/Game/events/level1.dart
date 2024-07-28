@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
+import 'package:my_app/Game/map.dart';
 import 'package:my_app/Game/player.dart';
 import 'package:toml/toml.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,9 @@ class Level1Event extends LevelEvent {
     if (type == "treasure") {
       // 鍵を入手
       myGame.db.items["key"] = 1;
-      myGame.map.updateTilemap(); // 宝箱更新
+
+      myGame.map
+          .changeEventTile(blockX, blockY, EventTile.treasureOpen.id); // 宝箱更新
 
       startMessageEvent(type);
     } else if (type == "treasure_open") {

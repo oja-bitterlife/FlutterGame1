@@ -109,39 +109,31 @@ class TiledManager {
     return null;
   }
 
+  // タイルマップの状態を変更する
+  void changeEventTile(int blockX, int blockY, int no) {
+    // データ更新
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
+    if (layer!.tileData?[blockY][blockX].tile == EventTile.treasure.id) {
+      // 宝箱を空いた状態に
+      layer.tileData?[blockY][blockX] = Gid(no, const Flips.defaults());
+    }
+
+    // ついでに表示も更新
+    updateTilemap();
+  }
+
   // タイルマップを状態に応じた表示にする
   void updateTilemap() {
-    bool isUpdate = false;
-
-    if (myGame.db.items.containsKey("key")) {
-      TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-      for (int y = 0; y < layer!.height; y++) {
-        for (int x = 0; x < layer.width; x++) {
-          if (layer.tileData?[y][x].tile == EventTile.treasure.id) {
-            // 宝箱を空いた状態に
-            layer.tileData?[y][x] =
-                Gid(EventTile.treasureOpen.id, const Flips.defaults());
-
-            // 更新が必要
-            isUpdate = true;
-            break;
-          }
-        }
-      }
-    }
-
     // 更新
-    if (isUpdate) {
-      myGame.remove(eventComponent);
+    myGame.remove(eventComponent);
 
-      var imageBatch = ImageBatchCompiler();
-      eventComponent = imageBatch.compileMapLayer(
-          tileMap: tiled.tileMap, layerNames: ['UnderPlayerEvent']);
-      eventComponent
-        ..priority = Priority.mapUnder.index
-        ..scale = Vector2.all(2);
+    var imageBatch = ImageBatchCompiler();
+    eventComponent = imageBatch.compileMapLayer(
+        tileMap: tiled.tileMap, layerNames: ['UnderPlayerEvent']);
+    eventComponent
+      ..priority = Priority.mapUnder.index
+      ..scale = Vector2.all(2);
 
-      myGame.add(eventComponent);
-    }
+    myGame.add(eventComponent);
   }
 }
