@@ -32,9 +32,10 @@ class Level1Event extends LevelEvent {
       // 鍵を入手
       myGame.db.items["key"] = 1;
 
-      myGame.map
-          .changeEventTile(blockX, blockY, EventTile.treasureOpen.id); // 宝箱更新
+      // 宝箱表示更新
+      myGame.map.changeEventTile(blockX, blockY, EventTile.treasureOpen.id);
 
+      // イベントメッセージ表示
       startMessageEvent(type);
     } else if (type == "treasure_open") {
       startMessageEvent(type);
