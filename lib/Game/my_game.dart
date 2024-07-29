@@ -31,7 +31,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     await TiledMap.load(this);
 
     // DBの作成
-    db = GameDB(this, TiledMap.getEventTiles());
+    db = GameDB(this, TiledMap.getEventTiles(), TiledMap.getMoveTiles());
 
     // 全体の初期化
     await init();

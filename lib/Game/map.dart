@@ -77,12 +77,9 @@ class TiledMap {
 
   MapEventType checkEventType(int blockX, int blockY) {
     // 移動不可チェック
-    var walkFlagLayerIndex =
-        tiled.tileMap.map.layers.indexOf(tiled.tileMap.getLayer("walk-flag")!);
-    if (tiled.tileMap
-            .getTileData(layerId: walkFlagLayerIndex, x: blockX, y: blockY)
-            ?.tile !=
-        0) return MapEventType.wall; // 移動不可
+    if (myGame.db.moveTiles[blockY][blockX] != 0) {
+      return MapEventType.wall; // 移動不可
+    }
 
     var event = getEvent(blockX, blockY);
     if (event != null) return MapEventType.event;
@@ -142,5 +139,20 @@ class TiledMap {
       }
     }
     return eventTiles;
+  }
+
+  // オリジナルのmoveリストを返す
+  static List<List<int>> getMoveTiles() {
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("walk-flag");
+    var moveTiles =
+        List.generate(layer!.height, (i) => List.filled(layer.width, 0));
+
+    for (int y = 0; y < layer.height; y++) {
+      for (int x = 0; x < layer.width; x++) {
+        var gid = layer.tileData?[y][x];
+        moveTiles[y][x] = gid!.tile;
+      }
+    }
+    return moveTiles;
   }
 }

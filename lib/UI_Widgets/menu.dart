@@ -25,7 +25,8 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.db = GameDB(myGame, TiledMap.getEventTiles());
+            myGame.db = GameDB(
+                myGame, TiledMap.getEventTiles(), TiledMap.getEventTiles());
             myGame.restart(true);
             Navigator.of(context).pop(); // メニューは閉じる
           },

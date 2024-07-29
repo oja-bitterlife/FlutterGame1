@@ -13,13 +13,13 @@ class GameDB {
   late MyGame myGame;
   static late Box box;
 
-  GameDB(this.myGame, this.eventTiles);
+  GameDB(this.myGame, this.eventTiles, this.moveTiles);
 
   // 管理対象データ
   PlayerDir playerDir = PlayerDir.down;
   int playerBlockX = 7, playerBlockY = 14;
   Map<String, int> items = {};
-  List<List<int>> eventTiles;
+  List<List<int>> eventTiles, moveTiles;
 
   static Future<void> init(MyGame myGame) async {
     await Hive.initFlutter();
@@ -32,7 +32,9 @@ class GameDB {
     box.put('playerBlockY', playerBlockY);
     box.put('items', items);
     box.put('time', DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
+
     box.put("eventTiles", eventTiles);
+    box.put("moveTiles", moveTiles);
   }
 
   void load() {
@@ -40,7 +42,9 @@ class GameDB {
     playerBlockX = box.get('playerBlockX');
     playerBlockY = box.get('playerBlockY');
     items = Map<String, int>.from(box.get('items'));
+
     eventTiles = List<List<int>>.from(box.get("eventTiles"));
+    moveTiles = List<List<int>>.from(box.get("moveTiles"));
   }
 
   String getTime() {
