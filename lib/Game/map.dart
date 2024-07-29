@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
+import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 
@@ -35,12 +38,13 @@ class TiledMap {
 
   static int blockSize = 32;
   static late TiledComponent tiled;
+  static late TiledAtlas atlas;
 
-  // event表示コンポーネント
-  late PositionComponent eventComponent;
+  late SpriteBatch eventSprites;
 
   static load(MyGame myGame) async {
-    TiledMap.tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
+    tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
+    atlas = await TiledAtlas.fromTiledMap(tiled.tileMap.map);
   }
 
   TiledMap(this.myGame) {
@@ -64,7 +68,11 @@ class TiledMap {
     myGame.add(overComponent);
 
     // イベント表示追加
-    addEventComponent();
+    eventSprites = SpriteBatch(atlas.atlas!);
+    myGame.add(PositionComponent(
+        children: [SpriteBatchComponent(spriteBatch: eventSprites)],
+        priority: Priority.mapUnder.index));
+    updateEventComponent();
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
@@ -84,18 +92,12 @@ class TiledMap {
 
   // イベントチェック
   String? getEvent(int blockX, int blockY) {
-    // イベントチェック
-    var eventGid = tiled.tileMap
-        .getLayer<TileLayer>("UnderPlayerEvent")!
-        .tileData![blockY][blockX];
-
     // イベントタイルが存在した
-    if (eventGid.tile != 0) {
+    int no = myGame.db.eventTiles[blockY][blockX];
+    if (no != 0) {
       // タイル情報のeventを読む
-      String? s = tiled.tileMap.map
-          .tileByGid(eventGid.tile)!
-          .properties["event"]!
-          .value as String?;
+      String? s = tiled.tileMap.map.tileByGid(no)!.properties["event"]!.value
+          as String?;
 
       if (s != null) return s;
     }
@@ -110,34 +112,24 @@ class TiledMap {
   }
 
   // イベントタイル表示
-  void addEventComponent() {
-    var imageBatch = ImageBatchCompiler();
-    eventComponent = imageBatch.compileMapLayer(
-        tileMap: tiled.tileMap, layerNames: ['UnderPlayerEvent']);
-    eventComponent
-      ..priority = Priority.mapUnder.index
-      ..scale = Vector2.all(2);
-
-    myGame.add(eventComponent);
-  }
-
-  // イベントタイル更新
   void updateEventComponent() {
-    myGame.remove(eventComponent);
+    eventSprites.clear();
 
-    // TileMapの更新
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-    for (int y = 0; y < layer!.height; y++) {
-      for (int x = 0; x < layer.width; x++) {
-        layer.tileData?[y][x] =
-            Gid(myGame.db.eventTiles[y][x], const Flips.defaults());
+    // Spriteの更新
+    for (int y = 0; y < myGame.db.eventTiles.length; y++) {
+      for (int x = 0; x < myGame.db.eventTiles[y].length; x++) {
+        int no = myGame.db.eventTiles[y][x] - 1;
+        if (myGame.db.eventTiles[y][x] != 0) {
+          eventSprites.add(
+              source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
+              scale: 2.0,
+              offset: Vector2(x * 32, y * 32));
+        }
       }
     }
-
-    addEventComponent();
   }
 
-  // 現在のeventの状態をリストで返す
+  // オリジナルのeventリストを返す
   static List<List<int>> getEventTiles() {
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
     var eventTiles =
