@@ -84,7 +84,7 @@ abstract class LevelMessageBase {
     }
 
     // 未実装イベント
-    startString("no implemented", ["未実装だ！"]);
+    startString("no implemented: $type", ["未実装だ！"]);
   }
 
   // メッセージ表示終わりコールバック
