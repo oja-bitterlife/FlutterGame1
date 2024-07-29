@@ -46,7 +46,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // アクションから開始
     log.info("on mount");
-    eventManager.startAction("start");
+    eventManager.startAction("on_start");
   }
 
   @override
@@ -119,7 +119,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     if (withStartAction) {
       // 基本はアクションから開始
-      eventManager.startAction("start");
+      eventManager.startAction("on_start");
     } else {
       startIdle();
     }

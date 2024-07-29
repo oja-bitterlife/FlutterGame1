@@ -29,6 +29,10 @@ abstract class LevelActionBase {
   void update();
 
   void onActionFinish(String type) {
+    log.info("finish action: $type");
+
+    reset();
+
     // idle開始
     myGame.eventManager
         .onIdle(myGame.player.getBlockX(), myGame.player.getBlockY());

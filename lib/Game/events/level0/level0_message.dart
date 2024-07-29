@@ -47,8 +47,6 @@ class Level0Message extends LevelMessageBase {
 
   @override
   void onMessageFinish(String type) {
-    log.info("finish event: $type");
-
     // ゲームオーバーに移行する
     if (type == "trap") {
       const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
@@ -64,8 +62,6 @@ class Level0Message extends LevelMessageBase {
       );
       return;
     }
-
-    if (myGame.db.items.containsKey("key")) {}
 
     // idleに戻す
     super.onMessageFinish(type);

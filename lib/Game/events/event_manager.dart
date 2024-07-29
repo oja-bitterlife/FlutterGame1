@@ -53,7 +53,7 @@ class EventManager {
     }
   }
 
-  void startMessage(String type, List<String> list, {List<String>? data}) {
+  void startMessage(String type, {List<String>? data}) {
     action.reset(); // アクションを止める
     if (data != null) {
       message.startString(type, data);

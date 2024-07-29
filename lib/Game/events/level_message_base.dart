@@ -3,6 +3,9 @@ import '../../UI_Widgets/message_window.dart';
 
 import '../my_game.dart';
 
+// ignore: unused_import
+import 'package:my_app/my_logger.dart';
+
 class MessageView {
   final LevelMessageBase eventManager;
 
@@ -86,7 +89,10 @@ abstract class LevelMessageBase {
 
   // メッセージ表示終わりコールバック
   void onMessageFinish(String type) {
+    log.info("finish message: $type");
+
     messageView?.close();
+    messageView = null;
 
     // idle開始
     myGame.eventManager

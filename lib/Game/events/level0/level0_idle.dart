@@ -19,7 +19,7 @@ class Level0Idle extends LevelIdleBase {
 
   @override
   void onIdle(int blockX, int blockY) {
-    // Level1は動ける位置を固定
+    // Level0は動ける位置を固定
     bool isDead = true;
     if (blockX == 7) {
       isDead = false;
@@ -38,7 +38,7 @@ class Level0Idle extends LevelIdleBase {
           priority: Priority.eventOver.index,
           scale: Vector2.all(2)));
 
-      myGame.eventManager.startMessage("trap", ["罠だ！"]);
+      myGame.eventManager.startMessage("trap", data: ["罠だ！"]);
       return;
     }
 

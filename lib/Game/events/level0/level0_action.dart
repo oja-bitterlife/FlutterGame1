@@ -2,6 +2,9 @@ import '../level_action_base.dart';
 import '../../my_game.dart';
 import '../../player.dart';
 
+// ignore: unused_import
+import 'package:my_app/my_logger.dart';
+
 class Level0Action extends LevelActionBase {
   Level0Action(super.myGame);
 
@@ -12,8 +15,8 @@ class Level0Action extends LevelActionBase {
 
   @override
   void update() {
-    if (type == "start") {
-      if (myGame.player.getBlockY() < 12) {
+    if (type == "on_start") {
+      if (myGame.player.getBlockY() > 10) {
         myGame.player.setMove(PlayerDir.up);
       } else {
         onActionFinish(type);
@@ -23,6 +26,6 @@ class Level0Action extends LevelActionBase {
 
   @override
   void onActionFinish(String type) {
-    this.type = "";
+    myGame.eventManager.startMessage("on_start");
   }
 }
