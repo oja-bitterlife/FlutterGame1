@@ -12,7 +12,7 @@ import 'game_db.dart';
 import 'player.dart';
 import 'map.dart';
 import 'events/event_manager.dart';
-import 'actions/level_action.dart';
+import 'events/level_action_base.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late GameDB db;
@@ -20,7 +20,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late MovePlayerComponent player;
   late TiledManager map;
   late EventManager eventManager;
-  late Level1Action levelAction;
 
   late SpriteSheet trapSheet;
 
@@ -47,7 +46,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // アクションから開始
     log.info("on mount");
-    levelAction.startAction("onStart");
+    eventManager.startAction("start");
   }
 
   @override
@@ -78,15 +77,11 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // 罠
     var trapImg = await images.load("tdrpg_interior.png");
     trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
-
-    // アクション設定
-    levelAction = Level1Action(this);
   }
 
   // 入力受付
   void startIdle() {
-    if (levelAction.isPlaying) {
-      levelAction.playAction();
+    if (eventManager.update()) {
       return;
     }
 
@@ -124,7 +119,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     if (withStartAction) {
       // 基本はアクションから開始
-      levelAction.startAction("onStart");
+      eventManager.startAction("start");
     } else {
       startIdle();
     }

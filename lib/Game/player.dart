@@ -84,7 +84,9 @@ class MovePlayerComponent extends PlayerComponent {
     if (!isMoving()) {
       myGame.db.playerBlockX = getBlockX();
       myGame.db.playerBlockY = getBlockY();
-      myGame.eventManager.onMoved(getBlockX(), getBlockY());
+
+      // Idle開始
+      myGame.eventManager.onIdle(getBlockX(), getBlockY());
     }
   }
 }

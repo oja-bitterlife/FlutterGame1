@@ -1,23 +1,22 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:my_app/Game/map.dart';
-import 'package:my_app/Game/player.dart';
 import 'package:toml/toml.dart';
 import 'package:flutter/material.dart';
-import '../../UI_Widgets/message_window.dart';
+import '../../../UI_Widgets/message_window.dart';
 
-import '../../Game/my_game.dart';
-import '../../Game/priorities.dart';
-import 'level_event.dart';
+import '../../my_game.dart';
+import '../../priorities.dart';
+import '../level_message_base.dart';
 
 // ignore: unused_import
-import '../../my_logger.dart';
+import '../../../my_logger.dart';
 
-class Level1Event extends LevelEvent {
-  Level1Event(super.myGame, super.eventData);
+class Level0Message extends LevelMessageBase {
+  Level0Message(super.myGame, super.eventData);
 
   static create(MyGame myGame) async {
-    var self = Level1Event(
+    var self = Level0Message(
         myGame,
         TomlDocument.parse(await rootBundle.loadString("assets/data/event.toml",
                 cache: false))
@@ -27,50 +26,23 @@ class Level1Event extends LevelEvent {
 
   @override
   void onFind(String type, int blockX, int blockY) {
-    log.info(type);
+    // 宝箱
     if (type == "treasure") {
       // 鍵を入手
       myGame.db.items["key"] = 1;
 
       // 宝箱表示更新
       myGame.map.changeEventTile(blockX, blockY, EventTile.treasureOpen.id);
-
-      // イベントメッセージ表示
-      startMessageEvent(type);
-    } else if (type == "treasure_open") {
-      startMessageEvent(type);
-    } else {
-      super.onFind(type, blockX, blockY);
     }
-  }
 
-  @override
-  void onMoved(int blockX, int blockY) {
-    // Level1は動ける位置を固定
-    bool isDead = true;
-    if (blockX == 7) {
-      isDead = false;
-    } else if (blockY <= 10) {
-      if (blockX >= 6 && blockX <= 8) {
-        isDead = false;
+    // ゲートセンサー
+    if (type == "gate") {
+      if (myGame.db.items.containsKey("key")) {
+        type = "gate_with_key";
       }
     }
 
-    if (isDead) {
-      var sp = myGame.trapSheet.getSprite(16, 5);
-      myGame.add(SpriteComponent(
-          sprite: sp,
-          position: Vector2(PlayerComponent.getPosFromBlockX(blockX) - 32,
-              PlayerComponent.getPosFromBlockY(blockY) - 64),
-          priority: Priority.eventOver.index,
-          scale: Vector2.all(2)));
-
-      addMessageEvent("trap", ["罠だ！"]);
-      return;
-    }
-
-    // idleに戻す
-    super.onMoved(blockX, blockY);
+    super.onFind(type, blockX, blockY);
   }
 
   @override
@@ -92,6 +64,8 @@ class Level1Event extends LevelEvent {
       );
       return;
     }
+
+    if (myGame.db.items.containsKey("key")) {}
 
     // idleに戻す
     super.onMessageFinish(type);

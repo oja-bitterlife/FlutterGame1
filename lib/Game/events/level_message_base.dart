@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../UI_Widgets/message_window.dart';
 
-import '../../Game/my_game.dart';
+import '../my_game.dart';
 
-// ignore: unused_import
-import '../../my_logger.dart';
-
-class MessageEvent {
-  final LevelEvent eventManager;
+class MessageView {
+  final LevelMessageBase eventManager;
 
   final String type;
   final List<String> message;
   int page = 0;
 
-  MessageEvent(this.eventManager, this.type, this.message);
+  MessageView(this.eventManager, this.type, this.message);
 
   // 次のメッセージを表示
   bool nextMessage() {
@@ -31,59 +28,68 @@ class MessageEvent {
     return true;
   }
 
-  bool startMessage({int page = 0}) {
+  bool start({int page = 0}) {
     this.page = page;
     return nextMessage(); // 最初のメッセージ表示
   }
+
+  void close() {
+    // メッセージを表示し終わっていたらhide
+    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    msgWin.currentState?.hide();
+  }
 }
 
-abstract class LevelEvent {
+abstract class LevelMessageBase {
   final MyGame myGame;
   final Map levelEventData;
 
-  MessageEvent? messageEvent;
+  // メッセージウインドウ
+  MessageView? messageView;
+  bool get isPlaying => messageView != null;
 
-  LevelEvent(this.myGame, this.levelEventData);
+  LevelMessageBase(this.myGame, this.levelEventData);
 
   // tomlデータのイベント再生
-  void startMessageEvent(String type) {
+  void startEvent(String type) {
     // データを確認して開始
     if (Map<String, dynamic>.from(levelEventData["messageEvent"])
         .containsKey(type)) {
       // メッセージイベントは同じ構造であること
-      messageEvent = MessageEvent(
+      messageView = MessageView(
           this, type, List<String>.from(levelEventData["messageEvent"][type]));
-      messageEvent?.startMessage();
+      messageView?.start();
     } else {
       // tomlに該当するイベントデータが無かった
-      addMessageEvent(type, ["データにないイベントだ！"]);
+      startString(type, ["メッセージデータがないイベントだ！: $type"]);
     }
   }
 
   // 特別にメッセージを出したいとき
-  void addMessageEvent(String type, List<String> message) {
-    messageEvent = MessageEvent(this, type, message);
-    messageEvent?.startMessage();
+  void startString(String type, List<String> message) {
+    messageView = MessageView(this, type, message);
+    messageView?.start();
   }
 
   // イベントオブジェクトチェック
   void onFind(String type, int blockX, int blockY) {
-    addMessageEvent("no implemented", ["未実装だ！"]);
-  }
+    // メッセージイベントだった
+    if (Map<String, dynamic>.from(levelEventData["messageEvent"])
+        .containsKey(type)) {
+      startEvent(type);
+      return;
+    }
 
-  // 移動後チェック
-  void onMoved(int blockX, int blockY) {
-    // 待機開始
-    myGame.startIdle();
+    // 未実装イベント
+    startString("no implemented", ["未実装だ！"]);
   }
 
   // メッセージ表示終わりコールバック
   void onMessageFinish(String type) {
-    // メッセージを表示し終わっていたらhide
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.hide();
+    messageView?.close();
 
     // idle開始
-    myGame.startIdle();
+    myGame.eventManager
+        .onIdle(myGame.player.getBlockX(), myGame.player.getBlockY());
   }
 }
