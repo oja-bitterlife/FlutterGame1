@@ -1,4 +1,3 @@
-import 'package:flame/cache.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'game_db.dart';
 import 'player.dart';
 import 'map.dart';
 import 'events/event_manager.dart';
-import 'events/level_action_base.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late GameDB db;
