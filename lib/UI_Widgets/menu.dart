@@ -4,6 +4,7 @@ import 'package:my_app/Game/game_db.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 import '../Game/my_game.dart';
+import '../Game/map.dart';
 
 class Menu extends StatelessWidget {
   final MyGame myGame;
@@ -24,7 +25,7 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.db = GameDB(myGame);
+            myGame.db = GameDB(myGame, TiledMap.getEventTiles());
             myGame.restart(true);
             Navigator.of(context).pop(); // メニューは閉じる
           },

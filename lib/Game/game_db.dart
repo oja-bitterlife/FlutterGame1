@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:my_app/Game/map.dart';
 import 'package:my_app/Game/my_game.dart';
 
 import 'player.dart';
@@ -11,18 +13,17 @@ class GameDB {
   late MyGame myGame;
   static late Box box;
 
-  GameDB(this.myGame);
+  GameDB(this.myGame, this.eventTiles);
 
   // 管理対象データ
   PlayerDir playerDir = PlayerDir.down;
   int playerBlockX = 7, playerBlockY = 14;
   Map<String, int> items = {};
+  List<List<int>> eventTiles;
 
-  static Future<GameDB> init(MyGame myGame) async {
+  static Future<void> init(MyGame myGame) async {
     await Hive.initFlutter();
     box = await Hive.openBox('GameDB');
-
-    return GameDB(myGame);
   }
 
   void save() {
@@ -31,6 +32,7 @@ class GameDB {
     box.put('playerBlockY', playerBlockY);
     box.put('items', items);
     box.put('time', DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
+    box.put("eventTiles", eventTiles);
   }
 
   void load() {
@@ -38,6 +40,7 @@ class GameDB {
     playerBlockX = box.get('playerBlockX');
     playerBlockY = box.get('playerBlockY');
     items = Map<String, int>.from(box.get('items'));
+    eventTiles = List<List<int>>.from(box.get("eventTiles"));
   }
 
   String getTime() {

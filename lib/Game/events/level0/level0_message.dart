@@ -32,7 +32,8 @@ class Level0Message extends LevelMessageBase {
       myGame.db.items["key"] = 1;
 
       // 宝箱表示更新
-      myGame.map.changeEventTile(blockX, blockY, EventTile.treasureOpen.id);
+      myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
+      myGame.map.updateEventComponent();
     }
 
     // ゲートセンサー

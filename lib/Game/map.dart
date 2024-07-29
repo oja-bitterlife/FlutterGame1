@@ -30,46 +30,41 @@ enum EventTile {
   const EventTile(this.id);
 }
 
-class TiledManager {
+class TiledMap {
   MyGame myGame;
 
   static int blockSize = 32;
-  late TiledComponent tiled;
+  static late TiledComponent tiled;
 
-  // 表示コンポーネント
-  late final PositionComponent underComponent;
-  late final PositionComponent overComponent;
+  // event表示コンポーネント
   late PositionComponent eventComponent;
 
-  TiledManager(this.myGame);
+  static load(MyGame myGame) async {
+    TiledMap.tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
+  }
 
-  static Future<TiledManager> create(MyGame myGame) async {
-    TiledManager self = TiledManager(myGame);
-
-    self.tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
+  TiledMap(this.myGame) {
     var imageBatch = ImageBatchCompiler();
 
     // プレイヤの下に表示
-    self.underComponent = imageBatch.compileMapLayer(
-        tileMap: self.tiled.tileMap, layerNames: ['UnderPlayer']);
-    self.underComponent
-      ..priority = Priority.mapUnder.index
-      ..scale = Vector2.all(2);
-
-    self.eventComponent = imageBatch.compileMapLayer(
-        tileMap: self.tiled.tileMap, layerNames: ['UnderPlayerEvent']);
-    self.eventComponent
+    var underComponent = imageBatch
+        .compileMapLayer(tileMap: tiled.tileMap, layerNames: ['UnderPlayer']);
+    underComponent
       ..priority = Priority.mapUnder.index
       ..scale = Vector2.all(2);
 
     // プレイヤの上に表示
-    self.overComponent = imageBatch.compileMapLayer(
-        tileMap: self.tiled.tileMap, layerNames: ['OverPlayer']);
-    self.overComponent
+    var overComponent = imageBatch
+        .compileMapLayer(tileMap: tiled.tileMap, layerNames: ['OverPlayer']);
+    overComponent
       ..priority = Priority.mapOver.index
       ..scale = Vector2.all(2);
 
-    return self;
+    myGame.add(underComponent);
+    myGame.add(overComponent);
+
+    // イベント表示追加
+    addEventComponent();
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
@@ -110,23 +105,12 @@ class TiledManager {
   }
 
   // タイルマップの状態を変更する
-  void changeEventTile(int blockX, int blockY, int no) {
-    // データ更新
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-    if (layer!.tileData?[blockY][blockX].tile == EventTile.treasure.id) {
-      // 宝箱を空いた状態に
-      layer.tileData?[blockY][blockX] = Gid(no, const Flips.defaults());
-    }
-
-    // ついでに表示も更新
-    updateTilemap();
+  void changeEvent(int blockX, int blockY, int no) {
+    myGame.db.eventTiles[blockY][blockX] = no;
   }
 
-  // タイルマップを状態に応じた表示にする
-  void updateTilemap() {
-    // 更新
-    myGame.remove(eventComponent);
-
+  // イベントタイル表示
+  void addEventComponent() {
     var imageBatch = ImageBatchCompiler();
     eventComponent = imageBatch.compileMapLayer(
         tileMap: tiled.tileMap, layerNames: ['UnderPlayerEvent']);
@@ -135,5 +119,36 @@ class TiledManager {
       ..scale = Vector2.all(2);
 
     myGame.add(eventComponent);
+  }
+
+  // イベントタイル更新
+  void updateEventComponent() {
+    myGame.remove(eventComponent);
+
+    // TileMapの更新
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
+    for (int y = 0; y < layer!.height; y++) {
+      for (int x = 0; x < layer.width; x++) {
+        layer.tileData?[y][x] =
+            Gid(myGame.db.eventTiles[y][x], const Flips.defaults());
+      }
+    }
+
+    addEventComponent();
+  }
+
+  // 現在のeventの状態をリストで返す
+  static List<List<int>> getEventTiles() {
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
+    var eventTiles =
+        List.generate(layer!.height, (i) => List.filled(layer.width, 0));
+
+    for (int y = 0; y < layer.height; y++) {
+      for (int x = 0; x < layer.width; x++) {
+        var gid = layer.tileData?[y][x];
+        eventTiles[y][x] = gid!.tile;
+      }
+    }
+    return eventTiles;
   }
 }

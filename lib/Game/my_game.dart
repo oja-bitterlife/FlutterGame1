@@ -16,7 +16,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late GameDB db;
 
   late MovePlayerComponent player;
-  late TiledManager map;
+  late TiledMap map;
   late EventManager eventManager;
 
   late SpriteSheet trapSheet;
@@ -24,12 +24,16 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   Future<void> onLoad() async {
     // DBを開いておく
-    db = await GameDB.init(this);
+    await GameDB.init(this);
 
     // 画像読み込み
     await PlayerComponent.load();
+    await TiledMap.load(this);
 
-    // 初期化
+    // DBの作成
+    db = GameDB(this, TiledMap.getEventTiles());
+
+    // 全体の初期化
     await init();
   }
 
@@ -37,13 +41,12 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     return GameWidget(key: const GlobalObjectKey("game"), game: this);
   }
 
-  // スタート時初期化
+  // スタート時のみ初期化(onLoadの後)
   @override
   void onMount() {
     super.onMount();
 
     // アクションから開始
-    log.info("on mount");
     eventManager.startAction("on_start");
   }
 
@@ -60,10 +63,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     add(player = MovePlayerComponent(this));
 
     // 画面構築
-    map = await TiledManager.create(this);
-    add(map.underComponent);
-    add(map.overComponent);
-    add(map.eventComponent);
+    map = TiledMap(this);
 
     // event管理
     eventManager = await EventManager.create(this);
@@ -113,7 +113,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   Future<void> restart(bool withStartAction) async {
     removeAll(children); // 一旦全部消す
     await init();
-    map.updateTilemap(); // マップを最新に
 
     if (withStartAction) {
       // 基本はアクションから開始

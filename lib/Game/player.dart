@@ -51,10 +51,10 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 移動先設定
     moveValue = switch (dir) {
-      PlayerDir.down => Vector2(0, TiledManager.blockSize.toDouble()),
-      PlayerDir.left => Vector2(-TiledManager.blockSize.toDouble(), 0),
-      PlayerDir.right => Vector2(TiledManager.blockSize.toDouble(), 0),
-      PlayerDir.up => Vector2(0, -TiledManager.blockSize.toDouble()),
+      PlayerDir.down => Vector2(0, TiledMap.blockSize.toDouble()),
+      PlayerDir.left => Vector2(-TiledMap.blockSize.toDouble(), 0),
+      PlayerDir.right => Vector2(TiledMap.blockSize.toDouble(), 0),
+      PlayerDir.up => Vector2(0, -TiledMap.blockSize.toDouble()),
     };
 
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
@@ -139,12 +139,12 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
 
   // 位置->ブロック座標
   int getBlockX() {
-    return position.x.round() ~/ TiledManager.blockSize;
+    return position.x.round() ~/ TiledMap.blockSize;
   }
 
   int getBlockY() {
-    return (position.y - TiledManager.blockSize * 0.5).round() ~/
-        TiledManager.blockSize;
+    return (position.y - TiledMap.blockSize * 0.5).round() ~/
+        TiledMap.blockSize;
   }
 
   // 位置->向き先ブロック座標
@@ -170,10 +170,10 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
 
   // ブロック座標->位置
   static double getPosFromBlockX(int blockX) {
-    return blockX * TiledManager.blockSize + TiledManager.blockSize * 0.5;
+    return blockX * TiledMap.blockSize + TiledMap.blockSize * 0.5;
   }
 
   static double getPosFromBlockY(int blockY) {
-    return (blockY + 1) * TiledManager.blockSize as double;
+    return (blockY + 1) * TiledMap.blockSize as double;
   }
 }
