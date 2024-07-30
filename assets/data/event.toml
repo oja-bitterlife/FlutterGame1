@@ -16,6 +16,9 @@ gate = [
 gate_with_key = [
     "扉の鍵をかざした",
 ]
+gate_opened = [
+    "扉はもう開いている",
+]
 
 
 on_start = [

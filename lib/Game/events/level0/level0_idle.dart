@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 
 import '../../my_game.dart';
 import '../level_idle_base.dart';
@@ -47,7 +48,15 @@ class Level0Idle extends LevelIdleBase {
 
     // ゴール判定
     if (blockX == GloalX && blockY == GloalY) {
-      myGame.eventManager.startMessage("clear", data: ["clear！"]);
+      myGame.add(
+        TextComponent(
+            text: 'Lv.0 Clear!',
+            position: Vector2(120, 220),
+            textRenderer: TextPaint(
+                style: const TextStyle(fontSize: 64, color: Colors.white)),
+            priority: Priority.GameOver.index),
+      );
+
       return;
     }
 

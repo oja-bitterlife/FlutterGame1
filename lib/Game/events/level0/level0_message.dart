@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:my_app/Game/map.dart';
 import 'package:toml/toml.dart';
 import 'package:flutter/material.dart';
 import '../../../UI_Widgets/message_window.dart';
@@ -57,8 +56,11 @@ class Level0Message extends LevelMessageBase {
 
     // ゲートセンサー
     if (type == "gate") {
-      if (myGame.db.items.containsKey("key")) {
+      if (myGame.db.items.containsKey("gate_open")) {
+        type = "gate_opened";
+      } else if (myGame.db.items.containsKey("key")) {
         type = "gate_with_key";
+        myGame.db.items["gate_open"] = 1;
       }
     }
 
