@@ -9,6 +9,7 @@ import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import '../my_logger.dart';
 import 'priorities.dart';
 import 'my_game.dart';
+import 'game_db.dart';
 
 enum MapEventType {
   floor(0),
@@ -18,19 +19,6 @@ enum MapEventType {
 
   final int id;
   const MapEventType(this.id);
-}
-
-enum EventTile {
-  sensorUp(448),
-  sensorDown(461),
-  letter(509),
-  treasure(373),
-  treasureOpen(374),
-  bedside(715),
-  ;
-
-  final int id;
-  const EventTile(this.id);
 }
 
 class TiledMap {
@@ -76,13 +64,14 @@ class TiledMap {
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
+    // イベントチェック
+    var event = getEvent(blockX, blockY);
+    if (event != null) return MapEventType.event;
+
     // 移動不可チェック
     if (myGame.db.moveTiles[blockY][blockX] != 0) {
       return MapEventType.wall; // 移動不可
     }
-
-    var event = getEvent(blockX, blockY);
-    if (event != null) return MapEventType.event;
 
     return MapEventType.floor; // なにもない(床)
   }
@@ -93,7 +82,7 @@ class TiledMap {
     int no = myGame.db.eventTiles[blockY][blockX];
     if (no != 0) {
       // タイル情報のeventを読む
-      String? s = tiled.tileMap.map.tileByGid(no)!.properties["event"]!.value
+      String? s = tiled.tileMap.map.tileByGid(no)?.properties["event"]?.value
           as String?;
 
       if (s != null) return s;
@@ -105,7 +94,11 @@ class TiledMap {
 
   // タイルマップの状態を変更する
   void changeEvent(int blockX, int blockY, int no) {
-    myGame.db.eventTiles[blockY][blockX] = no;
+    myGame.db.eventTiles[blockY][blockX] = no + 1;
+  }
+
+  void changeMove(int blockX, int blockY, bool isMovable) {
+    myGame.db.moveTiles[blockY][blockX] = isMovable ? 0 : 1;
   }
 
   // イベントタイル表示

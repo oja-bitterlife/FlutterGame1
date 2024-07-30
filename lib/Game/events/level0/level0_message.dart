@@ -12,6 +12,25 @@ import '../level_message_base.dart';
 // ignore: unused_import
 import '../../../my_logger.dart';
 
+// イベントが発生するタイル
+enum EventTile {
+  doorUp(153),
+  doorDown(165),
+  doorUpOpen(177),
+  doorDownOpen(189),
+  gate(460),
+  gateSensor(447),
+  gateSensorOpen(423),
+  letter(508),
+  treasure(372),
+  treasureOpen(373),
+  bedside(714),
+  ;
+
+  final int id;
+  const EventTile(this.id);
+}
+
 class Level0Message extends LevelMessageBase {
   Level0Message(super.myGame, super.eventData);
 
@@ -62,6 +81,20 @@ class Level0Message extends LevelMessageBase {
             priority: Priority.GameOver.index),
       );
       return;
+    }
+
+    if (type == "gate_with_key") {
+      myGame.map.changeEvent(myGame.player.getFowardBlockX(),
+          myGame.player.getFowardBlockY() - 1, EventTile.gateSensorOpen.id);
+      myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
+          myGame.player.getFowardBlockY() - 1, EventTile.doorDownOpen.id);
+      myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
+          myGame.player.getFowardBlockY() - 2, EventTile.doorUpOpen.id);
+
+      myGame.map.changeMove(myGame.player.getFowardBlockX() + 1,
+          myGame.player.getFowardBlockY() - 1, true);
+
+      myGame.map.updateEventComponent();
     }
 
     // idleに戻す

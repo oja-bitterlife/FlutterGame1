@@ -9,6 +9,9 @@ import '../../player.dart';
 // ignore: unused_import
 import '../../../my_logger.dart';
 
+const int GloalX = 7;
+const int GloalY = 3;
+
 class Level0Idle extends LevelIdleBase {
   Level0Idle(super.myGame);
 
@@ -39,6 +42,12 @@ class Level0Idle extends LevelIdleBase {
           scale: Vector2.all(2)));
 
       myGame.eventManager.startMessage("trap", data: ["罠だ！"]);
+      return;
+    }
+
+    // ゴール判定
+    if (blockX == GloalX && blockY == GloalY) {
+      myGame.eventManager.startMessage("clear", data: ["clear！"]);
       return;
     }
 

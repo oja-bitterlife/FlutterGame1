@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:my_app/Game/map.dart';
 import 'package:my_app/Game/my_game.dart';
+import 'dart:convert';
 
 import 'player.dart';
 
@@ -27,24 +26,31 @@ class GameDB {
   }
 
   void save() {
+    box.put('time', DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
+
     box.put('playerDirID', playerDir.id);
     box.put('playerBlockX', playerBlockX);
     box.put('playerBlockY', playerBlockY);
-    box.put('items', items);
-    box.put('time', DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
 
-    box.put("eventTiles", eventTiles);
-    box.put("moveTiles", moveTiles);
+    box.put('items', items);
+
+    box.put("eventTiles", jsonEncode(eventTiles));
+    box.put("moveTiles", jsonEncode(moveTiles));
   }
 
   void load() {
     playerDir = PlayerDir.fromID(box.get('playerDirID'));
     playerBlockX = box.get('playerBlockX');
     playerBlockY = box.get('playerBlockY');
+
     items = Map<String, int>.from(box.get('items'));
 
-    eventTiles = List<List<int>>.from(box.get("eventTiles"));
-    moveTiles = List<List<int>>.from(box.get("moveTiles"));
+    eventTiles = List<dynamic>.from(jsonDecode(box.get("eventTiles")))
+        .map((line) => List<int>.from(line))
+        .toList();
+    moveTiles = List<dynamic>.from(jsonDecode(box.get("moveTiles")))
+        .map((line) => List<int>.from(line))
+        .toList();
   }
 
   String getTime() {
