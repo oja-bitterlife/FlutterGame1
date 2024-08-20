@@ -64,12 +64,12 @@ class GameDB {
 }
 
 Future<CommonDatabase> openUserDB() async {
-  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
-
   final fileSystem = await IndexedDbFileSystem.open(dbName: 'fluuter_game1');
-  sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
 
-  var db = sqlite3.open("test.sqlite");
+  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+  sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
+  var db = sqlite3.open("test.db");
+
   db.execute("""CREATE TABLE IF NOT EXISTS user (
           Dir INT(1) NOT NULL,
           BlockX INT(3) NOT NULL,
