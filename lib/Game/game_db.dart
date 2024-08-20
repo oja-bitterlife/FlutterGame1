@@ -5,6 +5,11 @@ import 'dart:convert';
 
 import 'player.dart';
 
+import 'package:sqlite3/wasm.dart';
+
+import 'package:flutter/services.dart';
+import 'package:file/memory.dart';
+
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
@@ -56,4 +61,43 @@ class GameDB {
   String getTime() {
     return box.get('time', defaultValue: "----/--/-- --:--:--");
   }
+}
+
+Future<CommonDatabase> openUserDB() async {
+  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+
+  final fileSystem = await IndexedDbFileSystem.open(dbName: 'fluuter_game1');
+  sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
+
+  var db = sqlite3.open("test.sqlite");
+  db.execute("""CREATE TABLE IF NOT EXISTS user (
+          Dir INT(1) NOT NULL,
+          BlockX INT(3) NOT NULL,
+          BlockY INT(3) NOT NULL,
+          items TEXT NULL
+        )""");
+
+  return db;
+}
+
+Future<CommonDatabase> openEventDB(String path) async {
+  // assetからデータの読み込み
+  ByteData data = await rootBundle.load(path);
+  Uint8List bytes =
+      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+  // SQLite3のMemoryFileSystemに書き込む
+  var fileSystem = InMemoryFileSystem();
+  var file = fileSystem
+      .xOpen(Sqlite3Filename(fileSystem.xFullPathName(path)),
+          SqlFlag.SQLITE_OPEN_READWRITE | SqlFlag.SQLITE_OPEN_CREATE)
+      .file;
+  file.xTruncate(0);
+  file.xWrite(bytes, 0);
+  file.xClose();
+
+  // SQLite3で開く
+  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+  sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
+  return sqlite3.open(path);
 }

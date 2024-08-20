@@ -3,14 +3,15 @@ import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
 
-// ignore: unused_import
-import '../my_logger.dart';
 import '../UI_Widgets/player_cursor.dart';
 import '../UI_Widgets/message_window.dart';
 import 'game_db.dart';
 import 'player.dart';
 import 'map.dart';
 import 'events/event_manager.dart';
+
+// ignore: unused_import
+import '../my_logger.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   late GameDB db;
@@ -25,6 +26,14 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   Future<void> onLoad() async {
     // DBを開いておく
     await GameDB.init(this);
+
+    var eventDB = await openEventDB("assets/data/data.sqlite");
+    var result = eventDB.select("select * from message_event");
+    result.forEach(log.info);
+
+    // var userDB = await openUserDB();
+    // var result = userDB.select("select * from user");
+    // result.forEach(log.info);
 
     // 画像読み込み
     await PlayerComponent.load();
