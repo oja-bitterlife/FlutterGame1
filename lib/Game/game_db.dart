@@ -8,7 +8,6 @@ import 'player.dart';
 import 'package:sqlite3/wasm.dart';
 
 import 'package:flutter/services.dart';
-import 'package:file/memory.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
@@ -68,14 +67,16 @@ Future<CommonDatabase> openUserDB() async {
 
   final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
   sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
-  var db = sqlite3.open("test.db");
+  var db = sqlite3.openInMemory();
+
+  // var db = sqlite3.open("user_data.sqlite");
 
   db.execute("""CREATE TABLE IF NOT EXISTS user (
           Dir INT(1) NOT NULL,
           BlockX INT(3) NOT NULL,
           BlockY INT(3) NOT NULL,
           items TEXT NULL
-        )""");
+        )""", []);
 
   return db;
 }
