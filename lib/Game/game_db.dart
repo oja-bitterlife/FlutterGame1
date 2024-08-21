@@ -85,7 +85,7 @@ Future<CommonDatabase> openEventDB(String path) async {
   Uint8List bytes =
       data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-  // SQLite3のMemoryFileSystemに書き込む
+  // SQLite3のInMemoryFileSystemに書き込む
   var fileSystem = InMemoryFileSystem();
   var file = fileSystem
       .xOpen(Sqlite3Filename(fileSystem.xFullPathName(path)),
