@@ -27,14 +27,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // DBを開いておく
     await GameDB.init(this);
 
-    var eventDB = await openEventDB("assets/data/event.sqlite");
-    var result = eventDB.select("select * from message_event");
-    result.forEach(log.info);
-
-    // var userDB = await openUserDB();
-    // var result = userDB.select("select * from user");
-    // result.forEach(log.info);
-
     // 画像読み込み
     await PlayerComponent.load();
     await TiledMap.load(this);

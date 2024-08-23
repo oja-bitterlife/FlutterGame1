@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sqlite3/wasm.dart';
+
 import '../../UI_Widgets/message_window.dart';
 
 import '../my_game.dart';
@@ -45,22 +47,29 @@ class MessageView {
 
 abstract class LevelMessageBase {
   final MyGame myGame;
-  final Map levelEventData;
+  final CommonDatabase eventDB;
+  final int level;
 
   // メッセージウインドウ
   MessageView? messageView;
   bool get isPlaying => messageView != null;
 
-  LevelMessageBase(this.myGame, this.levelEventData);
+  LevelMessageBase(this.myGame, this.level, this.eventDB);
+
+  // 文字列フォーマッタ
+  List<String> format(String msg) {
+    return msg.replaceAll("\\n", "\n").split("\\0");
+  }
 
   // tomlデータのイベント再生
   void startEvent(String type) {
+    var result = eventDB.select(
+        "select msg from message_event where name = ? and level = ?",
+        [type, level]);
+
     // データを確認して開始
-    if (Map<String, dynamic>.from(levelEventData["messageEvent"])
-        .containsKey(type)) {
-      // メッセージイベントは同じ構造であること
-      messageView = MessageView(
-          this, type, List<String>.from(levelEventData["messageEvent"][type]));
+    if (result.isNotEmpty) {
+      messageView = MessageView(this, type, format(result.first["msg"]));
       messageView?.start();
     } else {
       // tomlに該当するイベントデータが無かった
@@ -76,14 +85,6 @@ abstract class LevelMessageBase {
 
   // イベントオブジェクトチェック
   void onFind(String type, int blockX, int blockY) {
-    // メッセージイベントだった
-    if (Map<String, dynamic>.from(levelEventData["messageEvent"])
-        .containsKey(type)) {
-      startEvent(type);
-      return;
-    }
-
-    // 未実装イベント
     startString("no implemented: $type", ["未実装だ！"]);
   }
 
