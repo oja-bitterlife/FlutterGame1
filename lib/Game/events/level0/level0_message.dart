@@ -1,11 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:flutter/services.dart';
-import 'package:toml/toml.dart';
 import 'package:flutter/material.dart';
 import '../../../UI_Widgets/message_window.dart';
 
 import '../../my_game.dart';
-import '../../game_db.dart';
 import '../../priorities.dart';
 import '../level_message_base.dart';
 
@@ -32,11 +29,10 @@ enum EventTile {
 }
 
 class Level0Message extends LevelMessageBase {
-  Level0Message(super.myGame, super.level, super.eventDB);
+  Level0Message(super.myGame, super.level);
 
   static create(MyGame myGame) async {
-    var self =
-        Level0Message(myGame, 0, await openEventDB("assets/data/event.sqlite"));
+    var self = Level0Message(myGame, 0);
     return self;
   }
 

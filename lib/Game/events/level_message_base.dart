@@ -47,14 +47,14 @@ class MessageView {
 
 abstract class LevelMessageBase {
   final MyGame myGame;
-  final CommonDatabase eventDB;
-  final int level;
+  final int level; // ステージ番号
+  static const messageEventTable = "message_event"; // メッセージデータ格納場所
 
   // メッセージウインドウ
   MessageView? messageView;
   bool get isPlaying => messageView != null;
 
-  LevelMessageBase(this.myGame, this.level, this.eventDB);
+  LevelMessageBase(this.myGame, this.level);
 
   // 文字列フォーマッタ
   List<String> format(String msg) {
@@ -63,8 +63,8 @@ abstract class LevelMessageBase {
 
   // tomlデータのイベント再生
   void startEvent(String type) {
-    var result = eventDB.select(
-        "select msg from message_event where name = ? and level = ?",
+    var result = myGame.eventManager.eventDB.select(
+        "select msg from $messageEventTable where name = ? and level = ?",
         [type, level]);
 
     // データを確認して開始

@@ -1,6 +1,8 @@
 import 'package:my_app/Game/events/level_idle_base.dart';
+import 'package:sqlite3/wasm.dart';
 
 import '../my_game.dart';
+import '../game_db.dart';
 import 'level_message_base.dart';
 import 'level_action_base.dart';
 
@@ -13,15 +15,17 @@ import '../../my_logger.dart';
 
 class EventManager {
   late MyGame myGame;
+  late CommonDatabase eventDB;
 
   late LevelMessageBase message;
   late LevelActionBase action;
   late LevelIdleBase move;
 
-  EventManager(this.myGame);
+  EventManager(this.myGame, this.eventDB);
 
   static Future<EventManager> create(MyGame myGame) async {
-    var self = EventManager(myGame);
+    var self =
+        EventManager(myGame, await openEventDB("assets/data/event.sqlite"));
 
     // とりあえずLevel0を作っていく
     self.message = await Level0Message.create(myGame);

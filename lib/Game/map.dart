@@ -9,7 +9,6 @@ import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import '../my_logger.dart';
 import 'priorities.dart';
 import 'my_game.dart';
-import 'game_db.dart';
 
 enum MapEventType {
   floor(0),
