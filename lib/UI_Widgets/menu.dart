@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/Game/game_db.dart';
+import 'package:my_app/Game/save_load.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -25,8 +25,8 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.db = GameDB(
-                myGame, TiledMap.getEventTiles(), TiledMap.getEventTiles());
+            myGame.saveLoad
+                .reset(TiledMap.orgEventTiles(), TiledMap.orgEventTiles());
             myGame.restart(true);
             Navigator.of(context).pop(); // メニューは閉じる
           },
@@ -34,18 +34,18 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('Save'),
           onTap: () {
-            myGame.db.save();
+            myGame.saveLoad.save();
             Navigator.of(context).pop(); // メニューは閉じる
           },
         ),
         ListTile(
           title: const Text('Load'),
           onTap: () {
-            myGame.db.load();
+            myGame.saveLoad.load();
             myGame.restart(false);
             Navigator.of(context).pop(); // メニューは閉じる
           },
-          subtitle: Text(myGame.db.getTime()),
+          subtitle: Text(myGame.saveLoad.getTime()),
         ),
       ],
     );

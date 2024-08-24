@@ -41,7 +41,7 @@ class Level0Message extends LevelMessageBase {
     // 宝箱
     if (type == "treasure") {
       // 鍵を入手
-      myGame.db.items["key"] = 1;
+      myGame.saveLoad.items["key"] = 1;
 
       // 宝箱表示更新
       myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
@@ -50,11 +50,11 @@ class Level0Message extends LevelMessageBase {
 
     // ゲートセンサー
     if (type == "gate") {
-      if (myGame.db.items.containsKey("gate_open")) {
+      if (myGame.saveLoad.items.containsKey("gate_open")) {
         type = "gate_opened";
-      } else if (myGame.db.items.containsKey("key")) {
+      } else if (myGame.saveLoad.items.containsKey("key")) {
         type = "gate_with_key";
-        myGame.db.items["gate_open"] = 1;
+        myGame.saveLoad.items["gate_open"] = 1;
       }
     }
 

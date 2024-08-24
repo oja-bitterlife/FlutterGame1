@@ -68,7 +68,7 @@ class TiledMap {
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
-    if (myGame.db.moveTiles[blockY][blockX] != 0) {
+    if (myGame.saveLoad.moveTiles[blockY][blockX] != 0) {
       return MapEventType.wall; // 移動不可
     }
 
@@ -78,7 +78,7 @@ class TiledMap {
   // イベントチェック
   String? getEvent(int blockX, int blockY) {
     // イベントタイルが存在した
-    int no = myGame.db.eventTiles[blockY][blockX];
+    int no = myGame.saveLoad.eventTiles[blockY][blockX];
     if (no != 0) {
       // タイル情報のeventを読む
       String? s = tiled.tileMap.map.tileByGid(no)?.properties["event"]?.value
@@ -93,11 +93,11 @@ class TiledMap {
 
   // タイルマップの状態を変更する
   void changeEvent(int blockX, int blockY, int no) {
-    myGame.db.eventTiles[blockY][blockX] = no + 1;
+    myGame.saveLoad.eventTiles[blockY][blockX] = no + 1;
   }
 
   void changeMove(int blockX, int blockY, bool isMovable) {
-    myGame.db.moveTiles[blockY][blockX] = isMovable ? 0 : 1;
+    myGame.saveLoad.moveTiles[blockY][blockX] = isMovable ? 0 : 1;
   }
 
   // イベントタイル表示
@@ -105,10 +105,10 @@ class TiledMap {
     eventSprites.clear();
 
     // Spriteの更新
-    for (int y = 0; y < myGame.db.eventTiles.length; y++) {
-      for (int x = 0; x < myGame.db.eventTiles[y].length; x++) {
-        int no = myGame.db.eventTiles[y][x] - 1;
-        if (myGame.db.eventTiles[y][x] != 0) {
+    for (int y = 0; y < myGame.saveLoad.eventTiles.length; y++) {
+      for (int x = 0; x < myGame.saveLoad.eventTiles[y].length; x++) {
+        int no = myGame.saveLoad.eventTiles[y][x] - 1;
+        if (myGame.saveLoad.eventTiles[y][x] != 0) {
           eventSprites.add(
               source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
               scale: 2.0,
@@ -119,7 +119,7 @@ class TiledMap {
   }
 
   // オリジナルのeventリストを返す
-  static List<List<int>> getEventTiles() {
+  static List<List<int>> orgEventTiles() {
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
     var eventTiles =
         List.generate(layer!.height, (i) => List.filled(layer.width, 0));
@@ -134,7 +134,7 @@ class TiledMap {
   }
 
   // オリジナルのmoveリストを返す
-  static List<List<int>> getMoveTiles() {
+  static List<List<int>> orgMoveTiles() {
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("walk-flag");
     var moveTiles =
         List.generate(layer!.height, (i) => List.filled(layer.width, 0));

@@ -38,12 +38,12 @@ class MovePlayerComponent extends PlayerComponent {
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
-  MovePlayerComponent(super.myGame);
+  MovePlayerComponent(super.myGame, super.blockX, super.blockY);
 
   // 移動開始
   void setMove(PlayerDir dir) {
-    // 方向をまず変えておく
-    this.dir = dir;
+    // 方向の保存
+    setDir(dir);
 
     // 移動アニメリセット
     transTime = 0;
@@ -82,9 +82,6 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 移動が終わったときの処理(positionを確定させてから)
     if (!isMoving()) {
-      myGame.db.playerBlockX = getBlockX();
-      myGame.db.playerBlockY = getBlockY();
-
       // Idle開始
       myGame.eventManager.onIdle(getBlockX(), getBlockY());
     }
@@ -93,6 +90,9 @@ class MovePlayerComponent extends PlayerComponent {
 
 class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
   final MyGame myGame;
+
+  // プレイヤの向き
+  PlayerDir dir = PlayerDir.up;
 
   // 歩きアニメ
   List<SpriteAnimation> walkAnim = [];
@@ -103,10 +103,10 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
     playerImage = await Sprite.load('sample20160312.png');
   }
 
-  PlayerComponent(this.myGame)
+  PlayerComponent(this.myGame, int blockX, int blockY)
       : super(
-          position: Vector2(getPosFromBlockX(myGame.db.playerBlockX),
-              getPosFromBlockY(myGame.db.playerBlockY)), // 初期座標
+          position: Vector2(
+              getPosFromBlockX(blockX), getPosFromBlockY(blockY)), // 初期座標
           anchor: Anchor.bottomCenter,
           size: Vector2(48, 48),
           priority: Priority.player.index,
@@ -130,12 +130,10 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
   }
 
   // 表示切り替え
-  set dir(PlayerDir dir) {
-    myGame.db.playerDir = dir;
+  void setDir(PlayerDir dir) {
+    this.dir = dir;
     animation = walkAnim[dir.id];
   }
-
-  PlayerDir get dir => myGame.db.playerDir;
 
   // 位置->ブロック座標
   int getBlockX() {
