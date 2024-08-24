@@ -11,7 +11,7 @@ Future<CommonDatabase> openUserDB() async {
 
   // テーブル作成
   db.execute("""CREATE TABLE IF NOT EXISTS player (
-            id INT(1) UNIQUE,
+            id INT(1) PRIMARY KEY,
             dir INT(1) DEFAULT 0,
             blockX INT(3) DEFAULT 0,
             blockY INT(3) DEFAULT 0,
@@ -19,9 +19,17 @@ Future<CommonDatabase> openUserDB() async {
           )""");
 
   db.execute("""CREATE TABLE IF NOT EXISTS items (
-            player_id INT(1) PRIMARY KEY,
+            player_id INT(1),
             name VARCHAR(255) NOT NULL,
             used BOOLEAN
+          )""");
+
+  // db.execute("""DROP TABLE IF EXISTS map_event""");
+  db.execute("""CREATE TABLE IF NOT EXISTS map_event (
+            player_id INT(1),
+            name VARCHAR(255) NOT NULL,
+            blockX INT(3),
+            blockY INT(3)
           )""");
 
   return db;

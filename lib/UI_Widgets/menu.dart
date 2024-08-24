@@ -41,7 +41,7 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('Load'),
           onTap: () {
-            if (myGame.saveLoad.hasData) {
+            if (myGame.saveLoad.hasPlayerSave) {
               myGame.restart(false);
               myGame.saveLoad.load();
             }

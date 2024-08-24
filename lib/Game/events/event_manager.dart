@@ -53,9 +53,21 @@ class EventManager {
     return false;
   }
 
+  String? getMapEvent(int blockX, int blockY) {
+    var result = myGame.saveLoad.userDB.select(
+        "select name from msg_event where player_id = 1 and  x = ? and y = ?",
+        [blockX, blockY]);
+
+    // イベントは特にない
+    if (result.isEmpty) return null;
+
+    // イベント名を返す
+    return result.first["name"];
+  }
+
   // Findアイコンが押された(イベントオブジェクトがある)
   void onFind(int blockX, int blockY) {
-    String? type = myGame.map.getEvent(blockX, blockY);
+    String? type = getMapEvent(blockX, blockY);
     if (type != null) {
       message.onFind(type, blockX, blockY);
     }

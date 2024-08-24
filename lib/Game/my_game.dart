@@ -98,7 +98,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   }
 
   PlayerCursorType checkEvent(int blockX, int blockY) {
-    switch ((findGame() as MyGame).map.checkEventType(blockX, blockY)) {
+    switch (map.checkEventType(blockX, blockY)) {
       case MapEventType.event:
         return PlayerCursorType.find;
       case MapEventType.wall:

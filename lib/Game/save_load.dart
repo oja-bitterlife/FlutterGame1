@@ -2,6 +2,7 @@ import 'package:sqlite3/common.dart';
 
 import '../db.dart';
 import 'my_game.dart';
+import 'map.dart';
 import 'player.dart';
 
 // ignore: unused_import
@@ -15,7 +16,7 @@ class SaveLoad {
 
   // 管理対象データ
   Map<String, bool> items = {}; // <name, used>
-  late List<List<int>> eventTiles, moveTiles;
+  late List<List<int>> viewTiles, moveTiles;
 
   static Future<SaveLoad> init(MyGame myGame, List<List<int>> orgEventTiles,
       List<List<int>> orgMoveTiles) async {
@@ -26,11 +27,34 @@ class SaveLoad {
   }
 
   void reset(List<List<int>> orgEventTiles, List<List<int>> orgMoveTiles) {
-    eventTiles = orgEventTiles.map((e) => e.toList()).toList();
+    // 一旦クリア
+    userDB.execute("delete from map_event where player_id = 1");
+
+    // DBにイベントを格納する
+    for (int y = 0; y < orgEventTiles.length; y++) {
+      for (int x = 0; x < orgEventTiles[y].length; x++) {
+        if (orgEventTiles[y][x] != 0) {
+          // タイル情報のeventを読む
+          String? eventName = TiledMap.tiled.tileMap.map
+              .tileByGid(orgEventTiles[y][x])
+              ?.properties["event"]
+              ?.value as String?;
+
+          // イベント情報をDBに保存
+          if (eventName != null) {
+            userDB.execute(
+                "insert into map_event (player_id, name, blockX, blockY) values (1, ?, ?, ?)",
+                [eventName, x, y]);
+          }
+        }
+      }
+    }
+
+    viewTiles = orgEventTiles.map((e) => e.toList()).toList();
     moveTiles = orgMoveTiles.map((e) => e.toList()).toList();
   }
 
-  bool get hasData => userDB.select("select time from player").isNotEmpty;
+  bool get hasPlayerSave => userDB.select("select time from player").isNotEmpty;
 
   void save() {
     // プレイヤーデータを保存する

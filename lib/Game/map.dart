@@ -23,7 +23,7 @@ enum MapEventType {
 class TiledMap {
   MyGame myGame;
 
-  static int blockSize = 32;
+  static const blockSize = 32;
   static late TiledComponent tiled;
   static late TiledAtlas atlas;
 
@@ -64,7 +64,7 @@ class TiledMap {
 
   MapEventType checkEventType(int blockX, int blockY) {
     // イベントチェック
-    var event = getEvent(blockX, blockY);
+    var event = myGame.eventManager.getMapEvent(blockX, blockY);
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
@@ -73,22 +73,6 @@ class TiledMap {
     }
 
     return MapEventType.floor; // なにもない(床)
-  }
-
-  // イベントチェック
-  String? getEvent(int blockX, int blockY) {
-    // イベントタイルが存在した
-    int no = myGame.saveLoad.eventTiles[blockY][blockX];
-    if (no != 0) {
-      // タイル情報のeventを読む
-      String? s = tiled.tileMap.map.tileByGid(no)?.properties["event"]?.value
-          as String?;
-
-      if (s != null) return s;
-    }
-
-    // イベントは存在しなかった
-    return null;
   }
 
   // タイルマップの状態を変更する
@@ -101,10 +85,10 @@ class TiledMap {
     eventSprites.clear();
 
     // Spriteの更新
-    for (int y = 0; y < myGame.saveLoad.eventTiles.length; y++) {
-      for (int x = 0; x < myGame.saveLoad.eventTiles[y].length; x++) {
-        int no = myGame.saveLoad.eventTiles[y][x] - 1;
-        if (myGame.saveLoad.eventTiles[y][x] != 0) {
+    for (int y = 0; y < myGame.saveLoad.viewTiles.length; y++) {
+      for (int x = 0; x < myGame.saveLoad.viewTiles[y].length; x++) {
+        int no = myGame.saveLoad.viewTiles[y][x] - 1;
+        if (myGame.saveLoad.viewTiles[y][x] != 0) {
           eventSprites.add(
               source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
               scale: 2.0,
