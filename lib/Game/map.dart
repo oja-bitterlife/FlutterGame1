@@ -92,10 +92,6 @@ class TiledMap {
   }
 
   // タイルマップの状態を変更する
-  void changeEvent(int blockX, int blockY, int no) {
-    myGame.saveLoad.eventTiles[blockY][blockX] = no + 1;
-  }
-
   void changeMove(int blockX, int blockY, bool isMovable) {
     myGame.saveLoad.moveTiles[blockY][blockX] = isMovable ? 0 : 1;
   }

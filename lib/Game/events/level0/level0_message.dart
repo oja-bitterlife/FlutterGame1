@@ -48,7 +48,7 @@ class Level0Message extends LevelMessageBase {
         myGame.saveLoad.items["key"] = false;
 
         // 宝箱表示更新
-        myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
+        // myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
         myGame.map.updateEventComponent();
       }
       return super.startEvent(type);
@@ -63,7 +63,7 @@ class Level0Message extends LevelMessageBase {
       // 鍵を持っているが未使用(ドアを開ける)
       else if (myGame.saveLoad.items.containsKey("key")) {
         type = "gate_with_key";
-        myGame.saveLoad.items["gate_open"] = true;
+        myGame.saveLoad.items["key"] = true; // 鍵を使用済みに
       }
 
       return super.startEvent(type);
@@ -92,12 +92,12 @@ class Level0Message extends LevelMessageBase {
     }
 
     if (type == "gate_with_key") {
-      myGame.map.changeEvent(myGame.player.getFowardBlockX(),
-          myGame.player.getFowardBlockY() - 1, EventTile.gateSensorOpen.id);
-      myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
-          myGame.player.getFowardBlockY() - 1, EventTile.doorDownOpen.id);
-      myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
-          myGame.player.getFowardBlockY() - 2, EventTile.doorUpOpen.id);
+      // myGame.map.changeEvent(myGame.player.getFowardBlockX(),
+      //     myGame.player.getFowardBlockY() - 1, EventTile.gateSensorOpen.id);
+      // myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
+      //     myGame.player.getFowardBlockY() - 1, EventTile.doorDownOpen.id);
+      // myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
+      //     myGame.player.getFowardBlockY() - 2, EventTile.doorUpOpen.id);
 
       myGame.map.changeMove(myGame.player.getFowardBlockX() + 1,
           myGame.player.getFowardBlockY() - 1, true);
