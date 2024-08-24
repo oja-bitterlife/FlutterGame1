@@ -14,10 +14,7 @@ class SaveLoad {
   SaveLoad(this.myGame, this.userDB);
 
   // 管理対象データ
-  // PlayerDir playerDir = PlayerDir.down;
-  // int playerBlockX = 7, playerBlockY = 14;
-
-  Map<String, int> items = {};
+  Map<String, bool> items = {}; // <name, used>
   late List<List<int>> eventTiles, moveTiles;
 
   static Future<SaveLoad> init(MyGame myGame, List<List<int>> orgEventTiles,
@@ -36,28 +33,49 @@ class SaveLoad {
   bool get hasData => userDB.select("select time from player").isNotEmpty;
 
   void save() {
+    // プレイヤーデータを保存する
     userDB.execute(
         "replace into player (id, dir, blockX, blockY) values (1, ?, ?, ?)", [
       myGame.player.dir.id,
       myGame.player.getBlockX(),
       myGame.player.getBlockY()
-    ]); // 1つ作っておく
+    ]);
+
+    // アイテムを保存する
+    userDB.execute("delete from items where player_id = 1"); // 一旦空に
+    var prepared = userDB
+        .prepare("insert into items (player_id, name, used) values (1, ?, ?)");
+    // 個々に保存
+    for (var name in items.keys) {
+      prepared.execute([name, items[name]]);
+    }
   }
 
   void load() {
-    var result =
+    // プレイヤーデータを読み込む
+    var resultPlayerData =
         userDB.select("select dir,blockX,blockY from player where id = 1");
 
     // まだセーブされていなかった
-    if (result.isEmpty) {
+    if (resultPlayerData.isEmpty) {
       return;
     }
 
-    // プレイヤーデータロード
-    var data = result.first;
-    myGame.player.setDir(PlayerDir.values[data["dir"] as int]);
-    myGame.player.position.x = PlayerComponent.getPosFromBlockX(data["blockX"]);
-    myGame.player.position.y = PlayerComponent.getPosFromBlockY(data["blockY"]);
+    var playerData = resultPlayerData.first;
+    myGame.player.setDir(PlayerDir.values[playerData["dir"] as int]);
+    myGame.player.position.x =
+        PlayerComponent.getPosFromBlockX(playerData["blockX"]);
+    myGame.player.position.y =
+        PlayerComponent.getPosFromBlockY(playerData["blockY"]);
+
+    // アイテムを読み込む
+    var resultItemData =
+        userDB.select("select name,used from items where player_id = 1");
+    items.clear();
+    for (var itemData in resultItemData) {
+      items[itemData["name"]] = itemData["used"] != 0;
+    }
+    log.info(items);
   }
 
   String getTime() {

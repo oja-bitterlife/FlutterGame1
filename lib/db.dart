@@ -10,7 +10,6 @@ Future<CommonDatabase> openUserDB() async {
   var db = sqlite3.open("user.sqlite");
 
   // テーブル作成
-  db.execute("DROP TABLE IF EXISTS player");
   db.execute("""CREATE TABLE IF NOT EXISTS player (
             id INT(1) UNIQUE,
             dir INT(1) DEFAULT 0,
@@ -19,7 +18,6 @@ Future<CommonDatabase> openUserDB() async {
             time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )""");
 
-  db.execute("DROP TABLE IF EXISTS items");
   db.execute("""CREATE TABLE IF NOT EXISTS items (
             player_id INT(1) PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
