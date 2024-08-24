@@ -1,7 +1,7 @@
 {
     "watch":{
         "assets_data": {
-            "patterns": ["assets/data"],
+            "patterns": ["assets/data", "assets/tiles", "assets/images"],
             "extensions": "*"
         }
     },

@@ -26,6 +26,11 @@ class EventManager {
   static Future<EventManager> create(MyGame myGame) async {
     var self = EventManager(myGame, await openEventDB());
 
+    // DBデバッグ
+    // var result = self.eventDB
+    //     .select("select * from ${LevelMessageBase.messageEventTable}");
+    // result.forEach(log.info);
+
     // とりあえずLevel0を作っていく
     self.message = await Level0Message.create(myGame);
     self.action = await Level0Action.create(myGame);

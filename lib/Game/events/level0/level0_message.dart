@@ -40,12 +40,18 @@ class Level0Message extends LevelMessageBase {
   void onFind(String type, int blockX, int blockY) {
     // 宝箱
     if (type == "treasure") {
-      // 鍵を入手
-      myGame.saveLoad.items["key"] = false;
+      // 鍵を入手済み
+      if (myGame.saveLoad.items.containsKey("key")) {
+        type = "treasure_opened";
+      } else {
+        // 鍵を入手
+        myGame.saveLoad.items["key"] = false;
 
-      // 宝箱表示更新
-      myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
-      myGame.map.updateEventComponent();
+        // 宝箱表示更新
+        myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
+        myGame.map.updateEventComponent();
+      }
+      return super.startEvent(type);
     }
 
     // ゲートセンサー
@@ -59,6 +65,8 @@ class Level0Message extends LevelMessageBase {
         type = "gate_with_key";
         myGame.saveLoad.items["gate_open"] = true;
       }
+
+      return super.startEvent(type);
     }
 
     // メッセージイベント

@@ -7,11 +7,6 @@
     <property name="event" value="treasure"/>
    </properties>
   </tile>
-  <tile id="373">
-   <properties>
-    <property name="event" value="treasure_open"/>
-   </properties>
-  </tile>
   <tile id="460">
    <properties>
     <property name="event" value="gate"/>
