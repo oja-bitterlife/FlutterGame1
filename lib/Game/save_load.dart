@@ -33,13 +33,35 @@ class SaveLoad {
     moveTiles = orgMoveTiles.map((e) => e.toList()).toList();
   }
 
-  void save() {}
+  bool get hasData => userDB.select("select time from player").isNotEmpty;
 
-  void load() {}
+  void save() {
+    userDB.execute(
+        "replace into player (id, dir, blockX, blockY) values (1, ?, ?, ?)", [
+      myGame.player.dir.id,
+      myGame.player.getBlockX(),
+      myGame.player.getBlockY()
+    ]); // 1つ作っておく
+  }
+
+  void load() {
+    var result =
+        userDB.select("select dir,blockX,blockY from player where id = 1");
+
+    // まだセーブされていなかった
+    if (result.isEmpty) {
+      return;
+    }
+
+    // プレイヤーデータロード
+    var data = result.first;
+    myGame.player.setDir(PlayerDir.values[data["dir"] as int]);
+    myGame.player.position.x = PlayerComponent.getPosFromBlockX(data["blockX"]);
+    myGame.player.position.y = PlayerComponent.getPosFromBlockY(data["blockY"]);
+  }
 
   String getTime() {
-    var result = userDB.select("select time from user");
-    log.info(result);
+    var result = userDB.select("select time from player");
     if (result.isEmpty) {
       return "----/--/-- --:--:--";
     }

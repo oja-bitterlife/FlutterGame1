@@ -41,8 +41,10 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('Load'),
           onTap: () {
-            myGame.saveLoad.load();
-            myGame.restart(false);
+            if (myGame.saveLoad.hasData) {
+              myGame.restart(false);
+              myGame.saveLoad.load();
+            }
             Navigator.of(context).pop(); // メニューは閉じる
           },
           subtitle: Text(myGame.saveLoad.getTime()),
