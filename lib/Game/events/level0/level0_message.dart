@@ -94,7 +94,7 @@ class Level0Message extends LevelMessageBase {
       // myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
       //     myGame.player.getFowardBlockY() - 2, EventTile.doorUpOpen.id);
 
-      myGame.userData.movable[Vector2(
+      myGame.userData.movables[Vector2(
           myGame.player.getFowardBlockX() + 1 as double,
           myGame.player.getFowardBlockY() - 1 as double)] = true;
 

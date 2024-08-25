@@ -20,16 +20,23 @@ Future<CommonDatabase> openUserDB() async {
 
   db.execute("""CREATE TABLE IF NOT EXISTS items (
             player_id INT(1),
-            name VARCHAR(255) NOT NULL,
+            name VARCHAR(255),
             used BOOLEAN
           )""");
 
   // db.execute("""DROP TABLE IF EXISTS map_event""");
   db.execute("""CREATE TABLE IF NOT EXISTS map_event (
             player_id INT(1),
-            name VARCHAR(255) NOT NULL,
+            name VARCHAR(255),
             blockX INT(3),
             blockY INT(3)
+          )""");
+
+  db.execute("""CREATE TABLE IF NOT EXISTS movable (
+            player_id INT(1),
+            blockX INT(3),
+            blockY INT(3),
+            movable INT(1)
           )""");
 
   return db;

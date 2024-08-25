@@ -17,7 +17,7 @@ class UserData {
   // 管理対象データ
   Map<String, bool> items = {}; // <name, used>
   Map<String, Vector2> mapEvents = {}; // <name, blockPos>
-  Map<Vector2, bool> movable = {}; // <blockPos, movable>
+  Map<Vector2, bool> movables = {}; // <blockPos, movable>
 
   static Future<UserData> init(MyGame myGame) async {
     return UserData(myGame, await openUserDB());
@@ -27,7 +27,7 @@ class UserData {
   void reset() {
     items.clear();
     mapEvents.clear();
-    movable.clear();
+    movables.clear();
   }
 
   bool get hasPlayerSave => userDB.select("select time from player").isNotEmpty;
@@ -56,6 +56,18 @@ class UserData {
         "insert into map_event (player_id, name, blockX, blockY) values (1, ?, ?, ?)");
     mapEvents.forEach((eventName, block) {
       preparedMapEvent.execute([eventName, block.x, block.y]);
+    });
+
+    // 移動上書きの保存
+    userDB.execute("delete from movable where player_id = 1"); // 一旦空に
+    var preparedMovable = userDB.prepare(
+        "insert into movable (player_id, blockX, blockY, movable) values (1, ?, ?, ?)");
+    movables.forEach((block, movable) {
+      preparedMovable.execute([
+        block.x,
+        block.y,
+        movable,
+      ]);
     });
   }
 
@@ -92,6 +104,15 @@ class UserData {
     for (var mapEvent in resultMapEvent) {
       mapEvents[mapEvent["name"]] =
           Vector2(mapEvent["blockX"], mapEvent["blockY"]);
+    }
+
+    // 移動上書きを読み込む
+    var resultMovable = userDB.select(
+        "select blockX,blockY,movable from movable where player_id = 1");
+    movables.clear();
+    for (var movable in resultMovable) {
+      movables[Vector2(movable["blockX"], movable["blockY"])] =
+          movable["movable"] != 0;
     }
   }
 

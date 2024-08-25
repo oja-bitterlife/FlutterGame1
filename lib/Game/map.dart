@@ -68,7 +68,7 @@ class TiledMap {
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
-    for (var entry in myGame.userData.movable.entries) {
+    for (var entry in myGame.userData.movables.entries) {
       // ユーザーデータ優先
       if (entry.key.x == blockX && entry.key.y == blockY) {
         return entry.value ? MapEventType.floor : MapEventType.wall;
