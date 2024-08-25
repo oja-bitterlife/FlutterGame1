@@ -10,9 +10,44 @@ import 'package:my_app/my_logger.dart';
 
 class UserData {
   late MyGame myGame;
-  CommonDatabase userDB;
+  CommonDatabase userDB, userTmp;
 
-  UserData(this.myGame, this.userDB);
+  UserData(this.myGame, this.userDB, this.userTmp) {
+    // userTmp.select("select * from movable");
+
+    // テーブル作成
+    var tables = [
+      """CREATE TABLE IF NOT EXISTS player (
+            id INT(1) PRIMARY KEY,
+            dir INT(1) DEFAULT 0,
+            blockX INT(3) DEFAULT 0,
+            blockY INT(3) DEFAULT 0,
+            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          )""",
+      """CREATE TABLE IF NOT EXISTS items (
+            player_id INT(1),
+            name VARCHAR(255),
+            used BOOLEAN
+          )""",
+      """CREATE TABLE IF NOT EXISTS map_event (
+            player_id INT(1),
+            name VARCHAR(255),
+            blockX INT(3),
+            blockY INT(3)
+          )""",
+      """CREATE TABLE IF NOT EXISTS movable (
+            player_id INT(1),
+            blockX INT(3),
+            blockY INT(3),
+            movable INT(1)
+          )"""
+    ];
+
+    for (var sql in tables) {
+      userDB.execute(sql);
+      userTmp.execute(sql);
+    }
+  }
 
   // 管理対象データ
   Map<String, bool> items = {}; // <name, used>
@@ -20,7 +55,7 @@ class UserData {
   Map<Vector2, bool> movables = {}; // <blockPos, movable>
 
   static Future<UserData> init(MyGame myGame) async {
-    return UserData(myGame, await openUserDB());
+    return UserData(myGame, await openUserDB(), await openUserTmp());
   }
 
   // 保持情報のクリア
