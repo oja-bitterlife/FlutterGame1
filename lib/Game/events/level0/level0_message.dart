@@ -86,6 +86,7 @@ class Level0Message extends LevelMessageBase {
     }
 
     if (type == "gate_with_key") {
+      // ドアオープン表示
       // myGame.map.changeEvent(myGame.player.getFowardBlockX(),
       //     myGame.player.getFowardBlockY() - 1, EventTile.gateSensorOpen.id);
       // myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
@@ -93,8 +94,9 @@ class Level0Message extends LevelMessageBase {
       // myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
       //     myGame.player.getFowardBlockY() - 2, EventTile.doorUpOpen.id);
 
-      myGame.map.changeMove(myGame.player.getFowardBlockX() + 1,
-          myGame.player.getFowardBlockY() - 1, true);
+      myGame.userData.movable[Vector2(
+          myGame.player.getFowardBlockX() + 1 as double,
+          myGame.player.getFowardBlockY() - 1 as double)] = true;
 
       myGame.map.updateEventComponent();
     }

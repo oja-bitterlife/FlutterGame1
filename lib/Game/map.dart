@@ -68,16 +68,17 @@ class TiledMap {
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
-    // if (myGame.userData.moveTiles[blockY][blockX] != 0) {
-    //   return MapEventType.wall; // 移動不可
-    // }
+    for (var entry in myGame.userData.movable.entries) {
+      // ユーザーデータ優先
+      if (entry.key.x == blockX && entry.key.y == blockY) {
+        return entry.value ? MapEventType.floor : MapEventType.wall;
+      }
+    }
+    var moveGid = getMoveGid(blockX, blockY);
+    if (moveGid != 0) return MapEventType.wall; // 移動不可
 
-    return MapEventType.floor; // なにもない(床)
-  }
-
-  // タイルマップの状態を変更する
-  void changeMove(int blockX, int blockY, bool isMovable) {
-    // myGame.userData.moveTiles[blockY][blockX] = isMovable ? 0 : 1;
+    // なにもない(床)
+    return MapEventType.floor;
   }
 
   // イベントタイル表示
@@ -98,19 +99,19 @@ class TiledMap {
     // }
   }
 
-  List<List<int>> getOrgTiles(String layerName) {
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
-    var tiles =
-        List.generate(layer!.height, (i) => List.filled(layer.width, 0));
+  // List<List<int>> getOrgTiles(String layerName) {
+  //   TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
+  //   var tiles =
+  //       List.generate(layer!.height, (i) => List.filled(layer.width, 0));
 
-    for (int y = 0; y < layer.height; y++) {
-      for (int x = 0; x < layer.width; x++) {
-        var gid = layer.tileData?[y][x];
-        tiles[y][x] = gid!.tile;
-      }
-    }
-    return tiles;
-  }
+  //   for (int y = 0; y < layer.height; y++) {
+  //     for (int x = 0; x < layer.width; x++) {
+  //       var gid = layer.tileData?[y][x];
+  //       tiles[y][x] = gid!.tile;
+  //     }
+  //   }
+  //   return tiles;
+  // }
 
   int getGid(String layerName, int blockX, int blockY) {
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
@@ -120,6 +121,10 @@ class TiledMap {
 
   int getEventGid(int blockX, int blockY) {
     return getGid("UnderPlayerEvent", blockX, blockY);
+  }
+
+  int getMoveGid(int blockX, int blockY) {
+    return getGid("walk-flag", blockX, blockY);
   }
 
   String? getTilesetProperty(int gid, String propName) {

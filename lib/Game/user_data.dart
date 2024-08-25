@@ -17,6 +17,7 @@ class UserData {
   // 管理対象データ
   Map<String, bool> items = {}; // <name, used>
   Map<String, Vector2> mapEvents = {}; // <name, blockPos>
+  Map<Vector2, bool> movable = {}; // <blockPos, movable>
 
   static Future<UserData> init(MyGame myGame) async {
     return UserData(myGame, await openUserDB());
@@ -26,6 +27,7 @@ class UserData {
   void reset() {
     items.clear();
     mapEvents.clear();
+    movable.clear();
   }
 
   bool get hasPlayerSave => userDB.select("select time from player").isNotEmpty;
