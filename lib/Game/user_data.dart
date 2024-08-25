@@ -114,8 +114,9 @@ class UserData {
 
   void save() {
     // プレイヤーデータを保存する
+    userTmp.execute("delete from player where book_id = 1");
     userTmp.execute(
-        "replace into player (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
+        "insert into player (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
         [
           myGame.player.dir.id,
           myGame.player.getBlockX(),

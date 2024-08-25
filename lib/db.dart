@@ -1,6 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:sqlite3/wasm.dart';
 
+// ignore: unused_import
+import '../my_logger.dart';
+
 // 実行時ユーザーデータ
 Future<CommonDatabase> openUserTmp() async {
   final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
@@ -50,7 +53,7 @@ void copyTable(CommonDatabase src, CommonDatabase dist, String table) {
 
   for (var data in result) {
     var keys = data.keys.join(",");
-    var placeholders = List<String>.filled(keys.length, "?");
+    var placeholders = List<String>.filled(data.length, "?").join(",");
     dist.execute(
         "insert into $table ($keys) values ($placeholders)", data.values);
   }
