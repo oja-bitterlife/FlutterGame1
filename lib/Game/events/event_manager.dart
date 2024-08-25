@@ -54,7 +54,7 @@ class EventManager {
   }
 
   String? getMapEvent(int blockX, int blockY) {
-    var result = myGame.saveLoad.userDB.select(
+    var result = myGame.userData.userDB.select(
         "select name from map_event where player_id = 1 and  blockX = ? and blockY = ?",
         [blockX, blockY]);
 

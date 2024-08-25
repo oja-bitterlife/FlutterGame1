@@ -1,57 +1,31 @@
+import 'package:flame/game.dart';
 import 'package:sqlite3/common.dart';
 
 import '../db.dart';
 import 'my_game.dart';
-import 'map.dart';
 import 'player.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class SaveLoad {
+class UserData {
   late MyGame myGame;
   CommonDatabase userDB;
 
-  SaveLoad(this.myGame, this.userDB);
+  UserData(this.myGame, this.userDB);
 
   // 管理対象データ
   Map<String, bool> items = {}; // <name, used>
-  late List<List<int>> viewTiles, moveTiles;
+  Map<String, Vector2> mapEvents = {}; // <name, blockPos>
 
-  static Future<SaveLoad> init(MyGame myGame, List<List<int>> orgEventTiles,
-      List<List<int>> orgMoveTiles) async {
-    var self = SaveLoad(myGame, await openUserDB());
-    self.reset(orgEventTiles, orgMoveTiles);
-
-    return self;
+  static Future<UserData> init(MyGame myGame) async {
+    return UserData(myGame, await openUserDB());
   }
 
-  void reset(List<List<int>> orgEventTiles, List<List<int>> orgMoveTiles) {
-    // 一旦クリア
-    userDB.execute("delete from map_event where player_id = 1");
-
-    // DBにイベントを格納する
-    for (int y = 0; y < orgEventTiles.length; y++) {
-      for (int x = 0; x < orgEventTiles[y].length; x++) {
-        if (orgEventTiles[y][x] != 0) {
-          // タイル情報のeventを読む
-          String? eventName = TiledMap.tiled.tileMap.map
-              .tileByGid(orgEventTiles[y][x])
-              ?.properties["event"]
-              ?.value as String?;
-
-          // イベント情報をDBに保存
-          if (eventName != null) {
-            userDB.execute(
-                "insert into map_event (player_id, name, blockX, blockY) values (1, ?, ?, ?)",
-                [eventName, x, y]);
-          }
-        }
-      }
-    }
-
-    viewTiles = orgEventTiles.map((e) => e.toList()).toList();
-    moveTiles = orgMoveTiles.map((e) => e.toList()).toList();
+  // 保持情報のクリア
+  void reset() {
+    items.clear();
+    mapEvents.clear();
   }
 
   bool get hasPlayerSave => userDB.select("select time from player").isNotEmpty;
@@ -67,12 +41,20 @@ class SaveLoad {
 
     // アイテムを保存する
     userDB.execute("delete from items where player_id = 1"); // 一旦空に
-    var prepared = userDB
+    var preparedItems = userDB
         .prepare("insert into items (player_id, name, used) values (1, ?, ?)");
     // 個々に保存
-    for (var name in items.keys) {
-      prepared.execute([name, items[name]]);
-    }
+    items.forEach((itemName, isUsed) {
+      preparedItems.execute([itemName, isUsed]);
+    });
+
+    // MAP配置イベントの保存
+    userDB.execute("delete from map_event where player_id = 1"); // 一旦空に
+    var preparedMapEvent = userDB.prepare(
+        "insert into map_event (player_id, name, blockX, blockY) values (1, ?, ?, ?)");
+    mapEvents.forEach((eventName, block) {
+      preparedMapEvent.execute([eventName, block.x, block.y]);
+    });
   }
 
   void load() {
@@ -85,6 +67,7 @@ class SaveLoad {
       return;
     }
 
+    // プレイヤーデータを更新
     var playerData = resultPlayerData.first;
     myGame.player.setDir(PlayerDir.values[playerData["dir"] as int]);
     myGame.player.position.x =
@@ -93,13 +76,21 @@ class SaveLoad {
         PlayerComponent.getPosFromBlockY(playerData["blockY"]);
 
     // アイテムを読み込む
-    var resultItemData =
+    var resultItems =
         userDB.select("select name,used from items where player_id = 1");
     items.clear();
-    for (var itemData in resultItemData) {
-      items[itemData["name"]] = itemData["used"] != 0;
+    for (var item in resultItems) {
+      items[item["name"]] = item["used"] != 0;
     }
-    log.info(items);
+
+    // MAPイベントを読み込む
+    var resultMapEvent = userDB
+        .select("select name,blockX,blockY from map_event where player_id = 1");
+    mapEvents.clear();
+    for (var mapEvent in resultMapEvent) {
+      mapEvents[mapEvent["name"]] =
+          Vector2(mapEvent["blockX"], mapEvent["blockY"]);
+    }
   }
 
   String getTime() {

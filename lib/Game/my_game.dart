@@ -5,7 +5,7 @@ import 'package:flame/sprite.dart';
 
 import '../UI_Widgets/player_cursor.dart';
 import '../UI_Widgets/message_window.dart';
-import 'save_load.dart';
+import 'user_data.dart';
 import 'player.dart';
 import 'map.dart';
 import 'events/event_manager.dart';
@@ -14,7 +14,7 @@ import 'events/event_manager.dart';
 import '../my_logger.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
-  late SaveLoad saveLoad;
+  late UserData userData;
 
   late MovePlayerComponent player;
   late TiledMap map;
@@ -28,9 +28,8 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     await PlayerComponent.load();
     await TiledMap.load(this);
 
-    // DBの作成
-    saveLoad = await SaveLoad.init(
-        this, TiledMap.orgEventTiles(), TiledMap.orgMoveTiles());
+    // ユーザーDBの作成
+    userData = await UserData.init(this);
 
     // 全体の初期化
     await init();
@@ -109,15 +108,18 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   }
 
   // 最初からやり直す
-  Future<void> restart(bool withStartAction) async {
+  Future<void> restart() async {
     removeAll(children); // 一旦全部消す
-    await init();
 
-    if (withStartAction) {
-      // 基本はアクションから開始
-      eventManager.startAction("on_start");
-    } else {
-      startIdle();
-    }
+    // 構築しなおし
+    await init();
+    startIdle();
+
+    // if (withStartAction) {
+    //   // 基本はアクションから開始
+    //   eventManager.startAction("on_start");
+    // } else {
+    //   startIdle();
+    // }
   }
 }
