@@ -55,6 +55,7 @@ class UserData {
 
   // 保持情報のクリア
   void reset() {
+    userTmp.execute("delete from player where book_id = 1");
     userTmp.execute("delete from items where book_id = 1");
     userTmp.execute("delete from map_event where book_id = 1");
     userTmp.execute("delete from movable where book_id = 1");
@@ -138,11 +139,7 @@ class UserData {
     // プレイヤーデータを読み込む
     var resultPlayerData = userTmp
         .select("select dir,blockX,blockY from player where book_id = 1");
-
-    // まだセーブされていなかった
-    if (resultPlayerData.isEmpty) {
-      return;
-    }
+    if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新
     var playerData = resultPlayerData.first;

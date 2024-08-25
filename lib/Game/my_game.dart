@@ -33,19 +33,11 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 全体の初期化
     await init();
+    startIdle();
   }
 
   GameWidget createWidget() {
     return GameWidget(key: const GlobalObjectKey("game"), game: this);
-  }
-
-  // スタート時のみ初期化(onLoadの後)
-  @override
-  void onMount() {
-    super.onMount();
-
-    // アクションから開始
-    eventManager.startAction("on_start");
   }
 
   @override
@@ -114,12 +106,5 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // 構築しなおし
     await init();
     startIdle();
-
-    // if (withStartAction) {
-    //   // 基本はアクションから開始
-    //   eventManager.startAction("on_start");
-    // } else {
-    //   startIdle();
-    // }
   }
 }

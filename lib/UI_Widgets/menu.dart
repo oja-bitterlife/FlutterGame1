@@ -26,6 +26,7 @@ class Menu extends StatelessWidget {
           title: const Text('リスタート'),
           onTap: () {
             myGame.restart();
+            myGame.userData.reset();
             Navigator.of(context).pop(); // メニューは閉じる
           },
         ),
