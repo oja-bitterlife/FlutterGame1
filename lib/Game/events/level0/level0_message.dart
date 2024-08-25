@@ -43,15 +43,11 @@ class Level0Message extends LevelMessageBase {
       // 鍵を入手
       myGame.userData.items["key"] = false;
 
-      // イベント更新
-      myGame.userData.mapEvents["treasure_opened"] =
-          Vector2(blockX as double, blockY as double);
-
       //   // 宝箱表示更新
       //   // myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
       //   myGame.map.updateEventComponent();
       // }
-      return super.startEvent(type);
+      return super.startEvent(type, blockX, blockY);
     }
 
     // ゲートセンサー
@@ -61,21 +57,18 @@ class Level0Message extends LevelMessageBase {
         // 鍵を使う
         type = "gate_with_key";
         myGame.userData.items["key"] = true;
-
-        // イベント更新
-        myGame.userData.mapEvents["gate_opened"] =
-            Vector2(blockX as double, blockY as double);
       }
 
-      return super.startEvent(type);
+      return super.startEvent(type, blockX, blockY);
     }
 
     // メッセージイベント
-    super.startEvent(type);
+    super.startEvent(type, blockX, blockY);
   }
 
   @override
-  void onMessageFinish(String type) {
+  void onMessageFinish(
+      String type, int blockX, int blockY, String? changeNext) {
     // ゲームオーバーに移行する
     if (type == "trap") {
       const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
@@ -107,6 +100,6 @@ class Level0Message extends LevelMessageBase {
     }
 
     // idleに戻す
-    super.onMessageFinish(type);
+    super.onMessageFinish(type, blockX, blockY, changeNext);
   }
 }

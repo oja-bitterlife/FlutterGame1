@@ -76,12 +76,12 @@ class EventManager {
     }
   }
 
-  void startMessage(String type, {List<String>? data}) {
+  void startMessage(String type, int blockX, int blockY, {List<String>? data}) {
     action.reset(); // アクションを止める
     if (data != null) {
-      message.startString(type, data);
+      message.startString(type, blockX, blockY, data);
     } else {
-      message.startEvent(type);
+      message.startEvent(type, blockX, blockY);
     }
   }
 
@@ -95,8 +95,9 @@ class EventManager {
   }
 
   // メッセージ終わりコールバック
-  void onMessageFinish(String type) {
-    message.onMessageFinish(type);
+  void onMessageFinish(
+      String type, int blockX, int blockY, String? changeNext) {
+    message.onMessageFinish(type, blockX, blockY, changeNext);
   }
 
   // アクション終わりコールバック

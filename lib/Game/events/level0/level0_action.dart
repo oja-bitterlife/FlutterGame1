@@ -26,6 +26,7 @@ class Level0Action extends LevelActionBase {
 
   @override
   void onActionFinish(String type) {
-    myGame.eventManager.startMessage("on_start");
+    myGame.eventManager.startMessage(
+        "on_start", myGame.player.getBlockX(), myGame.player.getBlockY());
   }
 }

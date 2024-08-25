@@ -1,3 +1,4 @@
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:sqlite3/wasm.dart';
 
@@ -11,17 +12,20 @@ import 'package:my_app/my_logger.dart';
 class MessageView {
   final LevelMessageBase eventManager;
 
-  final String type;
+  final String type; // 実行イベント
   final List<String> message;
+  final String? changeNext; // イベント変更先
+  final int blockX, blockY; // イベント発生場所
   int page = 0;
 
-  MessageView(this.eventManager, this.type, this.message);
+  MessageView(this.eventManager, this.type, this.blockX, this.blockY,
+      this.message, this.changeNext);
 
   // 次のメッセージを表示
   bool nextMessage() {
     // メッセージが空になら終了
     if (page >= message.length) {
-      eventManager.onMessageFinish(type);
+      eventManager.onMessageFinish(type, blockX, blockY, changeNext);
       return false;
     }
 
@@ -46,9 +50,10 @@ class MessageView {
 }
 
 abstract class LevelMessageBase {
+  static const messageEventTable = "message_event"; // メッセージデータ格納場所
+
   final MyGame myGame;
   final int level; // ステージ番号
-  static const messageEventTable = "message_event"; // メッセージデータ格納場所
 
   // メッセージウインドウ
   MessageView? messageView;
@@ -61,39 +66,49 @@ abstract class LevelMessageBase {
     return msg.replaceAll("\\n", "\n").split("\\0");
   }
 
-  // tomlデータのイベント再生
-  void startEvent(String type) {
+  // イベント再生
+  void startEvent(String type, int blockX, int blockY) {
     var result = myGame.eventManager.eventDB.select(
-        "select msg from $messageEventTable where name = ? and level = ?",
+        "select msg,next from $messageEventTable where name = ? and level = ?",
         [type, level]);
 
     // データを確認して開始
     if (result.isNotEmpty) {
-      messageView = MessageView(this, type, format(result.first["msg"]));
+      messageView = MessageView(this, type, blockX, blockY,
+          format(result.first["msg"]), result.first["next"]);
       messageView?.start();
     } else {
       // tomlに該当するイベントデータが無かった
-      startString(type, ["メッセージデータがないイベントだ！: $type"]);
+      startString(
+          type, blockX, blockY, ["メッセージデータがないイベントだ！: $type($blockX, $blockY)"]);
     }
   }
 
   // 特別にメッセージを出したいとき
-  void startString(String type, List<String> message) {
-    messageView = MessageView(this, type, message);
+  void startString(String type, int blockX, int blockY, List<String> message,
+      [String? changeNext]) {
+    messageView = MessageView(this, type, blockX, blockY, message, changeNext);
     messageView?.start();
   }
 
   // イベントオブジェクトチェック
   void onFind(String type, int blockX, int blockY) {
-    startString("no implemented: $type", ["未実装だ！"]);
+    startString("no implemented: $type", blockX, blockY, ["未実装だ！"]);
   }
 
   // メッセージ表示終わりコールバック
-  void onMessageFinish(String type) {
+  void onMessageFinish(
+      String type, int blockX, int blockY, String? changeNext) {
     log.info("finish message: $type");
 
     messageView?.close();
     messageView = null;
+
+    // イベント更新
+    if (changeNext != null) {
+      myGame.userData.mapEvents[changeNext] =
+          Vector2(blockX as double, blockY as double);
+    }
 
     // idle開始
     myGame.eventManager
