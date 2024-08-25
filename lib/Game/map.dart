@@ -119,33 +119,27 @@ class TiledMap {
     // }
   }
 
-  // オリジナルのeventリストを返す
-  static List<List<int>> orgEventTiles() {
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("UnderPlayerEvent");
-    var eventTiles =
+  static List<List<int>> getOrgTiles(String layerName) {
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
+    var tiles =
         List.generate(layer!.height, (i) => List.filled(layer.width, 0));
 
     for (int y = 0; y < layer.height; y++) {
       for (int x = 0; x < layer.width; x++) {
         var gid = layer.tileData?[y][x];
-        eventTiles[y][x] = gid!.tile;
+        tiles[y][x] = gid!.tile;
       }
     }
-    return eventTiles;
+    return tiles;
+  }
+
+  // オリジナルのeventリストを返す
+  static List<List<int>> orgEventTiles() {
+    return getOrgTiles("UnderPlayerEvent");
   }
 
   // オリジナルのmoveリストを返す
   static List<List<int>> orgMoveTiles() {
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>("walk-flag");
-    var moveTiles =
-        List.generate(layer!.height, (i) => List.filled(layer.width, 0));
-
-    for (int y = 0; y < layer.height; y++) {
-      for (int x = 0; x < layer.width; x++) {
-        var gid = layer.tileData?[y][x];
-        moveTiles[y][x] = gid!.tile;
-      }
-    }
-    return moveTiles;
+    return getOrgTiles("walk-flag");
   }
 }

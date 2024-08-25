@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:sqlite3/common.dart';
 import '../my_game.dart';
 import '../../db.dart';
@@ -26,11 +27,6 @@ class EventManager {
   static Future<EventManager> create(MyGame myGame) async {
     var self = EventManager(myGame, await openEventDB());
 
-    // DBデバッグ
-    // var result = self.eventDB
-    //     .select("select * from ${LevelMessageBase.messageEventTable}");
-    // result.forEach(log.info);
-
     // とりあえずLevel0を作っていく
     self.message = await Level0Message.create(myGame);
     self.action = await Level0Action.create(myGame);
@@ -54,15 +50,15 @@ class EventManager {
   }
 
   String? getMapEvent(int blockX, int blockY) {
-    var result = myGame.userData.userDB.select(
-        "select name from map_event where player_id = 1 and  blockX = ? and blockY = ?",
-        [blockX, blockY]);
+    // マップ上にイベントが存在するか調べる
+    var result = myGame.userData.mapEvents.entries.firstWhereOrNull(
+        (data) => data.value.x == blockX && data.value.y == blockY);
 
-    // イベントは特にない
-    if (result.isEmpty) return null;
+    // イベントは特になかった
+    if (result == null) return null;
 
     // イベント名を返す
-    return result.first["name"];
+    return result.key;
   }
 
   // Findアイコンが押された(イベントオブジェクトがある)
