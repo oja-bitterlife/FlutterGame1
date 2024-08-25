@@ -60,27 +60,6 @@ class TiledMap {
         children: [SpriteBatchComponent(spriteBatch: eventSprites)],
         priority: Priority.mapUnder.index));
     updateEventComponent();
-
-    // イベントデータ抜き出し
-    updateUserMapEvent();
-  }
-
-  void updateUserMapEvent() {
-    var eventTiles = orgEventTiles();
-    for (int y = 0; y < eventTiles.length; y++) {
-      for (int x = 0; x < eventTiles[y].length; x++) {
-        int gidTile = eventTiles[y][x];
-        if (gidTile > 0) {
-          var prop =
-              tiled.tileMap.map.tilesets[0].tiles[gidTile - 1].properties;
-          var eventName = prop["event"]?.value as String?;
-          if (eventName != null) {
-            myGame.userData.mapEvents[eventName] =
-                Vector2(x as double, y as double);
-          }
-        }
-      }
-    }
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
@@ -119,7 +98,7 @@ class TiledMap {
     // }
   }
 
-  static List<List<int>> getOrgTiles(String layerName) {
+  List<List<int>> getOrgTiles(String layerName) {
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
     var tiles =
         List.generate(layer!.height, (i) => List.filled(layer.width, 0));
@@ -133,13 +112,19 @@ class TiledMap {
     return tiles;
   }
 
-  // オリジナルのeventリストを返す
-  static List<List<int>> orgEventTiles() {
-    return getOrgTiles("UnderPlayerEvent");
+  int getGid(String layerName, int blockX, int blockY) {
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
+    var gid = layer?.tileData?[blockY][blockX];
+    return gid!.tile;
   }
 
-  // オリジナルのmoveリストを返す
-  static List<List<int>> orgMoveTiles() {
-    return getOrgTiles("walk-flag");
+  int getEventGid(int blockX, int blockY) {
+    return getGid("UnderPlayerEvent", blockX, blockY);
+  }
+
+  String? getTilesetProperty(int gid, String propName) {
+    if (gid == 0) return null;
+    var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
+    return prop["event"]?.value as String?;
   }
 }

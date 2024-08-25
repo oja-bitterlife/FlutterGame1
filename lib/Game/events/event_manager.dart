@@ -49,16 +49,23 @@ class EventManager {
     return false;
   }
 
+  // マップ上にイベントが存在するか調べる
   String? getMapEvent(int blockX, int blockY) {
-    // マップ上にイベントが存在するか調べる
+    // 上書きイベントを確認
     var result = myGame.userData.mapEvents.entries.firstWhereOrNull(
         (data) => data.value.x == blockX && data.value.y == blockY);
 
-    // イベントは特になかった
-    if (result == null) return null;
-
     // イベント名を返す
-    return result.key;
+    if (result != null) return result.key;
+
+    // マップのイベントを確認
+    int gid = myGame.map.getEventGid(blockX, blockY);
+    if (gid != 0) {
+      return myGame.map.getTilesetProperty(gid, "event");
+    }
+
+    // イベントは特になかった
+    return null;
   }
 
   // Findアイコンが押された(イベントオブジェクトがある)

@@ -48,7 +48,7 @@ class UserData {
       preparedItems.execute([itemName, isUsed]);
     });
 
-    // MAP配置イベントの保存
+    // MAP上書きイベントの保存
     userDB.execute("delete from map_event where player_id = 1"); // 一旦空に
     var preparedMapEvent = userDB.prepare(
         "insert into map_event (player_id, name, blockX, blockY) values (1, ?, ?, ?)");

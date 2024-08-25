@@ -40,30 +40,31 @@ class Level0Message extends LevelMessageBase {
   void onFind(String type, int blockX, int blockY) {
     // 宝箱
     if (type == "treasure") {
-      // 鍵を入手済み
-      if (myGame.userData.items.containsKey("key")) {
-        type = "treasure_opened";
-      } else {
-        // 鍵を入手
-        myGame.userData.items["key"] = false;
+      // 鍵を入手
+      myGame.userData.items["key"] = false;
 
-        // 宝箱表示更新
-        // myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
-        myGame.map.updateEventComponent();
-      }
+      // イベント更新
+      myGame.userData.mapEvents["treasure_opened"] =
+          Vector2(blockX as double, blockY as double);
+
+      //   // 宝箱表示更新
+      //   // myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
+      //   myGame.map.updateEventComponent();
+      // }
       return super.startEvent(type);
     }
 
     // ゲートセンサー
     if (type == "gate") {
-      // 鍵を使用済み(ドアは開いている)
-      if (myGame.userData.items["key"]!) {
-        type = "gate_opened";
-      }
-      // 鍵を持っているが未使用(ドアを開ける)
-      else if (myGame.userData.items.containsKey("key")) {
+      // 鍵を持っていたらドアを開ける
+      if (myGame.userData.items.containsKey("key")) {
+        // 鍵を使う
         type = "gate_with_key";
-        myGame.userData.items["key"] = true; // 鍵を使用済みに
+        myGame.userData.items["key"] = true;
+
+        // イベント更新
+        myGame.userData.mapEvents["gate_opened"] =
+            Vector2(blockX as double, blockY as double);
       }
 
       return super.startEvent(type);
