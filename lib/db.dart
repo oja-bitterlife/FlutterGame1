@@ -41,3 +41,17 @@ Future<CommonDatabase> openEventDB() async {
   sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
   return sqlite3.open(path);
 }
+
+void copyTable(CommonDatabase src, CommonDatabase dist, String table) {
+  dist.execute("delete from $table where book_id = 1");
+
+  var result = src.select("select * from $table where book_id = 1");
+  if (result.isEmpty) return;
+
+  for (var data in result) {
+    var keys = data.keys.join(",");
+    var placeholders = List<String>.filled(keys.length, "?");
+    dist.execute(
+        "insert into $table ($keys) values ($placeholders)", data.values);
+  }
+}

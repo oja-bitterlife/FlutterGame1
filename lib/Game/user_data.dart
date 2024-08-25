@@ -18,25 +18,25 @@ class UserData {
     // テーブル作成
     var tables = [
       """CREATE TABLE IF NOT EXISTS player (
-            id INT(1) PRIMARY KEY,
-            dir INT(1) DEFAULT 0,
-            blockX INT(3) DEFAULT 0,
-            blockY INT(3) DEFAULT 0,
+            book_id INT(1),
+            dir INT(1),
+            blockX INT(3),
+            blockY INT(3),
             time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           )""",
       """CREATE TABLE IF NOT EXISTS items (
-            player_id INT(1),
+            book_id INT(1),
             name VARCHAR(255),
             used BOOLEAN
           )""",
       """CREATE TABLE IF NOT EXISTS map_event (
-            player_id INT(1),
+            book_id INT(1),
             name VARCHAR(255),
             blockX INT(3),
             blockY INT(3)
           )""",
       """CREATE TABLE IF NOT EXISTS movable (
-            player_id INT(1),
+            book_id INT(1),
             blockX INT(3),
             blockY INT(3),
             movable INT(1)
@@ -49,67 +49,94 @@ class UserData {
     }
   }
 
-  // 管理対象データ
-  Map<String, bool> items = {}; // <name, used>
-  Map<String, Vector2> mapEvents = {}; // <name, blockPos>
-  Map<Vector2, bool> movables = {}; // <blockPos, movable>
-
   static Future<UserData> init(MyGame myGame) async {
     return UserData(myGame, await openUserDB(), await openUserTmp());
   }
 
   // 保持情報のクリア
   void reset() {
-    items.clear();
-    mapEvents.clear();
-    movables.clear();
+    userTmp.execute("delete from items where book_id = 1");
+    userTmp.execute("delete from map_event where book_id = 1");
+    userTmp.execute("delete from movable where book_id = 1");
   }
 
-  bool get hasPlayerSave => userDB.select("select time from player").isNotEmpty;
+  bool get hasPlayerSave =>
+      userDB.select("select time from player where book_id = 1").isNotEmpty;
+
+  bool hasItem(String name, {bool checkUsed = true}) {
+    var usedCheck = checkUsed ? "and used = 0" : "";
+    return userTmp.select(
+        "select used from items where book_id = 1 and name = ? $usedCheck",
+        [name]).isNotEmpty;
+  }
+
+  void setItem(String name, {bool used = false}) {
+    userTmp.execute("delete from items where book_id = 1 and name = ?", [name]);
+    userTmp.execute(
+        "insert into items (book_id,name,used) values (1, ?, ?)", [name, used]);
+  }
+
+  bool? isMobable(int blockX, int blockY) {
+    var result = userTmp.select(
+        "select movable from movable where book_id = 1 and blockX = ? and blockY = ?",
+        [blockX, blockY]);
+    if (result.isEmpty) return null;
+
+    return result.first["movable"] != 0;
+  }
+
+  void setMovable(int blockX, int blockY, bool movable) {
+    userTmp.execute(
+        "delete from movable where book_id = 1 and blockX = ? and blockY = ?",
+        [blockX, blockY]);
+    userTmp.execute(
+        "insert into movable (book_id,blockX,blockY,movable) values (1, ?, ?, ?)",
+        [blockX, blockY, movable]);
+  }
+
+  String? getMapEvent(int blockX, int blockY) {
+    var result = userTmp.select(
+        "select name from map_event where book_id = 1 and blockX = ? and blockY = ?",
+        [blockX, blockY]);
+    if (result.isEmpty) return null;
+
+    return result.first["name"];
+  }
+
+  void setMapEvent(String name, int blockX, int blockY) {
+    userTmp.execute(
+        "delete from map_event where book_id = 1 and blockX = ? and blockY = ?",
+        [blockX, blockY]);
+    userTmp.execute(
+        "insert into map_event (book_id,name,blockX,blockY) values (1, ?, ?, ?)",
+        [name, blockX, blockY]);
+  }
 
   void save() {
     // プレイヤーデータを保存する
-    userDB.execute(
-        "replace into player (id, dir, blockX, blockY) values (1, ?, ?, ?)", [
-      myGame.player.dir.id,
-      myGame.player.getBlockX(),
-      myGame.player.getBlockY()
-    ]);
+    userTmp.execute(
+        "replace into player (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
+        [
+          myGame.player.dir.id,
+          myGame.player.getBlockX(),
+          myGame.player.getBlockY()
+        ]);
 
-    // アイテムを保存する
-    userDB.execute("delete from items where player_id = 1"); // 一旦空に
-    var preparedItems = userDB
-        .prepare("insert into items (player_id, name, used) values (1, ?, ?)");
-    // 個々に保存
-    items.forEach((itemName, isUsed) {
-      preparedItems.execute([itemName, isUsed]);
-    });
-
-    // MAP上書きイベントの保存
-    userDB.execute("delete from map_event where player_id = 1"); // 一旦空に
-    var preparedMapEvent = userDB.prepare(
-        "insert into map_event (player_id, name, blockX, blockY) values (1, ?, ?, ?)");
-    mapEvents.forEach((eventName, block) {
-      preparedMapEvent.execute([eventName, block.x, block.y]);
-    });
-
-    // 移動上書きの保存
-    userDB.execute("delete from movable where player_id = 1"); // 一旦空に
-    var preparedMovable = userDB.prepare(
-        "insert into movable (player_id, blockX, blockY, movable) values (1, ?, ?, ?)");
-    movables.forEach((block, movable) {
-      preparedMovable.execute([
-        block.x,
-        block.y,
-        movable,
-      ]);
-    });
+    copyTable(userTmp, userDB, "player");
+    copyTable(userTmp, userDB, "items");
+    copyTable(userTmp, userDB, "map_event");
+    copyTable(userTmp, userDB, "movable");
   }
 
   void load() {
+    copyTable(userDB, userTmp, "player");
+    copyTable(userDB, userTmp, "items");
+    copyTable(userDB, userTmp, "map_event");
+    copyTable(userDB, userTmp, "movable");
+
     // プレイヤーデータを読み込む
-    var resultPlayerData =
-        userDB.select("select dir,blockX,blockY from player where id = 1");
+    var resultPlayerData = userTmp
+        .select("select dir,blockX,blockY from player where book_id = 1");
 
     // まだセーブされていなかった
     if (resultPlayerData.isEmpty) {
@@ -118,37 +145,11 @@ class UserData {
 
     // プレイヤーデータを更新
     var playerData = resultPlayerData.first;
-    myGame.player.setDir(PlayerDir.values[playerData["dir"] as int]);
+    myGame.player.setDir(PlayerDir.values[playerData["dir"]]);
     myGame.player.position.x =
         PlayerComponent.getPosFromBlockX(playerData["blockX"]);
     myGame.player.position.y =
         PlayerComponent.getPosFromBlockY(playerData["blockY"]);
-
-    // アイテムを読み込む
-    var resultItems =
-        userDB.select("select name,used from items where player_id = 1");
-    items.clear();
-    for (var item in resultItems) {
-      items[item["name"]] = item["used"] != 0;
-    }
-
-    // MAPイベントを読み込む
-    var resultMapEvent = userDB
-        .select("select name,blockX,blockY from map_event where player_id = 1");
-    mapEvents.clear();
-    for (var mapEvent in resultMapEvent) {
-      mapEvents[mapEvent["name"]] =
-          Vector2(mapEvent["blockX"], mapEvent["blockY"]);
-    }
-
-    // 移動上書きを読み込む
-    var resultMovable = userDB.select(
-        "select blockX,blockY,movable from movable where player_id = 1");
-    movables.clear();
-    for (var movable in resultMovable) {
-      movables[Vector2(movable["blockX"], movable["blockY"])] =
-          movable["movable"] != 0;
-    }
   }
 
   String getTime() {

@@ -106,8 +106,7 @@ abstract class LevelMessageBase {
 
     // イベント更新
     if (changeNext != null) {
-      myGame.userData.mapEvents[changeNext] =
-          Vector2(blockX as double, blockY as double);
+      myGame.userData.setMapEvent(changeNext, blockX, blockY);
     }
 
     // idle開始

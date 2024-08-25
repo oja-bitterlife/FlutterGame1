@@ -68,11 +68,10 @@ class TiledMap {
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
-    for (var entry in myGame.userData.movables.entries) {
+    bool? movable = myGame.userData.isMobable(blockX, blockY);
+    if (movable != null) {
       // ユーザーデータ優先
-      if (entry.key.x == blockX && entry.key.y == blockY) {
-        return entry.value ? MapEventType.floor : MapEventType.wall;
-      }
+      return movable ? MapEventType.floor : MapEventType.wall;
     }
     var moveGid = getMoveGid(blockX, blockY);
     if (moveGid != 0) return MapEventType.wall; // 移動不可
