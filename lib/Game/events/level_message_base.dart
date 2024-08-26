@@ -103,7 +103,7 @@ abstract class LevelMessageBase {
 
     // イベント更新
     if (changeNext != null) {
-      myGame.userData.setMapEvent(changeNext, blockX, blockY);
+      myGame.userData.mapEvent.set(changeNext, blockX, blockY);
     }
 
     // idle開始

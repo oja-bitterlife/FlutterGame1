@@ -6,7 +6,7 @@ import 'package:flame/sprite.dart';
 import '../UI_Widgets/player_cursor.dart';
 import '../UI_Widgets/message_window.dart';
 import '../db.dart';
-import 'user_data.dart';
+import 'user_data/user_data.dart';
 import 'player.dart';
 import 'map.dart';
 import 'events/event_manager.dart';

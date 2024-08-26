@@ -49,7 +49,7 @@ class EventManager {
   // マップ上にイベントが存在するか調べる
   String? getMapEvent(int blockX, int blockY) {
     // 上書きイベントを確認
-    var eventName = myGame.userData.getMapEvent(blockX, blockY);
+    var eventName = myGame.userData.mapEvent.get(blockX, blockY);
     if (eventName != null) return eventName; // イベント名を返す
 
     // マップのイベントを確認

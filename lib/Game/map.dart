@@ -67,7 +67,7 @@ class TiledMap {
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
-    bool? movable = myGame.userData.isMobable(blockX, blockY);
+    var movable = myGame.userData.movable.get(blockX, blockY);
     if (movable != null) {
       // ユーザーデータ優先
       return movable ? MapEventType.floor : MapEventType.wall;

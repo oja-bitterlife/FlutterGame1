@@ -41,7 +41,7 @@ class Level0Message extends LevelMessageBase {
     // 宝箱
     if (type == "treasure") {
       // 鍵を入手
-      myGame.userData.setItem("key");
+      myGame.userData.items.obtain("key");
 
       //   // 宝箱表示更新
       //   // myGame.map.changeEvent(blockX, blockY, EventTile.treasureOpen.id);
@@ -53,10 +53,10 @@ class Level0Message extends LevelMessageBase {
     // ゲートセンサー
     if (type == "gate") {
       // 鍵を持っていたらドアを開ける
-      if (myGame.userData.hasItem("key")) {
+      if (myGame.userData.items.has("key") == null) {
         // 鍵を使う
         type = "gate_with_key";
-        myGame.userData.setItem("key", used: true);
+        myGame.userData.items.use("key");
       }
 
       return super.startEvent(type, blockX, blockY);
@@ -94,7 +94,7 @@ class Level0Message extends LevelMessageBase {
       // myGame.map.changeEvent(myGame.player.getFowardBlockX() + 1,
       //     myGame.player.getFowardBlockY() - 2, EventTile.doorUpOpen.id);
 
-      myGame.userData.setMovable(myGame.player.getFowardBlockX() + 1,
+      myGame.userData.movable.set(myGame.player.getFowardBlockX() + 1,
           myGame.player.getFowardBlockY() - 1, true);
 
       myGame.map.updateEventComponent();
