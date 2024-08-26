@@ -39,8 +39,8 @@ class MessageView {
     return nextMessage(); // 最初のメッセージ表示
   }
 
+  // メッセージ表示終了
   void close() {
-    // メッセージを表示し終わっていたらhide
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
   }
@@ -57,6 +57,12 @@ abstract class LevelMessageBase {
   bool get isPlaying => messageView != null;
 
   LevelMessageBase(this.myGame, this.level);
+
+  // メッセージ表示終了
+  void close() {
+    messageView?.close();
+    messageView = null;
+  }
 
   // 文字列フォーマッタ
   List<String> format(String msg) {
@@ -97,17 +103,14 @@ abstract class LevelMessageBase {
   void onMessageFinish(
       String type, int blockX, int blockY, String? changeNext) {
     log.info("finish message: $type");
-
-    messageView?.close();
-    messageView = null;
+    close();
 
     // イベント更新
     if (changeNext != null) {
       myGame.userData.mapEvent.set(changeNext, blockX, blockY);
     }
 
-    // idle開始
-    myGame.eventManager
-        .onIdle(myGame.player.getBlockX(), myGame.player.getBlockY());
+    // メッセージが終わったらコマンド待ち
+    myGame.startIdle();
   }
 }

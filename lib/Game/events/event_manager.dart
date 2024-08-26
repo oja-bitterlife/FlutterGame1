@@ -2,11 +2,11 @@ import '../my_game.dart';
 
 import 'level_message_base.dart';
 import 'level_action_base.dart';
-import 'level_idle_base.dart';
+import 'level_moved_base.dart';
 
 import 'level0/level0_message.dart';
 import 'level0/level0_action.dart';
-import 'level0/level0_idle.dart';
+import 'level0/level0_moved.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
@@ -16,19 +16,18 @@ class EventManager {
 
   late LevelMessageBase message;
   late LevelActionBase action;
-  late LevelIdleBase move;
+  late LevelMovedBase move;
 
-  EventManager(this.myGame);
-
-  static Future<EventManager> create(MyGame myGame) async {
-    var self = EventManager(myGame);
-
+  EventManager(this.myGame) {
     // とりあえずLevel0を作っていく
-    self.message = await Level0Message.create(myGame);
-    self.action = await Level0Action.create(myGame);
-    self.move = await Level0Idle.create(myGame);
+    message = Level0Message(myGame);
+    action = Level0Action(myGame);
+    move = Level0Idle(myGame);
+  }
 
-    return self;
+  void reset() {
+    message.close();
+    action.reset();
   }
 
   bool update() {
@@ -68,7 +67,6 @@ class EventManager {
   }
 
   void startMessage(String type, int blockX, int blockY, {List<String>? data}) {
-    action.reset(); // アクションを止める
     if (data != null) {
       message.startString(type, blockX, blockY, data);
     } else {
@@ -80,9 +78,9 @@ class EventManager {
     action.start(type);
   }
 
-  // Idle開始時イベント
-  void onIdle(int blockX, int blockY) {
-    move.onIdle(blockX, blockY);
+  // 移動終了時イベント
+  void onMoveFinish(int blockX, int blockY) {
+    move.onMoveFinish(blockX, blockY);
   }
 
   // メッセージ終わりコールバック

@@ -38,7 +38,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 全体の初期化
     await init();
-    eventManager.action.start("on_start");
+
+    // event管理
+    eventManager = EventManager(this);
+    startIdle();
   }
 
   GameWidget createWidget() {
@@ -53,15 +56,15 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     log.info("onGameTap");
   }
 
-  // 画面構築
+  // 画面構築(Components)
   Future<void> init() async {
+    log.info("onInit");
+
+    // プレイヤ表示
     add(player = MovePlayerComponent(this, 7, 14));
 
-    // 画面構築
+    // マップ表示
     map = TiledMap(this);
-
-    // event管理
-    eventManager = await EventManager.create(this);
 
     // UIリセット
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
@@ -110,5 +113,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 構築しなおし
     await init();
+    eventManager.reset();
+    startIdle();
   }
 }

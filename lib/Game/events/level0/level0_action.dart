@@ -6,12 +6,7 @@ import '../../player.dart';
 import 'package:my_app/my_logger.dart';
 
 class Level0Action extends LevelActionBase {
-  Level0Action(super.myGame);
-
-  static create(MyGame myGame) async {
-    var self = Level0Action(myGame);
-    return self;
-  }
+  Level0Action(MyGame myGame) : super(myGame, 0);
 
   @override
   void update() {
@@ -26,6 +21,9 @@ class Level0Action extends LevelActionBase {
 
   @override
   void onActionFinish(String type) {
+    super.onActionFinish(type);
+
+    // アクションの次のイベントを発火
     myGame.eventManager.startMessage(
         "on_start", myGame.player.getBlockX(), myGame.player.getBlockY());
   }

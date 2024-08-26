@@ -29,12 +29,7 @@ enum EventTile {
 }
 
 class Level0Message extends LevelMessageBase {
-  Level0Message(super.myGame, super.level);
-
-  static create(MyGame myGame) async {
-    var self = Level0Message(myGame, 0);
-    return self;
-  }
+  Level0Message(MyGame myGame) : super(myGame, 0);
 
   @override
   void onFind(String type, int blockX, int blockY) {

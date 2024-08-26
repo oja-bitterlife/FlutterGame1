@@ -5,34 +5,40 @@ import 'package:my_app/my_logger.dart';
 
 abstract class LevelActionBase {
   final MyGame myGame;
-  String type = "";
+  final int level; // ステージ番号
+
+  String type = "on_start";
   int actionStep = 0;
 
-  LevelActionBase(this.myGame);
+  LevelActionBase(this.myGame, this.level);
 
   bool get isPlaying => type.isNotEmpty;
 
   // アクションを開始する
   void start(String type) {
+    log.info("call action start");
     this.type = type;
     actionStep = 0; // 最初から
     myGame.startIdle();
   }
 
-  // アクションを強制終了して初期状態に
-  void reset() {
+  // アクション終了
+  void stop() {
     type = "";
   }
 
-  void update();
+  // アクションを強制終了して初期状態に
+  void reset() => start("on_start");
+
+  void update() {
+    if (isPlaying) onActionFinish(type);
+  }
 
   void onActionFinish(String type) {
     log.info("finish action: $type");
+    stop();
 
-    reset();
-
-    // idle開始
-    myGame.eventManager
-        .onIdle(myGame.player.getBlockX(), myGame.player.getBlockY());
+    // アクションが終わったらコマンド待ち
+    // myGame.startIdle();
   }
 }

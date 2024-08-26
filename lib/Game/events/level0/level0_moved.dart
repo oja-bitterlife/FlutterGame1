@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 import '../../my_game.dart';
-import '../level_idle_base.dart';
+import '../level_moved_base.dart';
 
 import '../../priorities.dart';
 import '../../player.dart';
@@ -13,16 +13,11 @@ import '../../../my_logger.dart';
 const int GloalX = 7;
 const int GloalY = 3;
 
-class Level0Idle extends LevelIdleBase {
-  Level0Idle(super.myGame);
-
-  static create(MyGame myGame) async {
-    var self = Level0Idle(myGame);
-    return self;
-  }
+class Level0Idle extends LevelMovedBase {
+  Level0Idle(MyGame myGame) : super(myGame, 0);
 
   @override
-  void onIdle(int blockX, int blockY) {
+  void onMoveFinish(int blockX, int blockY) {
     // Level0は動ける位置を固定
     bool isDead = true;
     if (blockX == 7) {
@@ -60,7 +55,6 @@ class Level0Idle extends LevelIdleBase {
       return;
     }
 
-    // 通常のidleに戻す
-    super.onIdle(blockX, blockY);
+    super.onMoveFinish(blockX, blockY);
   }
 }
