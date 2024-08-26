@@ -1,7 +1,4 @@
-// DBの統合
-// イベント表示物
-
-import 'package:sqlite3/common.dart';
+import 'package:sqlite3/wasm.dart';
 
 import '../db.dart';
 import 'my_game.dart';
@@ -10,57 +7,43 @@ import 'player.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
+// IndexedDBに保存するユーザーデータ
 class UserData {
+  // 使用テーブル
+  static const playerTable = "user.player";
+  static const itemsTable = "user.items";
+  static const mapEventTable = "user.map_event";
+  static const movableTable = "user.movable";
+
   late MyGame myGame;
-  CommonDatabase userDB, userTmp;
+  CommonDatabase userDB;
 
-  UserData(this.myGame, this.userDB, this.userTmp) {
-    // userTmp.select("select * from movable");
-
-    // テーブル作成
-    var tables = [
-      """CREATE TABLE IF NOT EXISTS player (
-            book_id INT(1),
-            dir INT(1),
-            blockX INT(3),
-            blockY INT(3),
-            time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-          )""",
-      """CREATE TABLE IF NOT EXISTS items (
-            book_id INT(1),
-            name VARCHAR(255),
-            used BOOLEAN
-          )""",
-      """CREATE TABLE IF NOT EXISTS map_event (
-            book_id INT(1),
-            name VARCHAR(255),
-            blockX INT(3),
-            blockY INT(3)
-          )""",
-      """CREATE TABLE IF NOT EXISTS movable (
-            book_id INT(1),
-            blockX INT(3),
-            blockY INT(3),
-            movable INT(1)
-          )"""
-    ];
-
-    for (var sql in tables) {
-      userDB.execute(sql);
-      userTmp.execute(sql);
+  UserData(this.myGame, this.userDB) {
+    var schemas = myGame.memoryDB
+        .select("SELECT * FROM user.sqlite_master WHERE type='table'");
+    for (var schema in schemas) {
+      // userDB.execute("""DROP TABLE IF EXISTS ${schema["name"]}""");
+      userDB.execute((schema["sql"] as String)
+          .replaceFirst("CREATE TABLE", "CREATE TABLE IF NOT EXISTS"));
     }
   }
 
   static Future<UserData> init(MyGame myGame) async {
-    return UserData(myGame, await openUserDB(), await openUserTmp());
+    // IndexedDB上にDBを作成する
+    final fileSystem = await IndexedDbFileSystem.open(dbName: 'fluuter_game1');
+    final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+    sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
+    var db = sqlite3.open("user.sqlite");
+
+    return UserData(myGame, db);
   }
 
   // 保持情報のクリア
   void reset() {
-    userTmp.execute("delete from player where book_id = 1");
-    userTmp.execute("delete from items where book_id = 1");
-    userTmp.execute("delete from map_event where book_id = 1");
-    userTmp.execute("delete from movable where book_id = 1");
+    myGame.memoryDB.execute("delete from $playerTable where book_id = 1");
+    myGame.memoryDB.execute("delete from $itemsTable where book_id = 1");
+    myGame.memoryDB.execute("delete from $mapEventTable where book_id = 1");
+    myGame.memoryDB.execute("delete from $movableTable where book_id = 1");
   }
 
   bool get hasPlayerSave =>
@@ -68,20 +51,22 @@ class UserData {
 
   bool hasItem(String name, {bool checkUsed = true}) {
     var usedCheck = checkUsed ? "and used = 0" : "";
-    return userTmp.select(
-        "select used from items where book_id = 1 and name = ? $usedCheck",
+    return myGame.memoryDB.select(
+        "select used from $itemsTable where book_id = 1 and name = ? $usedCheck",
         [name]).isNotEmpty;
   }
 
   void setItem(String name, {bool used = false}) {
-    userTmp.execute("delete from items where book_id = 1 and name = ?", [name]);
-    userTmp.execute(
-        "insert into items (book_id,name,used) values (1, ?, ?)", [name, used]);
+    myGame.memoryDB.execute(
+        "delete from $itemsTable where book_id = 1 and name = ?", [name]);
+    myGame.memoryDB.execute(
+        "insert into $itemsTable (book_id,name,used) values (1, ?, ?)",
+        [name, used]);
   }
 
   bool? isMobable(int blockX, int blockY) {
-    var result = userTmp.select(
-        "select movable from movable where book_id = 1 and blockX = ? and blockY = ?",
+    var result = myGame.memoryDB.select(
+        "select movable from $movableTable where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
     if (result.isEmpty) return null;
 
@@ -89,17 +74,17 @@ class UserData {
   }
 
   void setMovable(int blockX, int blockY, bool movable) {
-    userTmp.execute(
-        "delete from movable where book_id = 1 and blockX = ? and blockY = ?",
+    myGame.memoryDB.execute(
+        "delete from $movableTable where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
-    userTmp.execute(
-        "insert into movable (book_id,blockX,blockY,movable) values (1, ?, ?, ?)",
+    myGame.memoryDB.execute(
+        "insert into $movableTable (book_id,blockX,blockY,movable) values (1, ?, ?, ?)",
         [blockX, blockY, movable]);
   }
 
   String? getMapEvent(int blockX, int blockY) {
-    var result = userTmp.select(
-        "select name from map_event where book_id = 1 and blockX = ? and blockY = ?",
+    var result = myGame.memoryDB.select(
+        "select name from $mapEventTable where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
     if (result.isEmpty) return null;
 
@@ -107,40 +92,40 @@ class UserData {
   }
 
   void setMapEvent(String name, int blockX, int blockY) {
-    userTmp.execute(
-        "delete from map_event where book_id = 1 and blockX = ? and blockY = ?",
+    myGame.memoryDB.execute(
+        "delete from $mapEventTable where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
-    userTmp.execute(
-        "insert into map_event (book_id,name,blockX,blockY) values (1, ?, ?, ?)",
+    myGame.memoryDB.execute(
+        "insert into $mapEventTable (book_id,name,blockX,blockY) values (1, ?, ?, ?)",
         [name, blockX, blockY]);
   }
 
   void save() {
     // プレイヤーデータを保存する
-    userTmp.execute("delete from player where book_id = 1");
-    userTmp.execute(
-        "insert into player (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
+    myGame.memoryDB.execute("delete from $playerTable where book_id = 1");
+    myGame.memoryDB.execute(
+        "insert into $playerTable (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
         [
           myGame.player.dir.id,
           myGame.player.getBlockX(),
           myGame.player.getBlockY()
         ]);
 
-    copyTable(userTmp, userDB, "player");
-    copyTable(userTmp, userDB, "items");
-    copyTable(userTmp, userDB, "map_event");
-    copyTable(userTmp, userDB, "movable");
+    copyTable(myGame.memoryDB.db, playerTable, userDB, "player");
+    copyTable(myGame.memoryDB.db, itemsTable, userDB, "items");
+    copyTable(myGame.memoryDB.db, mapEventTable, userDB, "map_event");
+    copyTable(myGame.memoryDB.db, movableTable, userDB, "movable");
   }
 
   void load() {
-    copyTable(userDB, userTmp, "player");
-    copyTable(userDB, userTmp, "items");
-    copyTable(userDB, userTmp, "map_event");
-    copyTable(userDB, userTmp, "movable");
+    copyTable(userDB, "player", myGame.memoryDB.db, playerTable);
+    copyTable(userDB, "items", myGame.memoryDB.db, itemsTable);
+    copyTable(userDB, "map_event", myGame.memoryDB.db, mapEventTable);
+    copyTable(userDB, "movable", myGame.memoryDB.db, movableTable);
 
     // プレイヤーデータを読み込む
-    var resultPlayerData = userTmp
-        .select("select dir,blockX,blockY from player where book_id = 1");
+    var resultPlayerData = myGame.memoryDB
+        .select("select dir,blockX,blockY from $playerTable where book_id = 1");
     if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新

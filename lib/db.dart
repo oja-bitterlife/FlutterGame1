@@ -4,22 +4,7 @@ import 'package:sqlite3/wasm.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 
-// 実行時ユーザーデータ
-Future<CommonDatabase> openUserTmp() async {
-  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
-  sqlite3.registerVirtualFileSystem(InMemoryFileSystem(), makeDefault: true);
-  return sqlite3.openInMemory();
-}
-
-// SaveLoad用
-Future<CommonDatabase> openUserDB() async {
-  final fileSystem = await IndexedDbFileSystem.open(dbName: 'fluuter_game1');
-
-  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
-  sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
-  return sqlite3.open("user.sqlite");
-}
-
+// 統括データベース
 class MemoryDB {
   // SQLite3接続用
   final InMemoryFileSystem fileSystem;
@@ -72,16 +57,17 @@ class MemoryDB {
 }
 
 // SaveLoad用テーブル内データ一括コピー
-void copyTable(CommonDatabase src, CommonDatabase dist, String table) {
-  dist.execute("delete from $table where book_id = 1");
+void copyTable(CommonDatabase src, String srcTable, CommonDatabase dist,
+    String distTable) {
+  dist.execute("delete from $distTable where book_id = 1");
 
-  var result = src.select("select * from $table where book_id = 1");
+  var result = src.select("select * from $srcTable where book_id = 1");
   if (result.isEmpty) return;
 
   for (var data in result) {
     var keys = data.keys.join(",");
     var placeholders = List<String>.filled(data.length, "?").join(",");
     dist.execute(
-        "insert into $table ($keys) values ($placeholders)", data.values);
+        "insert into $distTable ($keys) values ($placeholders)", data.values);
   }
 }

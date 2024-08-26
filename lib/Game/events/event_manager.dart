@@ -1,4 +1,3 @@
-import 'package:sqlite3/common.dart';
 import '../my_game.dart';
 import '../../db.dart';
 
@@ -15,18 +14,15 @@ import '../../my_logger.dart';
 
 class EventManager {
   late MyGame myGame;
-  late MemoryDB memoryDB;
 
   late LevelMessageBase message;
   late LevelActionBase action;
   late LevelIdleBase move;
 
-  EventManager(this.myGame, this.memoryDB);
+  EventManager(this.myGame);
 
   static Future<EventManager> create(MyGame myGame) async {
-    var memoryDB = await MemoryDB.create();
-
-    var self = EventManager(myGame, memoryDB);
+    var self = EventManager(myGame);
 
     // とりあえずLevel0を作っていく
     self.message = await Level0Message.create(myGame);

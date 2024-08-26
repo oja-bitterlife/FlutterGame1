@@ -5,6 +5,7 @@ import 'package:flame/sprite.dart';
 
 import '../UI_Widgets/player_cursor.dart';
 import '../UI_Widgets/message_window.dart';
+import '../db.dart';
 import 'user_data.dart';
 import 'player.dart';
 import 'map.dart';
@@ -14,6 +15,7 @@ import 'events/event_manager.dart';
 import '../my_logger.dart';
 
 class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
+  late MemoryDB memoryDB;
   late UserData userData;
 
   late MovePlayerComponent player;
@@ -24,11 +26,14 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   @override
   Future<void> onLoad() async {
+    // DBロード
+    memoryDB = await MemoryDB.create();
+
     // データ読み込み
     await PlayerComponent.load();
     await TiledMap.load(this);
 
-    // ユーザーDBの作成
+    // ユーザーデータの作成
     userData = await UserData.init(this);
 
     // 全体の初期化

@@ -1,7 +1,4 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:sqlite3/wasm.dart';
-
 import '../../UI_Widgets/message_window.dart';
 
 import '../my_game.dart';
@@ -68,7 +65,7 @@ abstract class LevelMessageBase {
 
   // イベント再生
   void startEvent(String type, int blockX, int blockY) {
-    var result = myGame.eventManager.memoryDB.select(
+    var result = myGame.memoryDB.select(
         "select msg,next from $messageEventTable where name = ? and level = ?",
         [type, level]);
 
