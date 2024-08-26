@@ -20,31 +20,58 @@ Future<CommonDatabase> openUserDB() async {
   return sqlite3.open("user.sqlite");
 }
 
-// イベントデータ
-Future<CommonDatabase> openEventDB() async {
-  const path = "assets/data/event.sqlite";
+class MemoryDB {
+  // SQLite3接続用
+  final InMemoryFileSystem fileSystem;
+  final WasmSqlite3 sqlite3;
+  final CommonDatabase db;
 
-  // assetからデータの読み込み
-  ByteData data = await rootBundle.load(path);
-  Uint8List bytes =
-      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  // コンストラクタで必要なDBを一気に読み込む
+  MemoryDB(this.sqlite3, this.fileSystem, this.db) {
+    loadDB("event", "assets/data/event.sqlite");
+    loadDB("data", "assets/data/data.sqlite");
+    loadDB("user", "assets/data/user.sqlite");
+  }
 
-  // SQLite3のInMemoryFileSystemに書き込む
-  var fileSystem = InMemoryFileSystem();
-  var file = fileSystem
-      .xOpen(Sqlite3Filename(fileSystem.xFullPathName(path)),
-          SqlFlag.SQLITE_OPEN_READWRITE | SqlFlag.SQLITE_OPEN_CREATE)
-      .file;
-  file.xTruncate(0);
-  file.xWrite(bytes, 0);
-  file.xClose();
+  // wrapper
+  ResultSet Function(String, [List<Object?>]) get select => db.select;
+  void Function(String, [List<Object?>]) get execute => db.execute;
+  CommonPreparedStatement Function(String) get prepare => db.prepare;
 
-  // SQLite3で開く
-  final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
-  sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
-  return sqlite3.open(path);
+  // 初期化
+  static Future<MemoryDB> create() async {
+    var fileSystem = InMemoryFileSystem();
+    final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+    sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
+    var db = sqlite3.openInMemory();
+
+    var self = MemoryDB(sqlite3, fileSystem, db);
+
+    return self;
+  }
+
+  // DBのロード
+  Future<void> loadDB(String dbName, String path) async {
+    // assetからデータの読み込み
+    ByteData data = await rootBundle.load(path);
+    Uint8List bytes =
+        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+    // SQLite3のInMemoryFileSystemに書き込む
+    var file = fileSystem
+        .xOpen(Sqlite3Filename(fileSystem.xFullPathName(path)),
+            SqlFlag.SQLITE_OPEN_READWRITE | SqlFlag.SQLITE_OPEN_CREATE)
+        .file;
+    file.xTruncate(0);
+    file.xWrite(bytes, 0);
+    file.xClose();
+
+    // Attach Open
+    db.execute("""attach database "$path" as $dbName""");
+  }
 }
 
+// SaveLoad用テーブル内データ一括コピー
 void copyTable(CommonDatabase src, CommonDatabase dist, String table) {
   dist.execute("delete from $table where book_id = 1");
 

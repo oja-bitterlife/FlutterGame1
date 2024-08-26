@@ -1,4 +1,6 @@
-import 'package:flame/game.dart';
+// DBの統合
+// イベント表示物
+
 import 'package:sqlite3/common.dart';
 
 import '../db.dart';

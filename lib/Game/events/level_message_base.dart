@@ -50,7 +50,7 @@ class MessageView {
 }
 
 abstract class LevelMessageBase {
-  static const messageEventTable = "message_event"; // メッセージデータ格納場所
+  static const messageEventTable = "event.message_event"; // メッセージデータ格納場所
 
   final MyGame myGame;
   final int level; // ステージ番号
@@ -68,7 +68,7 @@ abstract class LevelMessageBase {
 
   // イベント再生
   void startEvent(String type, int blockX, int blockY) {
-    var result = myGame.eventManager.eventDB.select(
+    var result = myGame.eventManager.memoryDB.select(
         "select msg,next from $messageEventTable where name = ? and level = ?",
         [type, level]);
 
