@@ -38,7 +38,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 全体の初期化
     await init();
-    startIdle();
+    eventManager.action.start("on_start");
   }
 
   GameWidget createWidget() {
@@ -110,6 +110,5 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 構築しなおし
     await init();
-    startIdle();
   }
 }

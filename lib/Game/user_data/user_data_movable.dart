@@ -2,7 +2,8 @@ import 'package:sqlite3/wasm.dart';
 import '../../db.dart';
 
 class UserDataMovable {
-  static const tableName = "user.movable";
+  static const dbName = "user";
+  static const tableName = "movable";
 
   MemoryDB memoryDB;
   CommonDatabase userDB;
@@ -14,7 +15,7 @@ class UserDataMovable {
 
   bool? get(int blockX, int blockY) {
     var result = memoryDB.select(
-        "select movable from $tableName where book_id = 1 and blockX = ? and blockY = ?",
+        "select movable from $dbName.$tableName where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
     if (result.isEmpty) return null;
 
@@ -23,10 +24,10 @@ class UserDataMovable {
 
   void set(int blockX, int blockY, bool movable) {
     memoryDB.execute(
-        "delete from $tableName where book_id = 1 and blockX = ? and blockY = ?",
+        "delete from $dbName.$tableName where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
     memoryDB.execute(
-        "insert into $tableName (book_id,blockX,blockY,movable) values (1, ?, ?, ?)",
+        "insert into $dbName.$tableName (book_id,blockX,blockY,movable) values (1, ?, ?, ?)",
         [blockX, blockY, movable]);
   }
 }

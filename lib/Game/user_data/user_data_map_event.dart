@@ -2,7 +2,8 @@ import 'package:sqlite3/wasm.dart';
 import '../../db.dart';
 
 class UserDataMapEvent {
-  static const tableName = "user.map_event";
+  static const dbName = "user";
+  static const tableName = "map_event";
 
   MemoryDB memoryDB;
   CommonDatabase userDB;
@@ -14,7 +15,7 @@ class UserDataMapEvent {
 
   String? get(int blockX, int blockY) {
     var result = memoryDB.select(
-        "select name from $tableName where book_id = 1 and blockX = ? and blockY = ?",
+        "select name from $dbName.$tableName where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
     if (result.isEmpty) return null;
 
@@ -23,10 +24,10 @@ class UserDataMapEvent {
 
   void set(String name, int blockX, int blockY) {
     memoryDB.execute(
-        "delete from $tableName where book_id = 1 and blockX = ? and blockY = ?",
+        "delete from $dbName.$tableName where book_id = 1 and blockX = ? and blockY = ?",
         [blockX, blockY]);
     memoryDB.execute(
-        "insert into $tableName (book_id,name,blockX,blockY) values (1, ?, ?, ?)",
+        "insert into $dbName.$tableName (book_id,name,blockX,blockY) values (1, ?, ?, ?)",
         [name, blockX, blockY]);
   }
 }

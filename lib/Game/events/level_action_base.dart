@@ -10,9 +10,7 @@ abstract class LevelActionBase {
 
   LevelActionBase(this.myGame);
 
-  bool get isPlaying {
-    return type.isNotEmpty;
-  }
+  bool get isPlaying => type.isNotEmpty;
 
   // アクションを開始する
   void start(String type) {

@@ -4,7 +4,8 @@ import '../my_game.dart';
 import '../player.dart';
 
 class UserDataPlayer {
-  static const tableName = "user.player";
+  static const dbName = "user";
+  static const tableName = "player";
 
   MemoryDB memoryDB;
   CommonDatabase userDB;
@@ -16,8 +17,8 @@ class UserDataPlayer {
 
   void savePreProcess(MyGame myGame) {
     // プレイヤーデータを保存する
-    myGame.memoryDB.execute("delete from $tableName where book_id = 1");
-    myGame.memoryDB.execute(
+    memoryDB.execute("delete from $dbName.$tableName where book_id = 1");
+    memoryDB.execute(
         "insert into $tableName (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
         [
           myGame.player.dir.id,
@@ -28,8 +29,8 @@ class UserDataPlayer {
 
   void loadPostProcess(MyGame myGame) {
     // プレイヤーデータを読み込む
-    var resultPlayerData = myGame.memoryDB
-        .select("select dir,blockX,blockY from $tableName where book_id = 1");
+    var resultPlayerData = memoryDB.select(
+        "select dir,blockX,blockY from $dbName.$tableName where book_id = 1");
     if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新

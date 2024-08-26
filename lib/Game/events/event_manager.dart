@@ -1,5 +1,4 @@
 import '../my_game.dart';
-import '../../db.dart';
 
 import 'level_message_base.dart';
 import 'level_action_base.dart';
@@ -31,8 +30,6 @@ class EventManager {
 
     return self;
   }
-
-  Future<void> reload() async {}
 
   bool update() {
     action.update();
