@@ -4,6 +4,8 @@ import '../../player.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
+import '../level_message_base.dart';
+
 class EventOnStart extends LevelActionBase {
   EventOnStart() : super("on_start");
 
@@ -13,7 +15,8 @@ class EventOnStart extends LevelActionBase {
       if (myGame.player.getBlockY() > 10) {
         myGame.player.setMove(PlayerDir.up);
       } else {
-        finish();
+        // 移動が終わるのを待ってFinish
+        if (!myGame.player.isMoving()) finish();
       }
     }
   }
@@ -23,7 +26,6 @@ class EventOnStart extends LevelActionBase {
     super.onFinish();
 
     // アクションの次のイベントを発火
-    // myGame.eventManager.startMessage(
-    //     "on_start", myGame.player.getBlockX(), myGame.player.getBlockY());
+    myGame.eventManager.add(LevelMessageBase(0, "on_start"));
   }
 }

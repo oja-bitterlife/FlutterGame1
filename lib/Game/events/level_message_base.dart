@@ -1,113 +1,94 @@
 import 'package:flutter/material.dart';
 import '../../UI_Widgets/message_window.dart';
 
-import '../my_game.dart';
+import 'package:my_app/Game/events/event_manager.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class MessageView {
-  final LevelMessageBase eventManager;
+class LevelMessageBase extends EventElement {
+  static const String messageTable = "event.message_event";
 
-  final String type; // 実行イベント
-  final List<String> message;
-  final String? changeNext; // イベント変更先
-  final int blockX, blockY; // イベント発生場所
+  late final List<String> message;
   int page = 0;
+  String? changeMapEvent;
 
-  MessageView(this.eventManager, this.type, this.blockX, this.blockY,
-      this.message, this.changeNext);
+  bool get isFinish => !isNotFinish;
+  bool get isNotFinish => page < message.length;
 
-  // 次のメッセージを表示
-  bool nextMessage() {
-    // メッセージが空になら終了
-    if (page >= message.length) {
-      eventManager.onMessageFinish(type, blockX, blockY, changeNext);
-      return false;
+  // 文字列フォーマッタ
+  static List<String> format(String msg) {
+    return msg.replaceAll("\\n", "\n").split("\\0");
+  }
+
+  LevelMessageBase(int level, super.name,
+      [String? msg, String? changeMapEvent]) {
+    // 動的メッセージ出力
+    if (msg != null) {
+      message = format(msg);
+      this.changeMapEvent = changeMapEvent;
+    }
+    // イベントメッセージ出力
+    else {
+      var result = myGame.memoryDB.select(
+          "select msg,next from $messageTable where name = ? and level = ?",
+          [name, level]);
+
+      // データを確認して開始
+      if (result.isNotEmpty) {
+        message = format(result.first["msg"]);
+        changeMapEvent = result.first["next"];
+      } else {
+        // tomlに該当するイベントデータが無かった
+        message = ["メッセージデータがないイベントだ！: $name"];
+      }
     }
 
     // メッセージを表示して次へ
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.show(message[page]);
-    page += 1;
-
-    return true;
   }
 
-  bool start({int page = 0}) {
-    this.page = page;
-    return nextMessage(); // 最初のメッセージ表示
-  }
-
-  // メッセージ表示終了
-  void close() {
+  @override
+  void stop() {
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
-  }
-}
 
-abstract class LevelMessageBase {
-  static const messageEventTable = "event.message_event"; // メッセージデータ格納場所
-
-  final MyGame myGame;
-  final int level; // ステージ番号
-
-  // メッセージウインドウ
-  MessageView? messageView;
-  bool get isPlaying => messageView != null;
-
-  LevelMessageBase(this.myGame, this.level);
-
-  // メッセージ表示終了
-  void close() {
-    messageView?.close();
-    messageView = null;
+    super.stop();
   }
 
-  // 文字列フォーマッタ
-  List<String> format(String msg) {
-    return msg.replaceAll("\\n", "\n").split("\\0");
+  @override
+  void finish() {
+    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    msgWin.currentState?.hide();
+
+    super.finish();
   }
 
-  // イベント再生
-  void startEvent(String type, int blockX, int blockY) {
-    var result = myGame.memoryDB.select(
-        "select msg,next from $messageEventTable where name = ? and level = ?",
-        [type, level]);
+  @override
+  void onFinish() {
+    super.onFinish();
 
-    // データを確認して開始
-    if (result.isNotEmpty) {
-      messageView = MessageView(this, type, blockX, blockY,
-          format(result.first["msg"]), result.first["next"]);
-      messageView?.start();
-    } else {
-      // tomlに該当するイベントデータが無かった
-      startString(
-          type, blockX, blockY, ["メッセージデータがないイベントだ！: $type($blockX, $blockY)"]);
+    // マップイベントを更新
+    if (changeMapEvent != null) {
+      // var result = myGame.memoryDB.select(
+      //     "select msg,next from $messageTable where name = ? and level = ?",
+      //     [name, level]);
     }
   }
 
-  // 特別にメッセージを出したいとき
-  void startString(String type, int blockX, int blockY, List<String> message,
-      [String? changeNext]) {
-    messageView = MessageView(this, type, blockX, blockY, message, changeNext);
-    messageView?.start();
+  void next() {
+    // 次のメッセージ
+    page += 1;
+    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
+    msgWin.currentState?.show(message[page]);
   }
 
-  // イベントオブジェクトチェック
-  void onFind(String type, int blockX, int blockY) {
-    startString("no implemented: $type", blockX, blockY, ["未実装だ！"]);
-  }
-
-  // メッセージ表示終わりコールバック
-  void onMessageFinish(
-      String type, int blockX, int blockY, String? changeNext) {
-    log.info("finish message: $type");
-    close();
-
-    // イベント更新
-    if (changeNext != null) {
-      myGame.userData.mapEvent.set(changeNext, blockX, blockY);
+  @override
+  void update() {
+    if (isFinish) {
+      finish();
+      return;
     }
   }
 }

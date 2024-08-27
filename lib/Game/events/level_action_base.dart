@@ -5,7 +5,7 @@ import 'package:my_app/my_logger.dart';
 
 class LevelActionBase extends EventElement {
   int actionStep = 0;
-  LevelActionBase(super.type);
+  LevelActionBase(super.name);
 
   @override
   void update() {

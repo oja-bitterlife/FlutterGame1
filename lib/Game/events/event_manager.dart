@@ -4,7 +4,6 @@ import 'level_message_base.dart';
 import 'level_action_base.dart';
 import 'level_moved_base.dart';
 
-import 'level0/level0_message.dart';
 import 'level0/level0_action.dart';
 import 'level0/level0_moved.dart';
 
@@ -43,10 +42,6 @@ class EventManager {
 
   bool get isEmpty => _eventList.isEmpty;
   bool get isNotEmpty => _eventList.isNotEmpty;
-
-  // late LevelMessageBase message;
-  // late LevelActionBase action;
-  // late LevelMovedBase move;
 
   EventManager(this.myGame) {
     EventElement._myGame = myGame;
@@ -92,27 +87,8 @@ class EventManager {
     }
   }
 
-  void startMessage(String type, int blockX, int blockY, {List<String>? data}) {
-    if (data != null) {
-      // message.startString(type, blockX, blockY, data);
-    } else {
-      // message.startEvent(type, blockX, blockY);
-    }
-  }
-
   // 移動終了時イベント
   void onMoveFinish(int blockX, int blockY) {
     // move.onMoveFinish(blockX, blockY);
-  }
-
-  // メッセージ終わりコールバック
-  void onMessageFinish(
-      String type, int blockX, int blockY, String? changeNext) {
-    // message.onMessageFinish(type, blockX, blockY, changeNext);
-  }
-
-  // アクション終わりコールバック
-  void onActionFinish(String type) {
-    // action.onFinish();
   }
 }
