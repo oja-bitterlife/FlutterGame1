@@ -9,12 +9,13 @@ import 'package:my_app/my_logger.dart';
 class LevelMessageBase extends EventElement {
   static const String messageTable = "event.message_event";
 
+  // 表示UI
+  late final MessageWindowState? msgWin;
+
+  // 表示データ
   late final List<String> message;
   int page = 0;
   String? changeMapEvent;
-
-  bool get isFinish => !isNotFinish;
-  bool get isNotFinish => page < message.length;
 
   // 文字列フォーマッタ
   static List<String> format(String msg) {
@@ -44,24 +45,27 @@ class LevelMessageBase extends EventElement {
       }
     }
 
-    // メッセージを表示して次へ
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.show(message[page]);
+    // メッセージを表示
+    msgWin =
+        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
+    msgWin?.show(message[page]);
+  }
+
+  // 次のメッセージ
+  void _showNext() {
+    page += 1;
+    msgWin?.show(message[page]);
   }
 
   @override
   void stop() {
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.hide();
-
+    msgWin?.hide();
     super.stop();
   }
 
   @override
   void finish() {
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.hide();
-
+    msgWin?.hide();
     super.finish();
   }
 
@@ -77,18 +81,12 @@ class LevelMessageBase extends EventElement {
     }
   }
 
-  void next() {
-    // 次のメッセージ
-    page += 1;
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.show(message[page]);
-  }
-
   @override
   void update() {
-    if (isFinish) {
-      finish();
-      return;
-    }
+    // 入力チェック
+    // if (マウス入力があった) {
+    //   if (page < message.length) _showNext();
+    //   else finish();
+    // }
   }
 }
