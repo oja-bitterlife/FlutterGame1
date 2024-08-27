@@ -44,17 +44,12 @@ class EventManager {
   bool get isEmpty => _eventList.isEmpty;
   bool get isNotEmpty => _eventList.isNotEmpty;
 
-  late LevelMessageBase message;
-  late LevelActionBase action;
-  late LevelMovedBase move;
+  // late LevelMessageBase message;
+  // late LevelActionBase action;
+  // late LevelMovedBase move;
 
   EventManager(this.myGame) {
     EventElement._myGame = myGame;
-
-    // とりあえずLevel0を作っていく
-    message = Level0Message(myGame);
-    // action = Level0Action();
-    move = Level0Idle(myGame);
   }
 
   // イベントを登録
@@ -64,26 +59,13 @@ class EventManager {
 
   void reset() {
     _eventList.clear();
-    _eventList.add(Level0Start()); // 最初のイベント
-
-    // message.close();
-    // action.reset();
+    _eventList.add(EventOnStart()); // 最初のイベント
   }
 
-  bool update() {
+  void update() {
     for (var event in _eventList) {
       event.update();
     }
-
-    action.update();
-
-    // アクション再生中ならtrue
-    if (action.isPlaying) return true;
-
-    // メッセージ表示中ならtrue
-    if (message.isPlaying) return true;
-
-    return false;
   }
 
   // マップ上にイベントが存在するか調べる
@@ -106,35 +88,31 @@ class EventManager {
   void onFind(int blockX, int blockY) {
     String? type = getMapEvent(blockX, blockY);
     if (type != null) {
-      message.onFind(type, blockX, blockY);
+      // message.onFind(type, blockX, blockY);
     }
   }
 
   void startMessage(String type, int blockX, int blockY, {List<String>? data}) {
     if (data != null) {
-      message.startString(type, blockX, blockY, data);
+      // message.startString(type, blockX, blockY, data);
     } else {
-      message.startEvent(type, blockX, blockY);
+      // message.startEvent(type, blockX, blockY);
     }
-  }
-
-  void startAction(String type) {
-    action.start(type);
   }
 
   // 移動終了時イベント
   void onMoveFinish(int blockX, int blockY) {
-    move.onMoveFinish(blockX, blockY);
+    // move.onMoveFinish(blockX, blockY);
   }
 
   // メッセージ終わりコールバック
   void onMessageFinish(
       String type, int blockX, int blockY, String? changeNext) {
-    message.onMessageFinish(type, blockX, blockY, changeNext);
+    // message.onMessageFinish(type, blockX, blockY, changeNext);
   }
 
   // アクション終わりコールバック
   void onActionFinish(String type) {
-    action.onActionFinish(type);
+    // action.onFinish();
   }
 }

@@ -1,12 +1,11 @@
 import '../level_action_base.dart';
-import '../../my_game.dart';
 import '../../player.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class Level0Start extends EventActionBase {
-  Level0Start() : super("on_start");
+class EventOnStart extends LevelActionBase {
+  EventOnStart() : super("on_start");
 
   @override
   void update() {

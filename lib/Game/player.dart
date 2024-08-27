@@ -56,9 +56,6 @@ class MovePlayerComponent extends PlayerComponent {
       PlayerDir.right => Vector2(TiledMap.blockSize.toDouble(), 0),
       PlayerDir.up => Vector2(0, -TiledMap.blockSize.toDouble()),
     };
-
-    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
-    cursor.currentState?.hide();
   }
 
   // 移動中チェック

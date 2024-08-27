@@ -37,7 +37,7 @@ class Level0Idle extends LevelMovedBase {
           priority: Priority.eventOver.index,
           scale: Vector2.all(2)));
 
-      myGame.eventManager.startMessage("trap", blockX, blockY, data: ["罠だ！"]);
+      // myGame.eventManager.startMessage("trap", blockX, blockY, data: ["罠だ！"]);
       return;
     }
 

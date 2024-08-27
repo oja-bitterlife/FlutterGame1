@@ -57,15 +57,15 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // マップ表示
     map = TiledMap(this);
 
-    // UIリセット
+    // // UIリセット
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
 
-    // 罠
+    // // 罠
     var trapImg = await images.load("tdrpg_interior.png");
     trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
 
-    // イベントも最初から
+    // // イベントも最初から
     eventManager.reset();
   }
 
@@ -77,22 +77,27 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   @override
   void update(double dt) {
-    // イベントが何もなければ操作カーソルを表示する
-    if (eventManager.isEmpty) {
-      const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
-      if (cursor.currentState?.isVisible == false) {
-        // プレイヤーの四方向チェック
-        int blockX = player.getBlockX();
-        int blockY = player.getBlockY();
-        cursor.currentState!
-          ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
-          ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
-          ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
-          ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
+    // イベントがあればイベントを実行
+    if (eventManager.isNotEmpty) {
+      eventManager.update();
+      super.update(dt);
+      return;
+    }
 
-        // 操作カーソル表示
-        cursor.currentState?.show(player.position);
-      }
+    // イベントが何もなければ操作カーソルを表示する
+    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+    if (cursor.currentState?.isVisible == false) {
+      // プレイヤーの四方向チェック
+      int blockX = player.getBlockX();
+      int blockY = player.getBlockY();
+      cursor.currentState!
+        ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
+        ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
+        ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
+        ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
+
+      // 操作カーソル表示
+      cursor.currentState?.show(player.position);
     }
 
     super.update(dt);
