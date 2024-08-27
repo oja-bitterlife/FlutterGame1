@@ -24,6 +24,10 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   late SpriteSheet trapSheet;
 
+  GameWidget createWidget() {
+    return GameWidget(key: const GlobalObjectKey("game"), game: this);
+  }
+
   @override
   Future<void> onLoad() async {
     // DBロード
@@ -36,24 +40,11 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // ユーザーデータの作成
     userData = await UserData.init(this);
 
-    // 全体の初期化
-    await init();
-
     // event管理
     eventManager = EventManager(this);
-    startIdle();
-  }
 
-  GameWidget createWidget() {
-    return GameWidget(key: const GlobalObjectKey("game"), game: this);
-  }
-
-  @override
-  void onTapDown(TapDownEvent event) {
-    super.onTapDown(event);
-
-    // ゲーム画面のタップ処理。たぶん今回は使わない
-    log.info("onGameTap");
+    // 全体の初期化
+    await init();
   }
 
   // 画面構築(Components)
@@ -73,27 +64,38 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // 罠
     var trapImg = await images.load("tdrpg_interior.png");
     trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
+
+    // イベントも最初から
+    eventManager.reset();
   }
 
-  // 入力受付
-  void startIdle() {
-    if (eventManager.update()) {
-      return;
+  // 状態のリセット
+  Future<void> reset() async {
+    removeAll(children); // 一旦全部消す
+    await init(); // 再構築
+  }
+
+  @override
+  void update(double dt) {
+    // イベントが何もなければ操作カーソルを表示する
+    if (eventManager.isEmpty) {
+      const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+      if (cursor.currentState?.isVisible == false) {
+        // プレイヤーの四方向チェック
+        int blockX = player.getBlockX();
+        int blockY = player.getBlockY();
+        cursor.currentState!
+          ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
+          ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
+          ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
+          ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
+
+        // 操作カーソル表示
+        cursor.currentState?.show(player.position);
+      }
     }
 
-    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
-
-    // プレイヤーの四方向チェック
-    int blockX = player.getBlockX();
-    int blockY = player.getBlockY();
-    cursor.currentState!
-      ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
-      ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
-      ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
-      ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
-
-    // 操作カーソル表示
-    cursor.currentState?.show(player.position);
+    super.update(dt);
   }
 
   PlayerCursorType checkEvent(int blockX, int blockY) {
@@ -107,13 +109,11 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     }
   }
 
-  // 最初からやり直す
-  Future<void> restart() async {
-    removeAll(children); // 一旦全部消す
+  @override
+  void onTapDown(TapDownEvent event) {
+    super.onTapDown(event);
 
-    // 構築しなおし
-    await init();
-    eventManager.reset();
-    startIdle();
+    // ゲーム画面のタップ処理。たぶん今回は使わない
+    log.info("onGameTap");
   }
 }

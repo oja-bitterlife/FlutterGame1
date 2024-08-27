@@ -11,8 +11,5 @@ abstract class LevelMovedBase {
 
   void onMoveFinish(int blockX, int blockY) {
     log.info("finish move: $blockX, $blockY");
-
-    // 移動が終わったらコマンド待ち
-    myGame.startIdle();
   }
 }

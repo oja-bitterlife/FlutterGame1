@@ -1,13 +1,24 @@
+import 'package:my_app/Game/events/event_manager.dart';
 import 'package:my_app/Game/my_game.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
+class EventAction extends EventElement {
+  int actionStep = 0;
+  EventAction(super.type);
+
+  @override
+  void update() {
+    Finish();
+  }
+}
+
 abstract class LevelActionBase {
   final MyGame myGame;
   final int level; // ステージ番号
 
-  String type = "on_start";
+  String type = "";
   int actionStep = 0;
 
   LevelActionBase(this.myGame, this.level);
@@ -19,7 +30,6 @@ abstract class LevelActionBase {
     log.info("call action start");
     this.type = type;
     actionStep = 0; // 最初から
-    myGame.startIdle();
   }
 
   // アクション終了

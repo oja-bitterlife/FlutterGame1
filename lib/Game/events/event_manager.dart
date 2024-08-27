@@ -11,26 +11,69 @@ import 'level0/level0_moved.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
+abstract class EventElement {
+  static late final MyGame myGame;
+
+  String name;
+  EventElement(this.name);
+
+  // イベントループ
+  void update();
+
+  // 強制終了
+  void stop() {
+    myGame.eventManager._eventList.remove(this);
+  }
+
+  // 通常終了
+  void Finish() {
+    myGame.eventManager._eventList.remove(this);
+    onFinish();
+  }
+
+  void onFinish() {
+    log.info("finish event: $name");
+  }
+}
+
 class EventManager {
   late MyGame myGame;
+  final List<EventElement> _eventList = [];
+
+  bool get isEmpty => _eventList.isEmpty;
+  bool get isNotEmpty => _eventList.isNotEmpty;
 
   late LevelMessageBase message;
   late LevelActionBase action;
   late LevelMovedBase move;
 
   EventManager(this.myGame) {
+    EventElement.myGame = myGame;
+
     // とりあえずLevel0を作っていく
     message = Level0Message(myGame);
     action = Level0Action(myGame);
     move = Level0Idle(myGame);
   }
 
+  // イベントを登録
+  void add(EventElement event) {
+    _eventList.add(event);
+  }
+
   void reset() {
+    _eventList.clear();
+    _eventList.add(EventAction("on_start")); // 最初のイベント
+
     message.close();
     action.reset();
   }
 
   bool update() {
+    for (var event in _eventList) {
+      event.update();
+    }
+
     action.update();
 
     // アクション再生中ならtrue

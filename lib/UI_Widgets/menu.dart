@@ -23,7 +23,7 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.restart();
+            myGame.reset();
             myGame.userData.reset();
             Navigator.of(context).pop(); // メニューは閉じる
           },
@@ -39,7 +39,7 @@ class Menu extends StatelessWidget {
           title: const Text('Load'),
           onTap: () {
             if (myGame.userData.hasSave()) {
-              myGame.restart();
+              myGame.reset();
               myGame.userData.load();
             }
             Navigator.of(context).pop(); // メニューは閉じる

@@ -109,8 +109,5 @@ abstract class LevelMessageBase {
     if (changeNext != null) {
       myGame.userData.mapEvent.set(changeNext, blockX, blockY);
     }
-
-    // メッセージが終わったらコマンド待ち
-    myGame.startIdle();
   }
 }
