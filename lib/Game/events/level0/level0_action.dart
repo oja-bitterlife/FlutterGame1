@@ -5,26 +5,26 @@ import '../../player.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class Level0Action extends LevelActionBase {
-  Level0Action(MyGame myGame) : super(myGame, 0);
+class Level0Start extends EventActionBase {
+  Level0Start() : super("on_start");
 
   @override
   void update() {
-    if (type == "on_start") {
+    if (name == "on_start") {
       if (myGame.player.getBlockY() > 10) {
         myGame.player.setMove(PlayerDir.up);
       } else {
-        onActionFinish(type);
+        finish();
       }
     }
   }
 
   @override
-  void onActionFinish(String type) {
-    super.onActionFinish(type);
+  void onFinish() {
+    super.onFinish();
 
     // アクションの次のイベントを発火
-    myGame.eventManager.startMessage(
-        "on_start", myGame.player.getBlockX(), myGame.player.getBlockY());
+    // myGame.eventManager.startMessage(
+    //     "on_start", myGame.player.getBlockX(), myGame.player.getBlockY());
   }
 }

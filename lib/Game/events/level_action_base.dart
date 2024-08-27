@@ -4,13 +4,13 @@ import 'package:my_app/Game/my_game.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class EventAction extends EventElement {
+class EventActionBase extends EventElement {
   int actionStep = 0;
-  EventAction(super.type);
+  EventActionBase(super.type);
 
   @override
   void update() {
-    Finish();
+    finish();
   }
 }
 

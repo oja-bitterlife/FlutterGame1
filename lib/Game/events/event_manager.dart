@@ -12,10 +12,11 @@ import 'level0/level0_moved.dart';
 import '../../my_logger.dart';
 
 abstract class EventElement {
-  static late final MyGame myGame;
+  static late MyGame _myGame;
 
+  MyGame myGame;
   String name;
-  EventElement(this.name);
+  EventElement(this.name) : myGame = _myGame;
 
   // イベントループ
   void update();
@@ -26,7 +27,7 @@ abstract class EventElement {
   }
 
   // 通常終了
-  void Finish() {
+  void finish() {
     myGame.eventManager._eventList.remove(this);
     onFinish();
   }
@@ -48,11 +49,11 @@ class EventManager {
   late LevelMovedBase move;
 
   EventManager(this.myGame) {
-    EventElement.myGame = myGame;
+    EventElement._myGame = myGame;
 
     // とりあえずLevel0を作っていく
     message = Level0Message(myGame);
-    action = Level0Action(myGame);
+    // action = Level0Action();
     move = Level0Idle(myGame);
   }
 
@@ -63,10 +64,10 @@ class EventManager {
 
   void reset() {
     _eventList.clear();
-    _eventList.add(EventAction("on_start")); // 最初のイベント
+    _eventList.add(Level0Start()); // 最初のイベント
 
-    message.close();
-    action.reset();
+    // message.close();
+    // action.reset();
   }
 
   bool update() {
