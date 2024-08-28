@@ -47,7 +47,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     init();
 
     // 最初のイベント
-    eventManager.add("on_start");
+    eventManager.add("action", "on_start");
   }
 
   // 画面構築(Components)

@@ -29,12 +29,13 @@ class EventMessage extends EventElement {
   EventMessage.fromDB(super.name) {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
-        "select text from $messageEventTable where level = ? and name = ?",
+        "select * from $messageEventTable where level = ? and name = ?",
         [myGame.eventManager.currentLevel, name]);
 
     // データを確認して開始
     if (result.isNotEmpty) {
       message = format(result.first["text"]);
+      next = EventNext(result.first["next_type"], result.first["next_name"]);
     }
     // 該当するイベントデータが無かった
     else {

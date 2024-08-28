@@ -6,13 +6,24 @@ import 'level_events/level0.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
+class EventNext {
+  String? type;
+  String? name;
+  EventNext(this.type, this.name);
+
+  @override
+  String toString() {
+    return "$type:$name";
+  }
+}
+
 abstract class EventElement {
   static late MyGame _myGame;
 
   MyGame myGame;
   String name;
-  String? next;
-  EventElement(this.name, [this.next]) : myGame = _myGame;
+  EventNext next = EventNext(null, null);
+  EventElement(this.name) : myGame = _myGame;
 
   // イベントループ
   void update();
@@ -29,16 +40,16 @@ abstract class EventElement {
   }
 
   void onFinish() {
-    log.info("finish $runtimeType: $name => $next");
+    log.info("finish $runtimeType:$name => $next");
 
     // nextがあれば次のイベントを登録
-    if (next != null) myGame.eventManager.add(next!);
+    if (next.type != null && next.name != null) {
+      myGame.eventManager.add(next.type!, next.name!);
+    }
   }
 }
 
 class EventManager {
-  static const eventTable = "event.event";
-
   late MyGame myGame;
   int currentLevel;
   final List<EventElement> _eventList = [];
@@ -52,34 +63,23 @@ class EventManager {
 
   // イベントを登録
   void addElement(EventElement event) {
-    log.info("event add: $event");
     _eventList.add(event);
   }
 
-  void add(String name) {
-    // DBのイベント情報を確認
-    var result = myGame.memoryDB.select(
-        "select * from $eventTable where level = ? and name = ?",
-        [currentLevel, name]);
+  void add(String type, String name) {
+    EventElement? element = switch (type) {
+      "msg" => EventMessage.fromDB(name),
+      "action" => getEventLv0(type, name),
+      _ => null,
+    };
 
-    // DBにイベント定義が無かった
-    if (result.isEmpty) {
-      log.info("event not found: $name");
+    // 見知らぬイベントタイプ
+    if (element == null) {
+      log.info("event not found: $type, $name");
       return;
     }
 
-    // Lvのイベントを取得して登録
-    EventElement? element = switch (result.first["type"]) {
-      "msg" => EventMessage.fromDB(name), // msgはここで完結できる
-      _ => getEventLv0(result.first["type"], name),
-    };
-    if (element != null) {
-      element.next = result.first["next"];
-      addElement(element);
-    } else {
-      // 対応するLevelEventが無かった
-      log.info("level_event not defined: $name");
-    }
+    addElement(element);
   }
 
   void update() {

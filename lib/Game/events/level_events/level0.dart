@@ -6,9 +6,7 @@ import '../../player.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-import '../level_msg.dart';
-
-class EventOnStart extends LevelAction {
+class EventOnStart extends EventAction {
   EventOnStart() : super("on_start");
 
   @override
