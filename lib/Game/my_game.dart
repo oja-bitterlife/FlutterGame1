@@ -83,6 +83,12 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
       return;
     }
 
+    // 移動中？
+    if (player.isMoving()) {
+      super.update(dt);
+      return;
+    }
+
     // イベントが何もなければ操作カーソルを表示する
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
     if (cursor.currentState?.isVisible == false) {

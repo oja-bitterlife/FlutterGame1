@@ -26,7 +26,7 @@ class PlayerCursorWidget extends StatefulWidget {
 
 class PlayerCursorState extends State<PlayerCursorWidget> {
   Vector2 cursorPos = Vector2.zero();
-  bool isVisible = true;
+  bool isVisible = false;
 
   // プレイヤの各方向(PlayerDir)のカーソルタイプ
   List<PlayerCursorType> playerCursorData = [
