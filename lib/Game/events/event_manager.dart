@@ -52,6 +52,7 @@ class EventManager {
 
   // イベントを登録
   void addElement(EventElement event) {
+    log.info("event add: $event");
     _eventList.add(event);
   }
 
@@ -79,11 +80,6 @@ class EventManager {
       // 対応するLevelEventが無かった
       log.info("level_event not defined: $name");
     }
-  }
-
-  void reset() {
-    _eventList.clear();
-    add("on_start"); // 最初のイベント
   }
 
   void update() {

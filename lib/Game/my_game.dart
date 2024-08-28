@@ -36,19 +36,22 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // データ読み込み
     await PlayerComponent.load();
     await TiledMap.load(this);
+    // 罠(仮)
+    var trapImg = await images.load("tdrpg_interior.png");
+    trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
 
     // ユーザーデータの作成
     userData = await UserData.init(this);
 
-    // event管理
-    eventManager = EventManager(this, 0);
-
     // 全体の初期化
-    await init();
+    init();
+
+    // 最初のイベント
+    eventManager.add("on_start");
   }
 
   // 画面構築(Components)
-  Future<void> init() async {
+  void init() {
     log.info("onInit");
 
     // プレイヤ表示
@@ -57,22 +60,18 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     // マップ表示
     map = TiledMap(this);
 
-    // // UIリセット
+    // UIリセット
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
 
-    // // 罠
-    var trapImg = await images.load("tdrpg_interior.png");
-    trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
-
-    // // イベントも最初から
-    eventManager.reset();
+    // event管理
+    eventManager = EventManager(this, 0);
   }
 
   // 状態のリセット
-  Future<void> reset() async {
+  void reset() {
     removeAll(children); // 一旦全部消す
-    await init(); // 再構築
+    init(); // 再構築
   }
 
   @override
