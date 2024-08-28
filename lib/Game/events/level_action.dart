@@ -21,7 +21,5 @@ class EventAction extends EventElement {
   }
 
   @override
-  void update() {
-    finish();
-  }
+  void update() {}
 }
