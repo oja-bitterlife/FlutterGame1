@@ -1,12 +1,14 @@
-import '../level_action_base.dart';
+import 'package:my_app/Game/events/event_manager.dart';
+
+import '../level_action.dart';
 import '../../player.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-import '../level_message_base.dart';
+import '../level_msg.dart';
 
-class EventOnStart extends LevelActionBase {
+class EventOnStart extends LevelAction {
   EventOnStart() : super("on_start");
 
   @override
@@ -26,6 +28,16 @@ class EventOnStart extends LevelActionBase {
     super.onFinish();
 
     // アクションの次のイベントを発火
-    myGame.eventManager.add(LevelMessageBase(0, "on_start"));
+    // myGame.eventManager.add(EventMessage.fromDB(0, "on_start"));
   }
+}
+
+EventElement? getEventLv0(String type, String name) {
+  if (type == "action") {
+    if (name == "on_start") {
+      return EventOnStart();
+    }
+  }
+
+  return null;
 }

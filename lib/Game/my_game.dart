@@ -41,7 +41,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     userData = await UserData.init(this);
 
     // event管理
-    eventManager = EventManager(this);
+    eventManager = EventManager(this, 0);
 
     // 全体の初期化
     await init();

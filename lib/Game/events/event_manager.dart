@@ -1,11 +1,7 @@
 import '../my_game.dart';
 
-import 'level_message_base.dart';
-import 'level_action_base.dart';
-import 'level_moved_base.dart';
-
-import 'level0/level0_action.dart';
-import 'level0/level0_moved.dart';
+import 'level_msg.dart';
+import 'level_events/level0.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
@@ -15,7 +11,8 @@ abstract class EventElement {
 
   MyGame myGame;
   String name;
-  EventElement(this.name) : myGame = _myGame;
+  String? next;
+  EventElement(this.name, [this.next]) : myGame = _myGame;
 
   // イベントループ
   void update();
@@ -32,29 +29,61 @@ abstract class EventElement {
   }
 
   void onFinish() {
-    log.info("finish event: $name");
+    log.info("finish $runtimeType: $name => $next");
+
+    // nextがあれば次のイベントを登録
+    if (next != null) myGame.eventManager.add(next!);
   }
 }
 
 class EventManager {
+  static const eventTable = "event.event";
+
   late MyGame myGame;
+  int currentLevel;
   final List<EventElement> _eventList = [];
 
   bool get isEmpty => _eventList.isEmpty;
   bool get isNotEmpty => _eventList.isNotEmpty;
 
-  EventManager(this.myGame) {
+  EventManager(this.myGame, this.currentLevel) {
     EventElement._myGame = myGame;
   }
 
   // イベントを登録
-  void add(EventElement event) {
+  void addElement(EventElement event) {
     _eventList.add(event);
+  }
+
+  void add(String name) {
+    // DBのイベント情報を確認
+    var result = myGame.memoryDB.select(
+        "select * from $eventTable where level = ? and name = ?",
+        [currentLevel, name]);
+
+    // DBにイベント定義が無かった
+    if (result.isEmpty) {
+      log.info("event not found: $name");
+      return;
+    }
+
+    // Lvのイベントを取得して登録
+    EventElement? element = switch (result.first["type"]) {
+      "msg" => EventMessage.fromDB(name), // msgはここで完結できる
+      _ => getEventLv0(result.first["type"], name),
+    };
+    if (element != null) {
+      element.next = result.first["next"];
+      addElement(element);
+    } else {
+      // 対応するLevelEventが無かった
+      log.info("level_event not defined: $name");
+    }
   }
 
   void reset() {
     _eventList.clear();
-    _eventList.add(EventOnStart()); // 最初のイベント
+    add("on_start"); // 最初のイベント
   }
 
   void update() {
@@ -84,6 +113,14 @@ class EventManager {
     String? type = getMapEvent(blockX, blockY);
     if (type != null) {
       // message.onFind(type, blockX, blockY);
+    }
+  }
+
+  void onMsgTap() {
+    for (var event in _eventList) {
+      if (event is EventMessage) {
+        event.nextPage();
+      }
     }
   }
 
