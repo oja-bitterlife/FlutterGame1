@@ -58,7 +58,7 @@ class EventElement extends Component {
     log.info("finish $runtimeType:$current => $next");
 
     // nextがあれば次のイベントを登録
-    if (next.type == null && next.name != null) {
+    if (next.type != null && next.name != null) {
       myGame.eventManager.addEvent(next.type!, next.name!);
     }
   }
