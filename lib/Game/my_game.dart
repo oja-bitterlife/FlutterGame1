@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
+import 'package:my_app/Game/events/level_action.dart';
 
 import '../UI_Widgets/player_cursor.dart';
 import '../UI_Widgets/message_window.dart';
@@ -45,6 +46,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 全体の初期化
     init();
+    eventManager?.add(EventActionGroup(this, "on_start"));
   }
 
   // 画面構築(Components)

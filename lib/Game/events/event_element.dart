@@ -55,7 +55,6 @@ class EventElement extends Component {
 
     // nextがあれば次のイベントを登録
     if (next.type == null && next.name != null) {
-      var eventManager = myGame.findByKeyName("EventManager");
       myGame.eventManager?.addEvent(next.type!, next.name!);
     }
   }
