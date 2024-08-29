@@ -41,7 +41,7 @@ class EventMsgGroup extends EventQueue {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
         "select * from $messageEventTable where level = ? and name = ?",
-        [myGame.eventManager?.currentLevel, name]);
+        [myGame.eventManager.currentLevel, name]);
 
     // データを確認して開始
     if (result.isNotEmpty) {

@@ -31,6 +31,8 @@ class EventElement extends Component {
       onStart();
       isStarted = true;
       return;
+    } else {
+      onUpdate();
     }
 
     super.update(dt);
@@ -50,12 +52,15 @@ class EventElement extends Component {
   // 最初の一回
   void onStart() {}
 
+  // 更新用
+  void onUpdate() {}
+
   void onFinish() {
     log.info("finish $runtimeType:$current => $next");
 
     // nextがあれば次のイベントを登録
     if (next.type == null && next.name != null) {
-      myGame.eventManager?.addEvent(next.type!, next.name!);
+      myGame.eventManager.addEvent(next.type!, next.name!);
     }
   }
 }

@@ -63,7 +63,7 @@ class TiledMap {
 
   MapEventType checkEventType(int blockX, int blockY) {
     // イベントチェック
-    var event = myGame.eventManager?.getMapEvent(blockX, blockY);
+    var event = myGame.eventManager.getMapEvent(blockX, blockY);
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
