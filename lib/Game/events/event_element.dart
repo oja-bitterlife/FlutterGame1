@@ -31,10 +31,9 @@ class EventElement extends Component {
       onStart();
       isStarted = true;
       return;
-    } else {
-      onUpdate();
     }
 
+    onUpdate();
     super.update(dt);
   }
 
@@ -69,7 +68,17 @@ class EventQueue extends EventElement {
   EventQueue(MyGame myGame, String type, String name)
       : super(myGame, type, name, Queue<EventElement>());
 
-  // void add(EventElement element) {
-  //   queue.add(element);
-  // }
+  // キューなので先頭1つだけ実行する
+  @override
+  void updateTree(double dt) {
+    super.update(dt);
+
+    if (hasChildren) {
+      EventElement element = children.first as EventElement;
+      element.updateTree(dt);
+    } else {
+      // キューが空っぽになった
+      finish();
+    }
+  }
 }

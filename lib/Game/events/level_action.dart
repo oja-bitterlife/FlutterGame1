@@ -43,13 +43,4 @@ class EventActionGroup extends EventQueue {
       next = (type: result.first["next_type"], name: result.first["next_name"]);
     }
   }
-
-  @override
-  void onUpdate() {
-    log.info(children.length);
-
-    if (!hasChildren) {
-      finish();
-    }
-  }
 }
