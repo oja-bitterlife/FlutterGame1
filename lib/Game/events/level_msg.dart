@@ -7,70 +7,69 @@ import 'event_element.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class EventMessage extends EventElement {
-  static const String messageEventTable = "event.msg";
-
+class EventMsg extends EventElement {
   // 表示UI
-  late final MessageWindowState? msgWin;
+  MessageWindowState? msgWin;
+  String text;
 
-  // 表示データ
-  late final List<String> message;
-  int page = 0;
+  EventMsg(MyGame myGame, String name, this.text) : super(myGame, "msg", name) {
+    msgWin =
+        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
+  }
+
+  @override
+  void onStart() {
+    msgWin?.show(text);
+  }
+}
+
+class EventMsgGroup extends EventQueue {
+  static const String messageEventTable = "event.msg";
 
   // 文字列フォーマッタ
   static List<String> format(String msg) {
     return msg.replaceAll("\\n", "\n").split("\\0");
   }
 
-  EventMessage.fromString(MyGame myGame, String msg)
+  EventMsgGroup.fromString(MyGame myGame, String msg)
       : super(myGame, "msg", "String") {
-    message = format(msg);
+    addAll(format(msg).map((text) => EventMsg(myGame, current.name!, text)));
   }
 
-  EventMessage.fromDB(MyGame myGame, String name) : super(myGame, "msg", name) {
+  EventMsgGroup.fromDB(MyGame myGame, String name)
+      : super(myGame, "msg", name) {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
         "select * from $messageEventTable where level = ? and name = ?",
-        [myGame.eventManager.currentLevel, name]);
+        [myGame.eventManager?.currentLevel, name]);
 
     // データを確認して開始
     if (result.isNotEmpty) {
-      message = format(result.first["text"]);
-      next = EventInfo(result.first["next_type"], result.first["next_name"]);
+      addAll(format(result.first["text"])
+          .map((text) => EventMsg(myGame, current.name!, text)));
+      next = (type: result.first["next_type"], name: result.first["next_name"]);
     }
     // 該当するイベントデータが無かった
     else {
-      message = ["メッセージデータがないイベントだ！: $name"];
-    }
-
-    // メッセージを表示
-    msgWin =
-        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
-    nextPage();
-  }
-
-  // 次のメッセージ
-  void nextPage() {
-    if (page < message.length) {
-      msgWin?.show(message[page]);
-      page += 1;
-    } else {
-      finish();
+      add(EventMsg(myGame, "Error", "メッセージデータがないイベントだ！: $name"));
     }
   }
 
   @override
   void stop() {
+    var msgWin =
+        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
     msgWin?.hide();
+
     super.stop();
   }
 
   @override
   void finish() {
+    var msgWin =
+        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
     msgWin?.hide();
+
     super.finish();
   }
-
-  @override
-  void update() {}
 }

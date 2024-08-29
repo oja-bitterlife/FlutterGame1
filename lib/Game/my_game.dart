@@ -20,9 +20,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   late MovePlayerComponent player;
   late TiledMap map;
-  late EventManager eventManager;
 
   late SpriteSheet trapSheet;
+  EventManager? get eventManager => findByKeyName<EventManager>("EventManager");
 
   GameWidget createWidget() {
     return GameWidget(key: const GlobalObjectKey("game"), game: this);
@@ -45,9 +45,6 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
     // 全体の初期化
     init();
-
-    // 最初のイベント
-    eventManager.add("action", "on_start");
   }
 
   // 画面構築(Components)
@@ -65,7 +62,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     msgWin.currentState?.hide();
 
     // event管理
-    eventManager = EventManager(this, 0);
+    add(EventManager(this, 0));
   }
 
   // 状態のリセット
@@ -76,9 +73,8 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   @override
   void update(double dt) {
-    // イベントがあればイベントを実行
-    if (eventManager.isNotEmpty) {
-      eventManager.update();
+    // イベント実行中なので何もしない
+    if (eventManager?.hasChildren ?? false) {
       super.update(dt);
       return;
     }

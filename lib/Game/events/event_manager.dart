@@ -1,3 +1,5 @@
+import 'package:flame/components.dart';
+
 import '../my_game.dart';
 
 import 'event_element.dart';
@@ -8,41 +10,27 @@ import '../../my_logger.dart';
 
 import 'level_events/level0.dart';
 
-class EventManager {
+class EventManager extends Component {
   late MyGame myGame;
   int currentLevel;
-  final List<EventElement> eventList = [];
 
-  bool get isEmpty => eventList.isEmpty;
-  bool get isNotEmpty => eventList.isNotEmpty;
+  EventManager(this.myGame, this.currentLevel)
+      : super(key: ComponentKey.named("EventManager"));
 
-  EventManager(this.myGame, this.currentLevel);
-
-  // イベントを登録
-  void addElement(EventElement event) {
-    eventList.add(event);
-  }
-
-  void add(String type, String name) {
+  void addEvent(String type, String name) {
     EventElement element = switch (type) {
-      "msg" => EventMessage.fromDB(myGame, name),
+      "msg" => EventMsgGroup.fromDB(myGame, name),
       "action" => getEventLv0(myGame, type, name),
-      _ => EventElement.empty(myGame),
+      _ => EventElement.notDefined(myGame),
     };
 
     // 見知らぬイベントタイプ
-    if (element.isEmpty) {
+    if (element.isNotDefined) {
       log.info("event not found: $type:$name");
       return;
     }
 
-    addElement(element);
-  }
-
-  void update() {
-    for (var event in eventList) {
-      event.update();
-    }
+    add(element);
   }
 
   // マップ上にイベントが存在するか調べる
@@ -70,11 +58,11 @@ class EventManager {
   }
 
   void onMsgTap() {
-    for (var event in eventList) {
-      if (event is EventMessage) {
-        event.nextPage();
-      }
-    }
+    // for (var event in eventList) {
+    //   if (event is EventMessage) {
+    //     event.nextPage();
+    //   }
+    // }
   }
 
   // 移動終了時イベント

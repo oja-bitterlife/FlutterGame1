@@ -11,16 +11,16 @@ class EventOnStart extends EventAction {
   EventOnStart(MyGame myGame) : super(myGame, "on_start");
 
   @override
-  void update() {
-    if (name == "on_start") {
-      if (myGame.player.getBlockY() > 10) {
-        myGame.player.setMove(PlayerDir.up);
-      } else {
-        // 移動が終わるのを待ってFinish
-        if (!myGame.player.isMoving()) finish();
-      }
-    }
-  }
+  // void update() {
+  //   if (name == "on_start") {
+  //     if (myGame.player.getBlockY() > 10) {
+  //       myGame.player.setMove(PlayerDir.up);
+  //     } else {
+  //       // 移動が終わるのを待ってFinish
+  //       if (!myGame.player.isMoving()) finish();
+  //     }
+  //   }
+  // }
 
   @override
   void onFinish() {
@@ -38,5 +38,5 @@ EventElement getEventLv0(MyGame myGame, String type, String name) {
     }
   }
 
-  return EventElement.empty(myGame);
+  return EventElement.notDefined(myGame);
 }

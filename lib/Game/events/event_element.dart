@@ -1,55 +1,71 @@
+import 'dart:collection';
+import 'package:flame/components.dart';
 import '../my_game.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
 
-class EventInfo {
-  final String? type;
-  final String? name;
-  EventInfo(this.type, this.name);
+typedef EventInfo = ({String? type, String? name});
 
-  const EventInfo.empty()
-      : type = null,
-        name = null;
+class EventElement extends Component {
+  final MyGame myGame;
 
-  bool get isEmpty => type == null || name == null;
-  bool get isNotEmpty => !isEmpty;
+  EventInfo current;
+  EventInfo next = (type: null, name: null);
+
+  bool isStarted = false;
+
+  bool get isNotDefined => current.type == null || current.name == null;
+
+  EventElement(this.myGame, String type, String name,
+      [Iterable<Component>? list])
+      : current = (type: type, name: name),
+        super(children: list);
+
+  EventElement.notDefined(this.myGame) : current = (type: null, name: null);
 
   @override
-  String toString() {
-    return "$type:$name";
+  void update(double dt) {
+    // 最初はupdateではなくonStartを実行する
+    if (isStarted == false) {
+      onStart();
+      isStarted = true;
+      return;
+    }
+
+    super.update(dt);
   }
-}
-
-class EventElement extends EventInfo {
-  final MyGame myGame;
-  EventInfo next = const EventInfo.empty();
-
-  EventElement(this.myGame, super.type, super.name,
-      [this.next = const EventInfo.empty()]);
-
-  EventElement.empty(this.myGame) : super.empty();
-
-  // イベントループ
-  void update() {}
 
   // 強制終了
   void stop() {
-    myGame.eventManager.eventList.remove(this);
+    removeFromParent();
   }
 
   // 通常終了
   void finish() {
-    myGame.eventManager.eventList.remove(this);
+    removeFromParent();
     onFinish();
   }
 
+  // 最初の一回
+  void onStart() {}
+
   void onFinish() {
-    log.info("finish $runtimeType:$name => $next");
+    log.info("finish $runtimeType:$current => $next");
 
     // nextがあれば次のイベントを登録
-    if (next.type != null && next.name != null) {
-      myGame.eventManager.add(next.type!, next.name!);
+    if (next.type == null && next.name != null) {
+      var eventManager = myGame.findByKeyName("EventManager");
+      myGame.eventManager?.addEvent(next.type!, next.name!);
     }
   }
+}
+
+class EventQueue extends EventElement {
+  EventQueue(MyGame myGame, String type, String name)
+      : super(myGame, type, name, Queue<EventElement>());
+
+  // void add(EventElement element) {
+  //   queue.add(element);
+  // }
 }

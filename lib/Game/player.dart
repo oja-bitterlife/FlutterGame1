@@ -78,7 +78,7 @@ class MovePlayerComponent extends PlayerComponent {
     // 移動が終わったときの処理(positionを確定させてから)
     if (!isMoving()) {
       // Idle開始
-      myGame.eventManager.onMoveFinish(getBlockX(), getBlockY());
+      myGame.eventManager?.onMoveFinish(getBlockX(), getBlockY());
     }
   }
 }

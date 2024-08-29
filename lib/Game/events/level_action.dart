@@ -13,14 +13,11 @@ class EventAction extends EventElement {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
         "select * from $actionEventTable where level = ? and name = ?",
-        [myGame.eventManager.currentLevel, name]);
+        [myGame.eventManager?.currentLevel, name]);
 
     // データを確認して開始
     if (result.isNotEmpty) {
-      next = EventInfo(result.first["next_type"], result.first["next_name"]);
+      // next = EventInfo(result.first["next_type"], result.first["next_name"]);
     }
   }
-
-  @override
-  void update() {}
 }
