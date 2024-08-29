@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 
 import '../my_game.dart';
 
@@ -10,7 +11,7 @@ import '../../my_logger.dart';
 
 import 'level_events/level0.dart';
 
-class EventManager extends Component {
+class EventManager extends Component with TapCallbacks {
   late MyGame myGame;
   int currentLevel;
 
@@ -63,6 +64,11 @@ class EventManager extends Component {
     //     event.nextPage();
     //   }
     // }
+  }
+  @override
+  void onTapDown(TapDownEvent event) {
+    // ゲーム画面のタップ処理。たぶん今回は使わない
+    log.info("onEventTap");
   }
 
   // 移動終了時イベント

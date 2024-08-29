@@ -114,11 +114,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     }
   }
 
+  // ゲーム画面のタップ処理。たぶん今回は使わない
   @override
   void onTapDown(TapDownEvent event) {
-    super.onTapDown(event);
-
-    // ゲーム画面のタップ処理。たぶん今回は使わない
     log.info("onGameTap");
   }
 }
