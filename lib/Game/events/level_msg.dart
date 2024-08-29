@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../UI_Widgets/message_window.dart';
 
-import 'package:my_app/Game/events/event_manager.dart';
+import '../my_game.dart';
+import 'event_element.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
@@ -21,12 +22,12 @@ class EventMessage extends EventElement {
     return msg.replaceAll("\\n", "\n").split("\\0");
   }
 
-  EventMessage.fromString(String msg) : super("DynamicMessage") {
+  EventMessage.fromString(MyGame myGame, String msg)
+      : super(myGame, "msg", "String") {
     message = format(msg);
-    log.info("");
   }
 
-  EventMessage.fromDB(super.name) {
+  EventMessage.fromDB(MyGame myGame, String name) : super(myGame, "msg", name) {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
         "select * from $messageEventTable where level = ? and name = ?",
@@ -35,7 +36,7 @@ class EventMessage extends EventElement {
     // データを確認して開始
     if (result.isNotEmpty) {
       message = format(result.first["text"]);
-      next = EventNext(result.first["next_type"], result.first["next_name"]);
+      next = EventInfo(result.first["next_type"], result.first["next_name"]);
     }
     // 該当するイベントデータが無かった
     else {

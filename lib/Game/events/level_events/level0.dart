@@ -1,4 +1,5 @@
-import 'package:my_app/Game/events/event_manager.dart';
+import '../../my_game.dart';
+import '../event_element.dart';
 
 import '../level_action.dart';
 import '../../player.dart';
@@ -7,7 +8,7 @@ import '../../player.dart';
 import 'package:my_app/my_logger.dart';
 
 class EventOnStart extends EventAction {
-  EventOnStart() : super("on_start");
+  EventOnStart(MyGame myGame) : super(myGame, "on_start");
 
   @override
   void update() {
@@ -30,12 +31,12 @@ class EventOnStart extends EventAction {
   }
 }
 
-EventElement? getEventLv0(String type, String name) {
+EventElement getEventLv0(MyGame myGame, String type, String name) {
   if (type == "action") {
     if (name == "on_start") {
-      return EventOnStart();
+      return EventOnStart(myGame);
     }
   }
 
-  return null;
+  return EventElement.empty(myGame);
 }

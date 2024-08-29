@@ -1,81 +1,38 @@
 import '../my_game.dart';
 
+import 'event_element.dart';
 import 'level_msg.dart';
-import 'level_events/level0.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
 
-class EventNext {
-  String? type;
-  String? name;
-  EventNext(this.type, this.name);
-
-  @override
-  String toString() {
-    return "$type:$name";
-  }
-}
-
-abstract class EventElement {
-  static late MyGame _myGame;
-
-  MyGame myGame;
-  String name;
-  EventNext next = EventNext(null, null);
-  EventElement(this.name) : myGame = _myGame;
-
-  // イベントループ
-  void update();
-
-  // 強制終了
-  void stop() {
-    myGame.eventManager._eventList.remove(this);
-  }
-
-  // 通常終了
-  void finish() {
-    myGame.eventManager._eventList.remove(this);
-    onFinish();
-  }
-
-  void onFinish() {
-    log.info("finish $runtimeType:$name => $next");
-
-    // nextがあれば次のイベントを登録
-    if (next.type != null && next.name != null) {
-      myGame.eventManager.add(next.type!, next.name!);
-    }
-  }
-}
+import 'level_events/level0.dart';
 
 class EventManager {
   late MyGame myGame;
   int currentLevel;
-  final List<EventElement> _eventList = [];
+  final List<EventElement> eventList = [];
 
-  bool get isEmpty => _eventList.isEmpty;
-  bool get isNotEmpty => _eventList.isNotEmpty;
+  bool get isEmpty => eventList.isEmpty;
+  bool get isNotEmpty => eventList.isNotEmpty;
 
-  EventManager(this.myGame, this.currentLevel) {
-    EventElement._myGame = myGame;
-  }
+  EventManager(this.myGame, this.currentLevel);
 
   // イベントを登録
   void addElement(EventElement event) {
-    _eventList.add(event);
+    eventList.add(event);
   }
 
   void add(String type, String name) {
-    EventElement? element = switch (type) {
-      "msg" => EventMessage.fromDB(name),
-      "action" => getEventLv0(type, name),
-      _ => null,
+    EventElement element = switch (type) {
+      "msg" => EventMessage.fromDB(myGame, name),
+      "action" => getEventLv0(myGame, type, name),
+      _ => EventElement.empty(myGame),
     };
 
     // 見知らぬイベントタイプ
-    if (element == null) {
-      log.info("event not found: $type, $name");
+    if (element.isEmpty) {
+      log.info("event not found: $type:$name");
       return;
     }
 
@@ -83,7 +40,7 @@ class EventManager {
   }
 
   void update() {
-    for (var event in _eventList) {
+    for (var event in eventList) {
       event.update();
     }
   }
@@ -113,7 +70,7 @@ class EventManager {
   }
 
   void onMsgTap() {
-    for (var event in _eventList) {
+    for (var event in eventList) {
       if (event is EventMessage) {
         event.nextPage();
       }
