@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../UI_Widgets/message_window.dart';
 
-import '../my_game.dart';
 import 'event_element.dart';
 
 // ignore: unused_import
@@ -31,8 +30,6 @@ class EventMsg extends EventElement {
 }
 
 class EventMsgGroup extends EventQueue {
-  static const String messageEventTable = "event.msg";
-
   // 文字列フォーマッタ
   static List<String> format(String msg) {
     return msg.replaceAll("\\n", "\n").split("\\0");
@@ -43,20 +40,11 @@ class EventMsgGroup extends EventQueue {
   }
 
   @override
-  void stop() {
+  void onFinish() {
     var msgWin =
         const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
     msgWin?.hide();
 
-    super.stop();
-  }
-
-  @override
-  void finish() {
-    var msgWin =
-        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
-    msgWin?.hide();
-
-    super.finish();
+    super.onFinish();
   }
 }

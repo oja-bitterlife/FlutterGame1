@@ -1,6 +1,5 @@
 import 'package:my_app/Game/player.dart';
 
-import '../my_game.dart';
 import 'event_element.dart';
 
 // ignore: unused_import
@@ -25,8 +24,6 @@ class EventAction extends EventElement {
 }
 
 class EventActionGroup extends EventQueue {
-  static const String actionEventTable = "event.action";
-
   EventActionGroup(super.name, String commands, [super.next]) {
     // データを確認して開始
     addAll(commands

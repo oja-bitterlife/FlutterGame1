@@ -1,5 +1,4 @@
 import 'package:flame/game.dart';
-import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
 
@@ -9,7 +8,6 @@ import '../db.dart';
 import 'events/event_manager.dart';
 import 'input.dart';
 
-import 'events/level_action.dart';
 import 'user_data/user_data.dart';
 import 'player.dart';
 import 'map.dart';
