@@ -65,6 +65,8 @@ class MyGame extends FlameGame {
     // UIリセット
     const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
     msgWin.currentState?.hide();
+    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
+    cursor.currentState?.hide();
 
     // イベント管理
     add(eventManager = EventManager(0));
