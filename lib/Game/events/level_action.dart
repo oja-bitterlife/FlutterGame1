@@ -7,7 +7,7 @@ import 'package:my_app/my_logger.dart';
 
 class EventAction extends EventElement {
   String command;
-  EventAction(super.name, this.command);
+  EventAction(this.command);
 
   @override
   void onStart() {
@@ -24,10 +24,8 @@ class EventAction extends EventElement {
 }
 
 class EventActionGroup extends EventQueue {
-  EventActionGroup(super.name, String commands, [super.next]) {
+  EventActionGroup(String commands, [super.next]) {
     // データを確認して開始
-    addAll(commands
-        .split(",")
-        .map((command) => EventAction(name as String, command)));
+    addAll(commands.split(",").map((command) => EventAction(command)));
   }
 }

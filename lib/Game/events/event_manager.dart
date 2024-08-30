@@ -14,7 +14,8 @@ class EventManager extends Component with HasGameRef<MyGame> {
 
   EventManager(this.currentLevel);
 
-  void addEvent(String name) {
+  // イベントをDBから読み出して追加する
+  void addEvent(String eventName) {
     const types = [
       "msg",
       "action",
@@ -23,21 +24,17 @@ class EventManager extends Component with HasGameRef<MyGame> {
     for (var type in types) {
       var result = gameRef.memoryDB.select(
           "select * from event.$type where level = ? and name = ?",
-          [gameRef.eventManager.currentLevel, name]);
+          [gameRef.eventManager.currentLevel, eventName]);
 
       // イベントが見つかった
       if (result.isNotEmpty) {
-        EventElement element = switch (type) {
-          "msg" =>
-            EventMsgGroup(name, result.first["text"], result.first["next"]),
-          "action" => EventActionGroup(
-              name, result.first["action"], result.first["next"]),
-          _ => EventElement.empty(),
+        EventElement? element = switch (type) {
+          "msg" => EventMsgGroup(result.first["text"], result.first["next"]),
+          "action" =>
+            EventActionGroup(result.first["action"], result.first["next"]),
+          _ => null,
         };
-        if (element.isEmpty) {
-          // 未実装のタイプ
-          log.info("type not implement: $type");
-        }
+        if (element == null) continue;
 
         // イベント登録
         add(element);
@@ -45,24 +42,8 @@ class EventManager extends Component with HasGameRef<MyGame> {
       }
     }
     // 見知らぬイベント
-    log.info("event not found: $name");
+    log.info("event not found: $eventName");
   }
-
-  // マップ上にイベントが存在するか調べる
-  // String? getMapEvent(int blockX, int blockY) {
-  //   // 上書きイベントを確認
-  //   var eventName = gameRef.userData.mapEvent.get(blockX, blockY);
-  //   if (eventName != null) return eventName; // イベント名を返す
-
-  //   // マップのイベントを確認
-  //   int gid = gameRef.map.getEventGid(blockX, blockY);
-  //   if (gid != 0) {
-  //     return gameRef.map.getTilesetProperty(gid, "event");
-  //   }
-
-  //   // イベントは特になかった
-  //   return null;
-  // }
 
   // Findアイコンが押された(イベントオブジェクトがある)
   void onFind(int blockX, int blockY) {

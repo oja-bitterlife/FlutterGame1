@@ -5,15 +5,10 @@ import '../my_game.dart';
 import '../../my_logger.dart';
 
 class EventElement extends Component with HasGameRef<MyGame> {
-  String? name, next;
-
+  String? next;
   bool isStarted = false;
 
-  bool get isEmpty => name?.isEmpty ?? true;
-  bool get isNotEmpty => !isEmpty;
-
-  EventElement(String this.name, [this.next]);
-  EventElement.empty();
+  EventElement([this.next]);
 
   @override
   void update(double dt) {
@@ -46,7 +41,7 @@ class EventElement extends Component with HasGameRef<MyGame> {
   void onUpdate() {}
 
   void onFinish() {
-    log.info("finish $runtimeType:$name => $next");
+    log.info("finish $runtimeType => $next");
 
     // nextがあれば次のイベントを登録
     if (next != null) {
@@ -56,7 +51,7 @@ class EventElement extends Component with HasGameRef<MyGame> {
 }
 
 class EventQueue extends EventElement {
-  EventQueue(super.name, [super.next]);
+  EventQueue([super.next]);
 
   // キューなので先頭1つだけ実行する
   @override
