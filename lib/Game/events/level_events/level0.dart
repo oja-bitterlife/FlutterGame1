@@ -38,5 +38,5 @@ EventElement getEventLv0(MyGame myGame, String type, String name) {
     }
   }
 
-  return EventElement.notDefined(myGame);
+  return EventElement.notDefined();
 }

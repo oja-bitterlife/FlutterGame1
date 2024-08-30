@@ -14,14 +14,13 @@ import 'level_events/level0.dart';
 class EventManager extends Component with HasGameRef<MyGame> {
   int currentLevel;
 
-  EventManager(this.currentLevel)
-      : super(key: ComponentKey.named("EventManager"));
+  EventManager(this.currentLevel);
 
   void addEvent(String type, String name) {
     EventElement element = switch (type) {
       "msg" => EventMsgGroup.fromDB(gameRef, name),
       "action" => getEventLv0(gameRef, type, name),
-      _ => EventElement.notDefined(gameRef),
+      _ => EventElement.notDefined(),
     };
 
     // 見知らぬイベントタイプ

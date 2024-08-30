@@ -8,18 +8,17 @@ import 'package:my_app/my_logger.dart';
 
 class EventAction extends EventElement {
   String command;
-  EventAction(MyGame myGame, String name, this.command)
-      : super(myGame, "action", name);
+  EventAction(String name, this.command) : super("action", name);
 
   @override
   void onStart() {
-    myGame.player.setMove(PlayerDir.up);
+    gameRef.player.setMove(PlayerDir.up);
   }
 
   @override
   void onUpdate() {
     // 移動完了
-    if (!myGame.player.isMoving()) {
+    if (!gameRef.player.isMoving()) {
       finish();
     }
   }
@@ -28,8 +27,7 @@ class EventAction extends EventElement {
 class EventActionGroup extends EventQueue {
   static const String actionEventTable = "event.action";
 
-  EventActionGroup.fromDB(MyGame myGame, String name)
-      : super(myGame, "action", name) {
+  EventActionGroup.fromDB(MyGame myGame, String name) : super("action", name) {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
         "select * from $actionEventTable where level = ? and name = ?",
@@ -39,7 +37,7 @@ class EventActionGroup extends EventQueue {
     if (result.isNotEmpty) {
       addAll((result.first["action"] as String)
           .split(",")
-          .map((command) => EventAction(myGame, name, command)));
+          .map((command) => EventAction(name, command)));
       next = (type: result.first["next_type"], name: result.first["next_name"]);
     }
   }

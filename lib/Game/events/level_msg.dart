@@ -12,7 +12,7 @@ class EventMsg extends EventElement {
   MessageWindowState? msgWin;
   String text;
 
-  EventMsg(MyGame myGame, String name, this.text) : super(myGame, "msg", name) {
+  EventMsg(String name, this.text) : super("msg", name) {
     msgWin =
         const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
   }
@@ -24,7 +24,7 @@ class EventMsg extends EventElement {
 
   @override
   void onUpdate() {
-    if (myGame.input.isTrgDown) {
+    if (gameRef.input.isTrgDown) {
       finish();
     }
   }
@@ -38,13 +38,11 @@ class EventMsgGroup extends EventQueue {
     return msg.replaceAll("\\n", "\n").split("\\0");
   }
 
-  EventMsgGroup.fromString(MyGame myGame, String msg)
-      : super(myGame, "msg", "String") {
-    addAll(format(msg).map((text) => EventMsg(myGame, current.name!, text)));
+  EventMsgGroup.fromString(String msg) : super("msg", "String") {
+    addAll(format(msg).map((text) => EventMsg(current.name!, text)));
   }
 
-  EventMsgGroup.fromDB(MyGame myGame, String name)
-      : super(myGame, "msg", name) {
+  EventMsgGroup.fromDB(MyGame myGame, String name) : super("msg", name) {
     // イベントメッセージ出力
     var result = myGame.memoryDB.select(
         "select * from $messageEventTable where level = ? and name = ?",
@@ -53,12 +51,12 @@ class EventMsgGroup extends EventQueue {
     // データを確認して開始
     if (result.isNotEmpty) {
       addAll(format(result.first["text"])
-          .map((text) => EventMsg(myGame, current.name!, text)));
+          .map((text) => EventMsg(current.name!, text)));
       next = (type: result.first["next_type"], name: result.first["next_name"]);
     }
     // 該当するイベントデータが無かった
     else {
-      add(EventMsg(myGame, "Error", "メッセージデータがないイベントだ！: $name"));
+      add(EventMsg("Error", "メッセージデータがないイベントだ！: $name"));
     }
   }
 

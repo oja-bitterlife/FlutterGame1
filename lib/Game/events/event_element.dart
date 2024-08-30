@@ -7,9 +7,7 @@ import '../../my_logger.dart';
 
 typedef EventInfo = ({String? type, String? name});
 
-class EventElement extends Component {
-  final MyGame myGame;
-
+class EventElement extends Component with HasGameRef<MyGame> {
   EventInfo current;
   EventInfo next = (type: null, name: null);
 
@@ -17,12 +15,9 @@ class EventElement extends Component {
 
   bool get isNotDefined => current.type == null || current.name == null;
 
-  EventElement(this.myGame, String type, String name,
-      [Iterable<Component>? list])
-      : current = (type: type, name: name),
-        super(children: list);
+  EventElement(String type, String name) : current = (type: type, name: name);
 
-  EventElement.notDefined(this.myGame) : current = (type: null, name: null);
+  EventElement.notDefined() : current = (type: null, name: null);
 
   @override
   void update(double dt) {
@@ -59,14 +54,13 @@ class EventElement extends Component {
 
     // nextがあれば次のイベントを登録
     if (next.type != null && next.name != null) {
-      myGame.eventManager.addEvent(next.type!, next.name!);
+      gameRef.eventManager.addEvent(next.type!, next.name!);
     }
   }
 }
 
 class EventQueue extends EventElement {
-  EventQueue(MyGame myGame, String type, String name)
-      : super(myGame, type, name, Queue<EventElement>());
+  EventQueue(super.type, super.name);
 
   // キューなので先頭1つだけ実行する
   @override

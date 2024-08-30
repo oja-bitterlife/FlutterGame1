@@ -3,5 +3,5 @@ enum Priority {
   player,
   mapOver,
   eventOver,
-  GameOver,
+  gameOver,
 }
