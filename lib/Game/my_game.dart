@@ -17,7 +17,7 @@ import 'map.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 
-class MyGame extends FlameGame with TapCallbacks {
+class MyGame extends FlameGame {
   late MemoryDB memoryDB;
   late UserData userData;
 
@@ -54,7 +54,7 @@ class MyGame extends FlameGame with TapCallbacks {
   // 画面構築(Components)
   void init() {
     // 入力管理
-    add(input = Input());
+    add(input = Input(512, 512));
 
     // プレイヤ表示
     add(player = MovePlayerComponent(this, 7, 14));
@@ -113,22 +113,5 @@ class MyGame extends FlameGame with TapCallbacks {
       default:
         return PlayerCursorType.move;
     }
-  }
-
-  // 入力更新
-  @override
-  void onTapDown(TapDownEvent event) {
-    log.info("onGameTap");
-    input.onTapDown();
-  }
-
-  @override
-  void onTapUp(TapUpEvent event) {
-    input.onTapUp();
-  }
-
-  @override
-  void onTapCancel(TapCancelEvent event) {
-    input = Input();
   }
 }

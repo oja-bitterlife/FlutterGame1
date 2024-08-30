@@ -1,6 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:transparent_pointer/transparent_pointer.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -59,32 +59,33 @@ class MessageWindowState extends State<MessaeWindowWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-        visible: _isVisible,
-        // 9-patchウインドウ
-        child: Stack(alignment: Alignment.topLeft, children: <Widget>[
-          Positioned(
-            top: windowY,
-            left: windowX,
-            child: Image.asset(
-              "assets/images/window.png",
-              width: windowW,
-              height: windowH,
-              centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
-            ),
-          ),
-          // テキスト
-          Positioned(
-            top: windowY + 16,
-            left: windowX + 16,
-            child: Text(_message,
-                style: const TextStyle(
-                    decoration: TextDecoration.none,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    height: 1.1)),
-          ),
-        ]));
+    return TransparentPointer(
+        child: Visibility(
+            visible: _isVisible,
+            // 9-patchウインドウ
+            child: Stack(alignment: Alignment.topLeft, children: <Widget>[
+              Positioned(
+                top: windowY,
+                left: windowX,
+                child: Image.asset(
+                  "assets/images/window.png",
+                  width: windowW,
+                  height: windowH,
+                  centerSlice: const Rect.fromLTRB(15, 15, 35, 35),
+                ),
+              ),
+              // テキスト
+              Positioned(
+                top: windowY + 16,
+                left: windowX + 16,
+                child: Text(_message,
+                    style: const TextStyle(
+                        decoration: TextDecoration.none,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                        fontSize: fontSize,
+                        height: 1.1)),
+              ),
+            ])));
   }
 }
