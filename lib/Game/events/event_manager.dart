@@ -11,18 +11,17 @@ import '../../my_logger.dart';
 
 import 'level_events/level0.dart';
 
-class EventManager extends Component with TapCallbacks {
-  late MyGame myGame;
+class EventManager extends Component with HasGameRef<MyGame> {
   int currentLevel;
 
-  EventManager(this.myGame, this.currentLevel)
+  EventManager(this.currentLevel)
       : super(key: ComponentKey.named("EventManager"));
 
   void addEvent(String type, String name) {
     EventElement element = switch (type) {
-      "msg" => EventMsgGroup.fromDB(myGame, name),
-      "action" => getEventLv0(myGame, type, name),
-      _ => EventElement.notDefined(myGame),
+      "msg" => EventMsgGroup.fromDB(gameRef, name),
+      "action" => getEventLv0(gameRef, type, name),
+      _ => EventElement.notDefined(gameRef),
     };
 
     // 見知らぬイベントタイプ
@@ -37,13 +36,13 @@ class EventManager extends Component with TapCallbacks {
   // マップ上にイベントが存在するか調べる
   String? getMapEvent(int blockX, int blockY) {
     // 上書きイベントを確認
-    var eventName = myGame.userData.mapEvent.get(blockX, blockY);
+    var eventName = gameRef.userData.mapEvent.get(blockX, blockY);
     if (eventName != null) return eventName; // イベント名を返す
 
     // マップのイベントを確認
-    int gid = myGame.map.getEventGid(blockX, blockY);
+    int gid = gameRef.map.getEventGid(blockX, blockY);
     if (gid != 0) {
-      return myGame.map.getTilesetProperty(gid, "event");
+      return gameRef.map.getTilesetProperty(gid, "event");
     }
 
     // イベントは特になかった
@@ -56,19 +55,6 @@ class EventManager extends Component with TapCallbacks {
     if (type != null) {
       // message.onFind(type, blockX, blockY);
     }
-  }
-
-  void onMsgTap() {
-    // for (var event in eventList) {
-    //   if (event is EventMessage) {
-    //     event.nextPage();
-    //   }
-    // }
-  }
-  @override
-  void onTapDown(TapDownEvent event) {
-    // ゲーム画面のタップ処理。たぶん今回は使わない
-    log.info("onEventTap");
   }
 
   // 移動終了時イベント

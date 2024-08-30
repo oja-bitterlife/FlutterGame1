@@ -21,6 +21,13 @@ class EventMsg extends EventElement {
   void onStart() {
     msgWin?.show(text);
   }
+
+  @override
+  void onUpdate() {
+    if (myGame.input.isTrgDown) {
+      finish();
+    }
+  }
 }
 
 class EventMsgGroup extends EventQueue {

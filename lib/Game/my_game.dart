@@ -2,24 +2,28 @@ import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
-import 'package:my_app/Game/events/level_action.dart';
 
 import '../UI_Widgets/player_cursor.dart';
 import '../UI_Widgets/message_window.dart';
 import '../db.dart';
+import 'events/event_manager.dart';
+import 'input.dart';
+
+import 'events/level_action.dart';
 import 'user_data/user_data.dart';
 import 'player.dart';
 import 'map.dart';
-import 'events/event_manager.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
 
-class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
+class MyGame extends FlameGame with TapCallbacks {
   late MemoryDB memoryDB;
   late UserData userData;
 
   late EventManager eventManager;
+  late Input input;
+
   late MovePlayerComponent player;
   late TiledMap map;
   late SpriteSheet trapSheet;
@@ -49,6 +53,9 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   // 画面構築(Components)
   void init() {
+    // 入力管理
+    add(input = Input());
+
     // プレイヤ表示
     add(player = MovePlayerComponent(this, 7, 14));
 
@@ -60,7 +67,7 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
     msgWin.currentState?.hide();
 
     // イベント管理
-    add(eventManager = EventManager(this, 0));
+    add(eventManager = EventManager(0));
     eventManager.add(EventActionGroup.fromDB(this, "on_start"));
   }
 
@@ -72,19 +79,13 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
 
   @override
   void update(double dt) {
-    // イベント実行中なので何もしない
-    if (eventManager.hasChildren) {
+    // 別のことを実行中
+    if (eventManager.hasChildren || player.isMoving()) {
       super.update(dt);
       return;
     }
 
-    // 移動中？
-    if (player.isMoving()) {
-      super.update(dt);
-      return;
-    }
-
-    // イベントが何もなければ操作カーソルを表示する
+    // 何もなければ操作カーソルを表示する
     const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
     if (cursor.currentState?.isVisible == false) {
       // プレイヤーの四方向チェック
@@ -118,5 +119,16 @@ class MyGame extends FlameGame with TapCallbacks, KeyboardEvents {
   @override
   void onTapDown(TapDownEvent event) {
     log.info("onGameTap");
+    input.onTapDown();
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    input.onTapUp();
+  }
+
+  @override
+  void onTapCancel(TapCancelEvent event) {
+    input = Input();
   }
 }
