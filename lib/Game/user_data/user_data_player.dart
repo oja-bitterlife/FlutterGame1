@@ -12,25 +12,24 @@ class UserDataPlayer {
   UserDataPlayer(this.memoryDB, this.userDB);
 
   void reset() {
-    userDB.execute("delete from $tableName where book_id = 1");
+    userDB.execute("delete from $tableName");
   }
 
   void savePreProcess(MyGame myGame) {
     // プレイヤーデータを保存する
-    memoryDB.execute("delete from $dbName.$tableName where book_id = 1");
+    memoryDB.execute("delete from $dbName.$tableName");
     memoryDB.execute(
-        "insert into $tableName (book_id, dir, blockX, blockY) values (1, ?, ?, ?)",
-        [
-          myGame.player.dir.id,
-          myGame.player.getBlockX(),
-          myGame.player.getBlockY()
-        ]);
+        "insert into $tableName (dir, blockX, blockY) values (?, ?, ?)", [
+      myGame.player.dir.id,
+      myGame.player.getBlockX(),
+      myGame.player.getBlockY()
+    ]);
   }
 
   void loadPostProcess(MyGame myGame) {
     // プレイヤーデータを読み込む
-    var resultPlayerData = memoryDB.select(
-        "select dir,blockX,blockY from $dbName.$tableName where book_id = 1");
+    var resultPlayerData =
+        memoryDB.select("select dir,blockX,blockY from $dbName.$tableName");
     if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新

@@ -70,7 +70,7 @@ class MyGame extends FlameGame {
 
     // イベント管理
     add(eventManager = EventManager(0));
-    eventManager.add(EventActionGroup.fromDB(this, "on_start"));
+    eventManager.addEvent("on_start");
   }
 
   // 状態のリセット
@@ -94,10 +94,10 @@ class MyGame extends FlameGame {
       int blockX = player.getBlockX();
       int blockY = player.getBlockY();
       cursor.currentState!
-        ..setCursorType(checkEvent(blockX - 1, blockY), PlayerDir.left)
-        ..setCursorType(checkEvent(blockX + 1, blockY), PlayerDir.right)
-        ..setCursorType(checkEvent(blockX, blockY - 1), PlayerDir.up)
-        ..setCursorType(checkEvent(blockX, blockY + 1), PlayerDir.down);
+        ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
+        ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
+        ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
+        ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
 
       // 操作カーソル表示
       cursor.currentState?.show(player.position);
@@ -106,14 +106,11 @@ class MyGame extends FlameGame {
     super.update(dt);
   }
 
-  PlayerCursorType checkEvent(int blockX, int blockY) {
-    switch (map.checkEventType(blockX, blockY)) {
-      case MapEventType.event:
-        return PlayerCursorType.find;
-      case MapEventType.wall:
-        return PlayerCursorType.none;
-      default:
-        return PlayerCursorType.move;
-    }
+  PlayerCursorType checkBlock(int blockX, int blockY) {
+    return switch (map.checkEventType(blockX, blockY)) {
+      MapEventType.event => PlayerCursorType.find,
+      MapEventType.wall => PlayerCursorType.none,
+      _ => PlayerCursorType.move
+    };
   }
 }

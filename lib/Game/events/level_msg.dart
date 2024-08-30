@@ -12,7 +12,7 @@ class EventMsg extends EventElement {
   MessageWindowState? msgWin;
   String text;
 
-  EventMsg(String name, this.text) : super("msg", name) {
+  EventMsg(super.name, this.text) {
     msgWin =
         const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
   }
@@ -38,26 +38,8 @@ class EventMsgGroup extends EventQueue {
     return msg.replaceAll("\\n", "\n").split("\\0");
   }
 
-  EventMsgGroup.fromString(String msg) : super("msg", "String") {
-    addAll(format(msg).map((text) => EventMsg(current.name!, text)));
-  }
-
-  EventMsgGroup.fromDB(MyGame myGame, String name) : super("msg", name) {
-    // イベントメッセージ出力
-    var result = myGame.memoryDB.select(
-        "select * from $messageEventTable where level = ? and name = ?",
-        [myGame.eventManager.currentLevel, name]);
-
-    // データを確認して開始
-    if (result.isNotEmpty) {
-      addAll(format(result.first["text"])
-          .map((text) => EventMsg(current.name!, text)));
-      next = (type: result.first["next_type"], name: result.first["next_name"]);
-    }
-    // 該当するイベントデータが無かった
-    else {
-      add(EventMsg("Error", "メッセージデータがないイベントだ！: $name"));
-    }
+  EventMsgGroup(super.name, String msg, [super.next]) {
+    addAll(format(msg).map((text) => EventMsg(name!, text)));
   }
 
   @override

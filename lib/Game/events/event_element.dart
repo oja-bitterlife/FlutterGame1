@@ -1,23 +1,19 @@
-import 'dart:collection';
 import 'package:flame/components.dart';
 import '../my_game.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
 
-typedef EventInfo = ({String? type, String? name});
-
 class EventElement extends Component with HasGameRef<MyGame> {
-  EventInfo current;
-  EventInfo next = (type: null, name: null);
+  String? name, next;
 
   bool isStarted = false;
 
-  bool get isNotDefined => current.type == null || current.name == null;
+  bool get isEmpty => name?.isEmpty ?? true;
+  bool get isNotEmpty => !isEmpty;
 
-  EventElement(String type, String name) : current = (type: type, name: name);
-
-  EventElement.notDefined() : current = (type: null, name: null);
+  EventElement(String this.name, [this.next]);
+  EventElement.empty();
 
   @override
   void update(double dt) {
@@ -50,17 +46,17 @@ class EventElement extends Component with HasGameRef<MyGame> {
   void onUpdate() {}
 
   void onFinish() {
-    log.info("finish $runtimeType:$current => $next");
+    log.info("finish $runtimeType:$name => $next");
 
     // nextがあれば次のイベントを登録
-    if (next.type != null && next.name != null) {
-      gameRef.eventManager.addEvent(next.type!, next.name!);
+    if (next != null) {
+      gameRef.eventManager.addEvent(next!);
     }
   }
 }
 
 class EventQueue extends EventElement {
-  EventQueue(super.type, super.name);
+  EventQueue(super.name, [super.next]);
 
   // キューなので先頭1つだけ実行する
   @override

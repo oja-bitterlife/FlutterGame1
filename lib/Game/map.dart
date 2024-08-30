@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -53,17 +54,19 @@ class TiledMap {
     myGame.add(underComponent);
     myGame.add(overComponent);
 
-    // イベント表示追加
-    eventSprites = SpriteBatch(atlas.atlas!);
-    myGame.add(PositionComponent(
-        children: [SpriteBatchComponent(spriteBatch: eventSprites)],
-        priority: Priority.mapUnder.index));
-    updateEventComponent();
+    // イベントを拾う
+    getOrgTiles("UnderPlayerEvent")
+        .forEachIndexed((y, line) => line.forEachIndexed((x, gid) {
+              if (gid > 0) {
+                String? name = getTilesetProperty(gid, "event");
+                if (name != null) myGame.userData.mapEvent.set(name, x, y);
+              }
+            }));
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
     // イベントチェック
-    var event = myGame.eventManager.getMapEvent(blockX, blockY);
+    var event = myGame.userData.mapEvent.get(blockX, blockY);
     if (event != null) return MapEventType.event;
 
     // 移動不可チェック
@@ -72,7 +75,7 @@ class TiledMap {
       // ユーザーデータ優先
       return movable ? MapEventType.floor : MapEventType.wall;
     }
-    var moveGid = getMoveGid(blockX, blockY);
+    var moveGid = getGid("walk-flag", blockX, blockY);
     if (moveGid != 0) return MapEventType.wall; // 移動不可
 
     // なにもない(床)
@@ -81,7 +84,7 @@ class TiledMap {
 
   // イベントタイル表示
   void updateEventComponent() {
-    eventSprites.clear();
+    // eventSprites.clear();
 
     // Spriteの更新
     // for (int y = 0; y < myGame.userData.viewTiles.length; y++) {
@@ -97,32 +100,24 @@ class TiledMap {
     // }
   }
 
-  // List<List<int>> getOrgTiles(String layerName) {
-  //   TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
-  //   var tiles =
-  //       List.generate(layer!.height, (i) => List.filled(layer.width, 0));
+  List<List<int>> getOrgTiles(String layerName) {
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
+    var tiles =
+        List.generate(layer!.height, (i) => List.filled(layer.width, 0));
 
-  //   for (int y = 0; y < layer.height; y++) {
-  //     for (int x = 0; x < layer.width; x++) {
-  //       var gid = layer.tileData?[y][x];
-  //       tiles[y][x] = gid!.tile;
-  //     }
-  //   }
-  //   return tiles;
-  // }
+    for (int y = 0; y < layer.height; y++) {
+      for (int x = 0; x < layer.width; x++) {
+        var gid = layer.tileData?[y][x];
+        tiles[y][x] = gid!.tile;
+      }
+    }
+    return tiles;
+  }
 
   int getGid(String layerName, int blockX, int blockY) {
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
     var gid = layer?.tileData?[blockY][blockX];
     return gid!.tile;
-  }
-
-  int getEventGid(int blockX, int blockY) {
-    return getGid("UnderPlayerEvent", blockX, blockY);
-  }
-
-  int getMoveGid(int blockX, int blockY) {
-    return getGid("walk-flag", blockX, blockY);
   }
 
   String? getTilesetProperty(int gid, String propName) {
