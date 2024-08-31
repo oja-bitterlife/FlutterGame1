@@ -5,16 +5,13 @@ import 'level0.dart';
 
 abstract class LevelEventBase {
   MyGame myGame;
-
-  int level;
-  LevelEventBase(this.myGame, this.level);
-
+  LevelEventBase(this.myGame);
   void onEventFinish(EventElement event);
 }
 
 LevelEventBase? getLevelEvent(MyGame myGame, int level) {
   return switch (level) {
-    0 => Level0(myGame, level),
+    0 => Level0(myGame),
     _ => null,
   };
 }

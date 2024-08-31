@@ -13,43 +13,24 @@ import '../../my_logger.dart';
 
 import 'levels/level_base.dart';
 
-class EventManager extends Component with HasGameRef<MyGame> {
-  static const eventTypes = [
-    "msg",
-    "action",
-  ];
-  int currentLevel;
+const eventTypes = [
+  "msg",
+  "action",
+];
 
+class EventManager extends Component with HasGameRef<MyGame> {
+  int level;
   LevelEventBase levelEvent;
 
-  EventManager(MyGame myGame, this.currentLevel)
-      : levelEvent = getLevelEvent(myGame, currentLevel)!;
-
-  // イベント名の重複チェッカー
-  static void checkDBEvents(CommonDatabase db, int level) {
-    List<String> eventNames = [];
-
-    for (var type in eventTypes) {
-      // イベント名重複チェック
-      var resultSet =
-          db.select("select name from event.$type where level = ?", [level]);
-      for (var result in resultSet) {
-        if (eventNames.contains(result["name"])) {
-          // イベント名が重複した
-          log.warning("イベント名の重複: ${result["name"]}");
-        } else {
-          eventNames.add(result["name"]);
-        }
-      }
-    }
-  }
+  EventManager(MyGame myGame, this.level)
+      : levelEvent = getLevelEvent(myGame, level)!;
 
   // イベントをDBから読み出して追加する
   void addEvent(String eventName) {
     for (var type in eventTypes) {
       var result = gameRef.memoryDB.select(
           "select * from event.$type where level = ? and name = ?",
-          [gameRef.eventManager.currentLevel, eventName]);
+          [gameRef.eventManager.level, eventName]);
 
       // イベントが見つかった
       if (result.isNotEmpty) {
@@ -80,5 +61,24 @@ class EventManager extends Component with HasGameRef<MyGame> {
   void onEventFinish(EventElement event) {
     levelEvent.onEventFinish(event);
     log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
+  }
+}
+
+// イベント名の重複チェッカー
+void checkDBEvents(CommonDatabase db, int level) {
+  List<String> eventNames = [];
+
+  for (var type in eventTypes) {
+    // イベント名重複チェック
+    var resultSet =
+        db.select("select name from event.$type where level = ?", [level]);
+    for (var result in resultSet) {
+      if (eventNames.contains(result["name"])) {
+        // イベント名が重複した
+        log.warning("イベント名の重複: ${result["name"]}");
+      } else {
+        eventNames.add(result["name"]);
+      }
+    }
   }
 }

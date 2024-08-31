@@ -34,7 +34,7 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     // DBロード
     memoryDB = await MemoryDB.create();
-    EventManager.checkDBEvents(memoryDB.db, 0); // デバッグ用
+    checkDBEvents(memoryDB.db, 0); // デバッグ用
 
     // データ読み込み
     await PlayerComponent.load();
