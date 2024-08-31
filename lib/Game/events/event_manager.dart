@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:my_app/Game/events/levels/level0.dart';
 import 'package:sqlite3/wasm.dart';
 
 import '../my_game.dart';
@@ -10,6 +11,8 @@ import 'level_action.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
+import 'levels/level_base.dart';
+
 class EventManager extends Component with HasGameRef<MyGame> {
   static const eventTypes = [
     "msg",
@@ -17,7 +20,10 @@ class EventManager extends Component with HasGameRef<MyGame> {
   ];
   int currentLevel;
 
-  EventManager(this.currentLevel);
+  LevelEventBase levelEvent;
+
+  EventManager(MyGame myGame, this.currentLevel)
+      : levelEvent = getLevelEvent(myGame, currentLevel)!;
 
   // イベント名の重複チェッカー
   static void checkDBEvents(CommonDatabase db, int level) {
@@ -48,9 +54,10 @@ class EventManager extends Component with HasGameRef<MyGame> {
       // イベントが見つかった
       if (result.isNotEmpty) {
         EventElement? element = switch (type) {
-          "msg" => EventMsgGroup(result.first["text"], result.first["next"]),
-          "action" =>
-            EventActionGroup(result.first["action"], result.first["next"]),
+          "msg" => EventMsgGroup(
+              eventName, result.first["text"], result.first["next"]),
+          "action" => EventActionGroup(
+              eventName, result.first["action"], result.first["next"]),
           _ => null,
         };
         if (element == null) continue;
@@ -61,7 +68,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
       }
     }
     // 見知らぬイベント
-    log.info("event not found: $eventName");
+    log.warning("event not found: $eventName");
   }
 
   // Findアイコンが押された(イベントオブジェクトがある)
@@ -70,8 +77,8 @@ class EventManager extends Component with HasGameRef<MyGame> {
     log.info(name);
   }
 
-  // 移動終了時イベント
-  void onMoveFinish(int blockX, int blockY) {
-    // move.onMoveFinish(blockX, blockY);
+  void onEventFinish(EventElement event) {
+    levelEvent.onEventFinish(event);
+    log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
   }
 }

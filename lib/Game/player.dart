@@ -74,12 +74,6 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 座標更新
     position = (moveValue * transTime / needMoveTime) + srcPos;
-
-    // 移動が終わったときの処理(positionを確定させてから)
-    if (!isMoving()) {
-      // Idle開始
-      myGame.eventManager.onMoveFinish(getBlockX(), getBlockY());
-    }
   }
 }
 

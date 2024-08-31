@@ -68,7 +68,7 @@ class MyGame extends FlameGame {
     cursor.currentState?.hide();
 
     // イベント管理
-    add(eventManager = EventManager(0));
+    add(eventManager = EventManager(this, 0));
     eventManager.addEvent("on_start");
   }
 

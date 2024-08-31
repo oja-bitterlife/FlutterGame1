@@ -11,7 +11,7 @@ class EventMsg extends EventElement {
   MessageWindowState? msgWin;
   String text;
 
-  EventMsg(this.text) {
+  EventMsg(super.name, this.text) {
     msgWin =
         const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
   }
@@ -35,8 +35,8 @@ class EventMsgGroup extends EventQueue {
     return msg.replaceAll("\\n", "\n").split("\\0");
   }
 
-  EventMsgGroup(String msg, [super.next]) {
-    addAll(format(msg).map((text) => EventMsg(text)));
+  EventMsgGroup(super.name, String msg, [super.next]) {
+    addAll(format(msg).map((text) => EventMsg(name, text)));
   }
 
   @override
