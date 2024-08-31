@@ -143,8 +143,6 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
 
   // カーソルが押された時の処理
   void onPlayerCursor(PlayerCursorType type, PlayerDir dir) {
-    hide(); // アクション中は隠す
-
     switch (type) {
       case PlayerCursorType.move:
         // 移動

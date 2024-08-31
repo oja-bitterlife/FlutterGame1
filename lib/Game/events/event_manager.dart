@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:my_app/Game/events/levels/level0.dart';
 import 'package:sqlite3/wasm.dart';
 
 import '../my_game.dart';
@@ -55,9 +54,12 @@ class EventManager extends Component with HasGameRef<MyGame> {
   // Findアイコンが押された(イベントオブジェクトがある)
   void onFind(int blockX, int blockY) {
     String? name = gameRef.userData.mapEvent.get(blockX, blockY);
-    log.info(name);
+    if (name != null) {
+      addEvent(name);
+    }
   }
 
+  // 登録したイベントが終わった時
   void onEventFinish(EventElement event) {
     levelEvent.onEventFinish(event);
     log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
