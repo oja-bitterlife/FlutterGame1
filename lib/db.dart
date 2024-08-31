@@ -11,12 +11,7 @@ class MemoryDB {
   final WasmSqlite3 sqlite3;
   final CommonDatabase db;
 
-  // コンストラクタで必要なDBを一気に読み込む
-  MemoryDB(this.sqlite3, this.fileSystem, this.db) {
-    loadDB("event", "assets/data/event.sqlite");
-    loadDB("data", "assets/data/data.sqlite");
-    loadDB("user", "assets/data/user.sqlite");
-  }
+  MemoryDB(this.sqlite3, this.fileSystem, this.db);
 
   // wrapper
   ResultSet Function(String, [List<Object?>]) get select => db.select;
@@ -31,6 +26,11 @@ class MemoryDB {
     var db = sqlite3.openInMemory();
 
     var self = MemoryDB(sqlite3, fileSystem, db);
+
+    // 初期データ読み込み
+    await self.loadDB("event", "assets/data/event.sqlite");
+    await self.loadDB("data", "assets/data/data.sqlite");
+    await self.loadDB("user", "assets/data/user.sqlite");
 
     return self;
   }
