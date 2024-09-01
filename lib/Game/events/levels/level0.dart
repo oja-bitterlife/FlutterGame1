@@ -11,8 +11,9 @@ class Level0 extends LevelEventBase {
 
   @override
   void onEventFinish(EventElement event) {
-    if (event.runtimeType == EventMsgGroup && event.name == "treasure") {
-      log.info("todo");
+    if (event.name == "treasure") {
+      myGame.userData.items.obtain("key");
+      log.info(myGame.userData.items.has("key"));
     }
 
     // TODO: implement onEventFinish

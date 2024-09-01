@@ -10,20 +10,25 @@ class UserDataItems {
   UserDataItems(this.memoryDB, this.userDB);
 
   void reset() {
-    userDB.execute("delete from $tableName");
+    userDB.execute("DELETE FROM $tableName");
   }
 
-  bool? has(String name) {
-    var result = memoryDB.select(
-        "select used from $dbName.$tableName where and name = ?", [name]);
-    if (result.isEmpty) return null;
-    return result.first["used"];
+  bool has(String name) {
+    var result = memoryDB
+        .select("SELECT used FROM $dbName.$tableName WHERE name = ?", [name]);
+    return result.isNotEmpty;
+  }
+
+  bool used(String name) {
+    var result = memoryDB
+        .select("SELECT used FROM $dbName.$tableName WHERE name = ?", [name]);
+    if (result.isEmpty) return false;
+    return result.first["used"] != 0;
   }
 
   void _setItem(String name, bool used) {
-    memoryDB
-        .execute("delete from $dbName.$tableName where and name = ?", [name]);
-    memoryDB.execute("insert into $dbName.$tableName (name,used) values (?, ?)",
+    memoryDB.execute("DELETE FROM $dbName.$tableName WHERE name = ?", [name]);
+    memoryDB.execute("INSERT INTO $dbName.$tableName (name,used) VALUES (?, ?)",
         [name, used]);
   }
 

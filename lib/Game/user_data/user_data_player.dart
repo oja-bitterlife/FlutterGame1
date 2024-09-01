@@ -12,14 +12,14 @@ class UserDataPlayer {
   UserDataPlayer(this.memoryDB, this.userDB);
 
   void reset() {
-    userDB.execute("delete from $tableName");
+    userDB.execute("DELETE FROM $tableName");
   }
 
   void savePreProcess(MyGame myGame) {
     // プレイヤーデータを保存する
-    memoryDB.execute("delete from $dbName.$tableName");
+    memoryDB.execute("DELETE FROM $dbName.$tableName");
     memoryDB.execute(
-        "insert into $tableName (dir, blockX, blockY) values (?, ?, ?)", [
+        "INSERT INTO $tableName (dir, blockX, blockY) VALUES (?, ?, ?)", [
       myGame.player.dir.id,
       myGame.player.getBlockX(),
       myGame.player.getBlockY()
@@ -29,7 +29,7 @@ class UserDataPlayer {
   void loadPostProcess(MyGame myGame) {
     // プレイヤーデータを読み込む
     var resultPlayerData =
-        memoryDB.select("select dir,blockX,blockY from $dbName.$tableName");
+        memoryDB.select("SELECT dir,blockX,blockY FROM $dbName.$tableName");
     if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新

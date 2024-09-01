@@ -10,12 +10,12 @@ class UserDataMovable {
   UserDataMovable(this.memoryDB, this.userDB);
 
   void reset() {
-    userDB.execute("delete from $tableName");
+    userDB.execute("DELETE FROM $tableName");
   }
 
   bool? get(int blockX, int blockY) {
     var result = memoryDB.select(
-        "select movable from $dbName.$tableName where blockX = ? and blockY = ?",
+        "SELECT movable FROM $dbName.$tableName WHERE blockX = ? AND blockY = ?",
         [blockX, blockY]);
     if (result.isEmpty) return null;
 
@@ -24,10 +24,10 @@ class UserDataMovable {
 
   void set(int blockX, int blockY, bool movable) {
     memoryDB.execute(
-        "delete from $dbName.$tableName where blockX = ? and blockY = ?",
+        "DELETE FROM $dbName.$tableName WHERE blockX = ? AND blockY = ?",
         [blockX, blockY]);
     memoryDB.execute(
-        "insert into $dbName.$tableName (blockX,blockY,movable) values (?, ?, ?)",
+        "INSERT INTO $dbName.$tableName (blockX,blockY,movable) VALUES (?, ?, ?)",
         [blockX, blockY, movable]);
   }
 }

@@ -6,6 +6,7 @@ import '../my_game.dart';
 import 'event_element.dart';
 import 'level_msg.dart';
 import 'level_action.dart';
+import 'level_map.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
@@ -28,7 +29,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
   void addEvent(String eventName) {
     for (var type in eventTypes) {
       var result = gameRef.memoryDB.select(
-          "select * from event.$type where level = ? and name = ?",
+          "SELECT * FROM event.$type WHERE level = ? AND name = ?",
           [gameRef.eventManager.level, eventName]);
 
       // イベントが見つかった
@@ -55,7 +56,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
   void onFind(int blockX, int blockY) {
     String? name = gameRef.map.getEventName(blockX, blockY);
     if (name != null) {
-      addEvent(name);
+      addEvent(changeMapEvent(gameRef, name));
     }
   }
 
@@ -73,7 +74,7 @@ void checkDBEvents(CommonDatabase db, int level) {
   for (var type in eventTypes) {
     // イベント名重複チェック
     var resultSet =
-        db.select("select name from event.$type where level = ?", [level]);
+        db.select("SELECT name FROM event.$type WHERE level = ?", [level]);
     for (var result in resultSet) {
       if (eventNames.contains(result["name"])) {
         // イベント名が重複した

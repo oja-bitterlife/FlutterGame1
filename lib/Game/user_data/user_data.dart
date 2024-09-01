@@ -56,11 +56,11 @@ class UserData {
   }
 
   bool hasSave() {
-    return userDB.select("select time from player").isNotEmpty;
+    return userDB.select("SELECT time FROM player").isNotEmpty;
   }
 
   String getTime() {
-    var result = userDB.select("select time from player where");
+    var result = userDB.select("SELECT time FROM player");
     if (result.isEmpty) {
       return "----/--/-- --:--:--";
     }
