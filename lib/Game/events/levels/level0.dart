@@ -1,4 +1,5 @@
 import 'package:my_app/Game/events/event_data/event_move.dart';
+import 'package:my_app/Game/ui_control.dart';
 
 import 'level_base.dart';
 import 'package:my_app/Game/events/event_element.dart';
@@ -13,7 +14,6 @@ class Level0 extends LevelEventBase {
   void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
-      log.info(myGame.userData.items.isOwned("key"));
     }
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
@@ -28,6 +28,9 @@ class Level0 extends LevelEventBase {
               "trap", myGame.player.getBlockX(), myGame.player.getBlockY()) !=
           0) {
         myGame.eventManager.addEvent("trap");
+
+        // UIを消した状態にする
+        myGame.uiControl.showUI = ShowUI.none;
       }
     }
   }

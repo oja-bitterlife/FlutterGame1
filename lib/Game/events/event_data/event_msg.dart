@@ -27,7 +27,7 @@ List<String> formatEventMsg(String text) {
   return text.replaceAll("\\n", "\n").split("\\0");
 }
 
-// メッセージ複数登録
+// 一連のメッセージ表示
 class EventMsgRoot extends EventElement {
   EventMsgRoot(super.name, String text, [super.next, super.notify = true]) {
     addAll(formatEventMsg(text).map((text) => EventMsg(name, text)));
@@ -44,6 +44,7 @@ class EventMsgRoot extends EventElement {
   }
 }
 
+// イベントマネージャ用
 EventMsgRoot createEventMsg(String name, String text, String? next) {
   return EventMsgRoot(name, text, next);
 }
