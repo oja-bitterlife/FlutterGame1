@@ -12,9 +12,10 @@ import '../../my_logger.dart';
 
 import 'levels/level_base.dart';
 
-const eventTypes = [
-  "msg",
-  "action",
+// イベント登録用情報
+const eventInfo = [
+  (type: "msg", data: "text", func: createEventMsg),
+  (type: "action", data: "action", func: createEventAction),
 ];
 
 class EventManager extends Component with HasGameRef<MyGame> {
@@ -26,24 +27,21 @@ class EventManager extends Component with HasGameRef<MyGame> {
 
   // イベントをDBから読み出して追加する
   void addEvent(String eventName) {
-    for (var type in eventTypes) {
+    for (var info in eventInfo) {
       var result = gameRef.memoryDB.select(
-          "SELECT * FROM event.$type WHERE level = ? AND name = ?",
+          "SELECT * FROM event.${info.type} WHERE level = ? AND name = ?",
           [gameRef.eventManager.level, eventName]);
+
+      // イベントが複数あってはいけない
+      if (result.length > 1) {
+        log.warning("event duplicated: $eventName(${result.length})");
+      }
 
       // イベントが見つかった
       if (result.isNotEmpty) {
-        EventElement? element = switch (type) {
-          "msg" => EventMsgGroup(
-              eventName, result.first["text"], result.first["next"]),
-          "action" => EventActionGroup(
-              eventName, result.first["action"], result.first["next"]),
-          _ => null,
-        };
-        if (element == null) continue;
-
         // イベント登録
-        add(element);
+        add(info.func(
+            eventName, result.first[info.data], result.first["next"]));
         return;
       }
     }
@@ -95,10 +93,10 @@ String changeMapEvent(MyGame myGame, String name) {
 void checkDBEvents(CommonDatabase db, int level) {
   List<String> eventNames = [];
 
-  for (var type in eventTypes) {
+  for (var info in eventInfo) {
     // イベント名重複チェック
-    var resultSet =
-        db.select("SELECT name FROM event.$type WHERE level = ?", [level]);
+    var resultSet = db
+        .select("SELECT name FROM event.${info.type} WHERE level = ?", [level]);
     for (var result in resultSet) {
       if (eventNames.contains(result["name"])) {
         // イベント名が重複した

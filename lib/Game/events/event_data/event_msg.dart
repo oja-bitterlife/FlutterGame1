@@ -6,6 +6,7 @@ import '../event_element.dart';
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
+// メッセージ1つ表示
 class EventMsg extends EventElement {
   // 表示UI
   MessageWindowState? msgWin;
@@ -29,6 +30,7 @@ class EventMsg extends EventElement {
   }
 }
 
+// 複数メッセージを順番に表示
 class EventMsgGroup extends EventQueue {
   // 文字列フォーマッタ
   static List<String> format(String msg) {
@@ -46,3 +48,7 @@ class EventMsgGroup extends EventQueue {
     msgWin?.hide();
   }
 }
+
+// イベントマネージャ用
+EventMsgGroup createEventMsg(String name, String text, String? next) =>
+    EventMsgGroup(name, text, next);
