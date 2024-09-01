@@ -18,7 +18,7 @@ class EventAction extends EventElement {
   @override
   void onUpdate() {
     // 移動完了
-    if (!gameRef.player.isMoving()) {
+    if (!gameRef.player.isMoving) {
       finish();
     }
   }

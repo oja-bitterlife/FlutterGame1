@@ -36,7 +36,7 @@ class MovePlayerComponent extends PlayerComponent {
   double transTime = needMoveTime;
   Vector2 srcPos = Vector2.zero(), moveValue = Vector2.zero();
 
-  MovePlayerComponent(super.myGame, super.blockX, super.blockY);
+  MovePlayerComponent(super.blockX, super.blockY);
 
   // 移動開始
   void setMove(PlayerDir dir) {
@@ -57,16 +57,14 @@ class MovePlayerComponent extends PlayerComponent {
   }
 
   // 移動中チェック
-  bool isMoving() {
-    return transTime < needMoveTime;
-  }
+  bool get isMoving => transTime < needMoveTime;
 
   @override
   void update(double dt) {
     super.update(dt);
 
     // 移動中でなかった
-    if (!isMoving()) return;
+    if (!isMoving) return;
 
     // 移動中処理
     // ------------------------------------------------------------------------
@@ -74,12 +72,17 @@ class MovePlayerComponent extends PlayerComponent {
 
     // 座標更新
     position = (moveValue * transTime / needMoveTime) + srcPos;
+
+    // 移動完了
+    if (!isMoving) {
+      gameRef.eventManager
+          .onMoveFinish(gameRef.player.getBlockX(), gameRef.player.getBlockY());
+    }
   }
 }
 
-class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
-  final MyGame myGame;
-
+class PlayerComponent extends SpriteAnimationComponent
+    with HasVisibility, HasGameRef<MyGame> {
   // プレイヤの向き
   PlayerDir dir = PlayerDir.up;
 
@@ -92,7 +95,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasVisibility {
     playerImage = await Sprite.load('sample20160312.png');
   }
 
-  PlayerComponent(this.myGame, int blockX, int blockY)
+  PlayerComponent(int blockX, int blockY)
       : super(
           position: Vector2(
               getPosFromBlockX(blockX), getPosFromBlockY(blockY)), // 初期座標

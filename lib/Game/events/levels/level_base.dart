@@ -6,6 +6,8 @@ import 'level0.dart';
 abstract class LevelEventBase {
   MyGame myGame;
   LevelEventBase(this.myGame);
+
+  void onMoveFinish(int blockX, int blockY);
   void onEventFinish(EventElement event);
 }
 

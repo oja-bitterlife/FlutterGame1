@@ -57,10 +57,15 @@ class EventManager extends Component with HasGameRef<MyGame> {
     }
   }
 
+  // 通常移動終了時に呼び出される
+  void onMoveFinish(int blockX, int blockY) {
+    levelEvent.onMoveFinish(blockX, blockY);
+  }
+
   // 登録したイベントが終わった時
   void onEventFinish(EventElement event) {
-    levelEvent.onEventFinish(event);
     log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
+    levelEvent.onEventFinish(event);
   }
 }
 

@@ -8,6 +8,13 @@ class Level0 extends LevelEventBase {
   Level0(super.myGame);
 
   @override
+  void onMoveFinish(int blockX, int blockY) {
+    if (myGame.map.getGid("trap", blockX, blockY) != 0) {
+      myGame.eventManager.addEvent("trap");
+    }
+  }
+
+  @override
   void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
@@ -17,7 +24,8 @@ class Level0 extends LevelEventBase {
       myGame.userData.items.use("key");
     }
 
-    // TODO: implement onEventFinish
-    // log.info(event.name);
+    if (event.name == "trap") {
+      log.info("game over");
+    }
   }
 }

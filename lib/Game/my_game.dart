@@ -57,7 +57,7 @@ class MyGame extends FlameGame {
     add(input = Input(512, 512));
 
     // プレイヤ表示
-    add(player = MovePlayerComponent(this, 7, 14));
+    add(player = MovePlayerComponent(7, 14));
 
     // マップ表示
     map = TiledMap(this);
@@ -84,7 +84,7 @@ class MyGame extends FlameGame {
         const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
 
     // 別のことを実行中
-    if (eventManager.hasChildren || player.isMoving()) {
+    if (eventManager.hasChildren || player.isMoving) {
       if (cursor?.isVisible ?? false) cursor!.hide();
       super.update(dt);
       return;
