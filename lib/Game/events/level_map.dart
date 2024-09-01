@@ -1,5 +1,3 @@
-import 'package:my_app/db.dart';
-
 import '../my_game.dart';
 
 // ignore: unused_import
@@ -13,20 +11,17 @@ String changeMapEvent(MyGame myGame, String name) {
   for (var result in results) {
     // アイテム保有時
     if (result["own"] != null) {
-      if (myGame.userData.items.has(result["own"])) {
+      if (myGame.userData.items.isOwned(result["own"])) {
         return result["next"];
       }
     }
 
     // アイテム使用時
     if (result["used"] != null) {
-      if (myGame.userData.items.used(result["used"])) {
+      if (myGame.userData.items.isUsed(result["used"])) {
         return result["next"];
       }
     }
-
-    // 無条件
-    return result["next"];
   }
 
   return name;

@@ -1,5 +1,3 @@
-import 'package:my_app/Game/events/level_msg.dart';
-
 import 'level_base.dart';
 import 'package:my_app/Game/events/event_element.dart';
 
@@ -13,7 +11,10 @@ class Level0 extends LevelEventBase {
   void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
-      log.info(myGame.userData.items.has("key"));
+      log.info(myGame.userData.items.isOwned("key"));
+    }
+    if (event.name == "gate_with_key") {
+      myGame.userData.items.use("key");
     }
 
     // TODO: implement onEventFinish

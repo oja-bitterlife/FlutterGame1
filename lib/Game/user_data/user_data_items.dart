@@ -1,35 +1,31 @@
-import 'package:sqlite3/wasm.dart';
 import '../../db.dart';
 
+// ignore: unused_import
+import 'package:my_app/my_logger.dart';
+
 class UserDataItems {
-  static const dbName = "user";
   static const tableName = "items";
 
   MemoryDB memoryDB;
-  CommonDatabase userDB;
-  UserDataItems(this.memoryDB, this.userDB);
+  UserDataItems(this.memoryDB);
 
-  void reset() {
-    userDB.execute("DELETE FROM $tableName");
-  }
-
-  bool has(String name) {
+  bool isOwned(String name) {
     var result = memoryDB
-        .select("SELECT used FROM $dbName.$tableName WHERE name = ?", [name]);
+        .select("SELECT used FROM user.$tableName WHERE name = ?", [name]);
     return result.isNotEmpty;
   }
 
-  bool used(String name) {
+  bool isUsed(String name) {
     var result = memoryDB
-        .select("SELECT used FROM $dbName.$tableName WHERE name = ?", [name]);
+        .select("SELECT used FROM user.$tableName WHERE name = ?", [name]);
     if (result.isEmpty) return false;
     return result.first["used"] != 0;
   }
 
   void _setItem(String name, bool used) {
-    memoryDB.execute("DELETE FROM $dbName.$tableName WHERE name = ?", [name]);
-    memoryDB.execute("INSERT INTO $dbName.$tableName (name,used) VALUES (?, ?)",
-        [name, used]);
+    memoryDB.execute("DELETE FROM user.$tableName WHERE name = ?", [name]);
+    memoryDB.execute(
+        "INSERT INTO user.$tableName (name,used) VALUES (?, ?)", [name, used]);
   }
 
   void obtain(String name) => _setItem(name, false);

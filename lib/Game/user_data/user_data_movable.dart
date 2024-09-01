@@ -1,21 +1,17 @@
-import 'package:sqlite3/wasm.dart';
 import '../../db.dart';
 
+// ignore: unused_import
+import 'package:my_app/my_logger.dart';
+
 class UserDataMovable {
-  static const dbName = "user";
   static const tableName = "movable";
 
   MemoryDB memoryDB;
-  CommonDatabase userDB;
-  UserDataMovable(this.memoryDB, this.userDB);
-
-  void reset() {
-    userDB.execute("DELETE FROM $tableName");
-  }
+  UserDataMovable(this.memoryDB);
 
   bool? get(int blockX, int blockY) {
     var result = memoryDB.select(
-        "SELECT movable FROM $dbName.$tableName WHERE blockX = ? AND blockY = ?",
+        "SELECT movable FROM user.$tableName WHERE blockX = ? AND blockY = ?",
         [blockX, blockY]);
     if (result.isEmpty) return null;
 
@@ -24,10 +20,10 @@ class UserDataMovable {
 
   void set(int blockX, int blockY, bool movable) {
     memoryDB.execute(
-        "DELETE FROM $dbName.$tableName WHERE blockX = ? AND blockY = ?",
+        "DELETE FROM user.$tableName WHERE blockX = ? AND blockY = ?",
         [blockX, blockY]);
     memoryDB.execute(
-        "INSERT INTO $dbName.$tableName (blockX,blockY,movable) VALUES (?, ?, ?)",
+        "INSERT INTO user.$tableName (blockX,blockY,movable) VALUES (?, ?, ?)",
         [blockX, blockY, movable]);
   }
 }

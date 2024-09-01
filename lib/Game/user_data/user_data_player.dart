@@ -1,23 +1,19 @@
-import 'package:sqlite3/wasm.dart';
 import '../../db.dart';
 import '../my_game.dart';
 import '../player.dart';
 
+// ignore: unused_import
+import 'package:my_app/my_logger.dart';
+
 class UserDataPlayer {
-  static const dbName = "user";
   static const tableName = "player";
 
   MemoryDB memoryDB;
-  CommonDatabase userDB;
-  UserDataPlayer(this.memoryDB, this.userDB);
-
-  void reset() {
-    userDB.execute("DELETE FROM $tableName");
-  }
+  UserDataPlayer(this.memoryDB);
 
   void savePreProcess(MyGame myGame) {
     // プレイヤーデータを保存する
-    memoryDB.execute("DELETE FROM $dbName.$tableName");
+    memoryDB.execute("DELETE FROM user.$tableName"); // 一旦削除
     memoryDB.execute(
         "INSERT INTO $tableName (dir, blockX, blockY) VALUES (?, ?, ?)", [
       myGame.player.dir.id,
@@ -29,7 +25,7 @@ class UserDataPlayer {
   void loadPostProcess(MyGame myGame) {
     // プレイヤーデータを読み込む
     var resultPlayerData =
-        memoryDB.select("SELECT dir,blockX,blockY FROM $dbName.$tableName");
+        memoryDB.select("SELECT dir,blockX,blockY FROM user.$tableName");
     if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新

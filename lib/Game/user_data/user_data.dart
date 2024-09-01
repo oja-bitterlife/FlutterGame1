@@ -32,9 +32,9 @@ class UserData {
     }
 
     // 各アクセス用クラス
-    player = UserDataPlayer(memoryDB, userDB);
-    items = UserDataItems(memoryDB, userDB);
-    movable = UserDataMovable(memoryDB, userDB);
+    player = UserDataPlayer(memoryDB);
+    items = UserDataItems(memoryDB);
+    movable = UserDataMovable(memoryDB);
   }
 
   // 初期化
@@ -50,9 +50,9 @@ class UserData {
 
   // 保持情報のクリア
   void reset() {
-    player.reset();
-    items.reset();
-    movable.reset();
+    memoryDB.execute("DELETE FROM user.${UserDataPlayer.tableName}");
+    memoryDB.execute("DELETE FROM user.${UserDataItems.tableName}");
+    memoryDB.execute("DELETE FROM user.${UserDataMovable.tableName}");
   }
 
   bool hasSave() {
@@ -70,15 +70,21 @@ class UserData {
   void save() {
     player.savePreProcess(myGame);
 
-    copyTable(memoryDB.db, UserDataPlayer.tableName, userDB, "player");
-    copyTable(memoryDB.db, UserDataItems.tableName, userDB, "items");
-    copyTable(memoryDB.db, UserDataMovable.tableName, userDB, "movable");
+    copyTable(memoryDB.db, "user.${UserDataPlayer.tableName}", userDB,
+        UserDataPlayer.tableName);
+    copyTable(memoryDB.db, "user.${UserDataItems.tableName}", userDB,
+        UserDataItems.tableName);
+    copyTable(memoryDB.db, "user.${UserDataMovable.tableName}", userDB,
+        UserDataMovable.tableName);
   }
 
   void load() {
-    copyTable(userDB, "player", memoryDB.db, UserDataPlayer.tableName);
-    copyTable(userDB, "items", memoryDB.db, UserDataItems.tableName);
-    copyTable(userDB, "movable", memoryDB.db, UserDataMovable.tableName);
+    copyTable(userDB, UserDataPlayer.tableName, memoryDB.db,
+        "user.${UserDataPlayer.tableName}");
+    copyTable(userDB, UserDataItems.tableName, memoryDB.db,
+        "user.${UserDataItems.tableName}");
+    copyTable(userDB, UserDataMovable.tableName, memoryDB.db,
+        "user.${UserDataMovable.tableName}");
 
     player.loadPostProcess(myGame);
   }
