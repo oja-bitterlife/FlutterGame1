@@ -7,9 +7,11 @@ import '../../my_logger.dart';
 class EventElement extends Component with HasGameRef<MyGame> {
   String name;
   String? next;
+  bool nofity;
+
   bool isStarted = false;
 
-  EventElement(this.name, [this.next]);
+  EventElement(this.name, [this.next, this.nofity = false]);
 
   @override
   void update(double dt) {
@@ -33,6 +35,16 @@ class EventElement extends Component with HasGameRef<MyGame> {
   void finish() {
     removeFromParent();
     onFinish();
+
+    // nextがあれば次のイベントを登録
+    if (next != null) {
+      gameRef.eventManager.addEvent(next!);
+    }
+
+    // 終了を通知
+    if (nofity) {
+      gameRef.eventManager.onEventFinish(this);
+    }
   }
 
   // 最初の一回
@@ -41,19 +53,12 @@ class EventElement extends Component with HasGameRef<MyGame> {
   // 更新用
   void onUpdate() {}
 
-  void onFinish() {
-    // nextがあれば次のイベントを登録
-    if (next != null) {
-      gameRef.eventManager.addEvent(next!);
-    }
-
-    // 終了を通知
-    gameRef.eventManager.onEventFinish(this);
-  }
+  // 終了時
+  void onFinish() {}
 }
 
 class EventQueue extends EventElement {
-  EventQueue(super.name, [super.next]);
+  EventQueue(super.name, [super.next, super.nofity = true]);
 
   // キューなので先頭1つだけ実行する
   @override

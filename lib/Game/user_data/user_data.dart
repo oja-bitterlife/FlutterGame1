@@ -5,7 +5,6 @@ import '../my_game.dart';
 
 import 'user_data_player.dart';
 import 'user_data_items.dart';
-import 'user_data_map_event.dart';
 import 'user_data_movable.dart';
 
 // ignore: unused_import
@@ -20,7 +19,6 @@ class UserData {
   // 各アクセス用クラス
   late UserDataPlayer player;
   late UserDataItems items;
-  late UserDataMapEvent mapEvent;
   late UserDataMovable movable;
 
   UserData(this.myGame, this.userDB) : memoryDB = myGame.memoryDB {
@@ -36,7 +34,6 @@ class UserData {
     // 各アクセス用クラス
     player = UserDataPlayer(memoryDB, userDB);
     items = UserDataItems(memoryDB, userDB);
-    mapEvent = UserDataMapEvent(memoryDB, userDB);
     movable = UserDataMovable(memoryDB, userDB);
   }
 
@@ -55,7 +52,6 @@ class UserData {
   void reset() {
     player.reset();
     items.reset();
-    mapEvent.reset();
     movable.reset();
   }
 
@@ -76,14 +72,12 @@ class UserData {
 
     copyTable(memoryDB.db, UserDataPlayer.tableName, userDB, "player");
     copyTable(memoryDB.db, UserDataItems.tableName, userDB, "items");
-    copyTable(memoryDB.db, UserDataMapEvent.tableName, userDB, "map_event");
     copyTable(memoryDB.db, UserDataMovable.tableName, userDB, "movable");
   }
 
   void load() {
     copyTable(userDB, "player", memoryDB.db, UserDataPlayer.tableName);
     copyTable(userDB, "items", memoryDB.db, UserDataItems.tableName);
-    copyTable(userDB, "map_event", memoryDB.db, UserDataMapEvent.tableName);
     copyTable(userDB, "movable", memoryDB.db, UserDataMovable.tableName);
 
     player.loadPostProcess(myGame);

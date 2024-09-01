@@ -23,7 +23,7 @@ class Input extends PositionComponent with TapCallbacks {
   // 入力更新
   @override
   void onTapDown(TapDownEvent event) {
-    log.info("onTap");
+    // log.info("onTap");
     isPressed = true;
   }
 

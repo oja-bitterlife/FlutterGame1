@@ -53,7 +53,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
 
   // Findアイコンが押された(イベントオブジェクトがある)
   void onFind(int blockX, int blockY) {
-    String? name = gameRef.userData.mapEvent.get(blockX, blockY);
+    String? name = gameRef.map.getEventName(blockX, blockY);
     if (name != null) {
       addEvent(name);
     }

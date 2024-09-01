@@ -53,21 +53,12 @@ class TiledMap {
 
     myGame.add(underComponent);
     myGame.add(overComponent);
-
-    // イベントを拾う
-    getOrgTiles("UnderPlayerEvent")
-        .forEachIndexed((y, line) => line.forEachIndexed((x, gid) {
-              if (gid > 0) {
-                String? name = getTilesetProperty(gid, "event");
-                if (name != null) myGame.userData.mapEvent.set(name, x, y);
-              }
-            }));
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
     // イベントチェック
-    var event = myGame.userData.mapEvent.get(blockX, blockY);
-    if (event != null) return MapEventType.event;
+    var eventGid = getEventName(blockX, blockY);
+    if (eventGid != null) return MapEventType.event;
 
     // 移動不可チェック
     var movable = myGame.userData.movable.get(blockX, blockY);
@@ -123,6 +114,9 @@ class TiledMap {
   String? getTilesetProperty(int gid, String propName) {
     if (gid == 0) return null;
     var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
-    return prop["event"]?.value as String?;
+    return prop[propName]?.value as String?;
   }
+
+  String? getEventName(int blockX, int blockY) =>
+      getTilesetProperty(getGid("UnderPlayerEvent", blockX, blockY), "event");
 }
