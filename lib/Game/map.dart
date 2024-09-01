@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -42,6 +43,7 @@ class TiledMap {
     underComponent
       ..priority = Priority.mapUnder.index
       ..scale = Vector2.all(2);
+    myGame.add(underComponent);
 
     // プレイヤの上に表示
     var overComponent = imageBatch
@@ -49,9 +51,12 @@ class TiledMap {
     overComponent
       ..priority = Priority.mapOver.index
       ..scale = Vector2.all(2);
-
-    myGame.add(underComponent);
     myGame.add(overComponent);
+
+    // イベントオブジェクト
+    eventSprites = SpriteBatch(atlas.atlas!);
+    updateEventComponent();
+    myGame.add(SpriteBatchComponent(spriteBatch: eventSprites));
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
@@ -74,20 +79,22 @@ class TiledMap {
 
   // イベントタイル表示
   void updateEventComponent() {
-    // eventSprites.clear();
+    eventSprites.clear();
+
+    var eventTiles = getOrgTiles("UnderPlayerEvent");
 
     // Spriteの更新
-    // for (int y = 0; y < myGame.userData.viewTiles.length; y++) {
-    //   for (int x = 0; x < myGame.userData.viewTiles[y].length; x++) {
-    //     int no = myGame.userData.viewTiles[y][x] - 1;
-    //     if (myGame.userData.viewTiles[y][x] != 0) {
-    //       eventSprites.add(
-    //           source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
-    //           scale: 2.0,
-    //           offset: Vector2(x * 32, y * 32));
-    //     }
-    //   }
-    // }
+    for (int y = 0; y < eventTiles.length; y++) {
+      for (int x = 0; x < eventTiles[y].length; x++) {
+        if (eventTiles[y][x] != 0) {
+          int no = eventTiles[y][x] - 1;
+          eventSprites.add(
+              source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
+              scale: 2.0,
+              offset: Vector2(x * 32, y * 32));
+        }
+      }
+    }
   }
 
   List<List<int>> getOrgTiles(String layerName) {
