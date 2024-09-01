@@ -4,6 +4,7 @@ import 'package:transparent_pointer/transparent_pointer.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
+
 import '../Game/my_game.dart';
 
 class MessaeWindowWidget extends StatefulWidget {
@@ -29,7 +30,7 @@ class MessageWindowState extends State<MessaeWindowWidget> {
   static const windowY = 512.0 - windowH - 32.0;
 
   // メッセージ表示
-  void show(String msg, {bool isAutoCR = true}) {
+  void setMsg(String msg, {bool isAutoCR = true}) {
     // 自動改行(autoCRが0の時は改行しない)
     if (autoCRLength > 0 && isAutoCR) {
       List<String> parts = [];
@@ -43,16 +44,13 @@ class MessageWindowState extends State<MessaeWindowWidget> {
     // 表示開始
     setState(() {
       _message = msg;
-      _isVisible = true;
     });
   }
 
   // メッセージ非表示
-  void hide() {
-    setState(() {
-      _isVisible = false;
-    });
-  }
+  set visible(bool visible) => setState(() {
+        _isVisible = visible;
+      });
 
   // メッセージ状態取得
   bool get isVisible => _isVisible;

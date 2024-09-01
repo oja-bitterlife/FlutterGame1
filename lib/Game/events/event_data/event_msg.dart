@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import '../../../UI_Widgets/message_window.dart';
-import '../../../UI_Widgets/player_cursor.dart';
-
 import '../event_element.dart';
+import '../../ui_control.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
@@ -16,13 +13,8 @@ class EventMsg extends EventElement {
 
   @override
   void onStart() {
-    var cursor =
-        const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
-    cursor?.hide();
-
-    var msgWin =
-        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
-    msgWin?.show(text);
+    gameRef.uiControl.showUI = ShowUI.msgWin;
+    gameRef.uiControl.msgWin?.setMsg(text);
   }
 
   @override
@@ -48,15 +40,7 @@ class EventMsgRoot extends EventElement {
 
   @override
   void onFinish() {
-    var msgWin =
-        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
-    msgWin?.hide();
-
-    if (next == null) {
-      var cursor =
-          const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
-      cursor?.showFromArea();
-    }
+    gameRef.uiControl.showUI = ShowUI.cursor;
   }
 }
 

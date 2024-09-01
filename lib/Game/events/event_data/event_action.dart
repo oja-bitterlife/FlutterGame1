@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import '../../../UI_Widgets/player_cursor.dart';
-
 import 'package:my_app/Game/events/event_data/event_move.dart';
 import 'package:my_app/Game/player.dart';
 
+import '../../ui_control.dart';
 import '../event_element.dart';
 
 // ignore: unused_import
@@ -50,9 +48,7 @@ class EventActionRoot extends EventElement {
   @override
   void onFinish() {
     if (next == null) {
-      var cursor =
-          const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
-      cursor?.showFromArea();
+      gameRef.uiControl.showUI = ShowUI.cursor;
     }
   }
 }

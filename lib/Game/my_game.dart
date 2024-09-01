@@ -1,9 +1,8 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
+import 'package:my_app/Game/ui_control.dart';
 
-import '../UI_Widgets/player_cursor.dart';
-import '../UI_Widgets/message_window.dart';
 import '../db.dart';
 import 'events/event_manager.dart';
 import 'input.dart';
@@ -25,6 +24,8 @@ class MyGame extends FlameGame {
   late MovePlayerComponent player;
   late TiledMap map;
   late SpriteSheet trapSheet;
+
+  late UIControl uiControl;
 
   GameWidget createWidget() {
     return GameWidget(key: const GlobalObjectKey("game"), game: this);
@@ -63,10 +64,7 @@ class MyGame extends FlameGame {
     map = TiledMap(this);
 
     // UIリセット
-    const msgWin = GlobalObjectKey<MessageWindowState>("MessageWindow");
-    msgWin.currentState?.hide();
-    const cursor = GlobalObjectKey<PlayerCursorState>("PlayerCursor");
-    cursor.currentState?.hide();
+    uiControl = UIControl();
 
     // イベント管理
     add(eventManager = EventManager(this, 0));
@@ -78,14 +76,9 @@ class MyGame extends FlameGame {
     init(); // 再構築
   }
 
-  // @override
-  // void update(double dt) {
-  //   // 別のことを実行中
-  //   if (eventManager.hasChildren || player.isMoving) {
-  //     super.update(dt);
-  //     return;
-  //   }
-
-  //   super.update(dt);
-  // }
+  @override
+  void update(double dt) {
+    super.update(dt);
+    uiControl.update();
+  }
 }

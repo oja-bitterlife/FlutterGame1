@@ -28,7 +28,7 @@ class PlayerCursorWidget extends StatefulWidget {
 
 class PlayerCursorState extends State<PlayerCursorWidget> {
   Vector2 cursorPos = Vector2.zero();
-  bool isVisible = false;
+  bool _isVisible = false;
 
   // プレイヤの各方向(PlayerDir)のカーソルタイプ
   List<PlayerCursorType> playerCursorData = [
@@ -44,25 +44,34 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
     });
   }
 
-  // 表示座標の設定
-  void show(Vector2 pos) {
+  // カーソル表示
+  set visible(bool visible) {
+    // 表示の時は準備が必要
+    if (visible) {
+      // プレイヤーの四方向チェック
+      int blockX = widget.myGame.player.getBlockX();
+      int blockY = widget.myGame.player.getBlockY();
+      // 周りをみてカーソル設定
+      this
+        ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
+        ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
+        ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
+        ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
+    }
+
     setState(() {
-      cursorPos.setFrom(pos);
-      isVisible = true;
+      cursorPos.setFrom(widget.myGame.player.position);
+      _isVisible = visible;
     });
   }
 
-  // 非表示
-  void hide() {
-    setState(() {
-      isVisible = false;
-    });
-  }
+  // カーソル状態取得
+  bool get isVisible => _isVisible;
 
   @override
   Widget build(BuildContext context) {
     return Visibility(
-        visible: isVisible,
+        visible: _isVisible,
         // 上下左右カーソル表示
         child: Stack(alignment: Alignment.topLeft, children: <Widget>[
           Positioned(
@@ -146,7 +155,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
   // カーソルが押された時の処理
   void onPlayerCursor(PlayerCursorType type, PlayerDir dir) {
     // ボタンが押されたら隠す
-    hide();
+    visible = false;
 
     switch (type) {
       case PlayerCursorType.move:
@@ -171,20 +180,5 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
       MapEventType.wall => PlayerCursorType.none,
       _ => PlayerCursorType.move
     };
-  }
-
-  // 周りをみてカーソル表示
-  void showFromArea() {
-    // プレイヤーの四方向チェック
-    int blockX = widget.myGame.player.getBlockX();
-    int blockY = widget.myGame.player.getBlockY();
-    this
-      ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
-      ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
-      ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
-      ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
-
-    // 操作カーソル表示
-    show(widget.myGame.player.position);
   }
 }

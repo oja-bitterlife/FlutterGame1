@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import '../../../UI_Widgets/player_cursor.dart';
-
+import '../../ui_control.dart';
 import '../event_element.dart';
 import 'package:my_app/Game/player.dart';
 
@@ -15,6 +13,7 @@ class EventMove extends EventElement {
 
   @override
   void onStart() {
+    gameRef.uiControl.showUI = ShowUI.none;
     gameRef.player.setMove(dir);
   }
 
@@ -30,8 +29,6 @@ class EventMoveToIdle extends EventMove {
 
   @override
   void onFinish() {
-    var cursor =
-        const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
-    cursor?.showFromArea();
+    gameRef.uiControl.showUI = ShowUI.cursor;
   }
 }
