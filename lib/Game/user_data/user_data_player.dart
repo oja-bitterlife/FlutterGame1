@@ -15,7 +15,7 @@ class UserDataPlayer {
     // プレイヤーデータを保存する
     memoryDB.execute("DELETE FROM user.$tableName"); // 一旦削除
     memoryDB.execute(
-        "INSERT INTO $tableName (dir, blockX, blockY) VALUES (?, ?, ?)", [
+        "INSERT INTO user.$tableName (dir, blockX, blockY) VALUES (?, ?, ?)", [
       myGame.player.dir.id,
       myGame.player.getBlockX(),
       myGame.player.getBlockY()
@@ -24,12 +24,12 @@ class UserDataPlayer {
 
   void loadPostProcess(MyGame myGame) {
     // プレイヤーデータを読み込む
-    var resultPlayerData =
+    var result =
         memoryDB.select("SELECT dir,blockX,blockY FROM user.$tableName");
-    if (resultPlayerData.isEmpty) return; // まだセーブされていなかった
+    if (result.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新
-    var playerData = resultPlayerData.first;
+    var playerData = result.first;
     myGame.player.setDir(PlayerDir.values[playerData["dir"]]);
     myGame.player.position.x =
         PlayerComponent.getPosFromBlockX(playerData["blockX"]);

@@ -48,6 +48,7 @@ class MyGame extends FlameGame {
 
     // 全体の初期化
     init();
+    eventManager.addEvent("on_start");
   }
 
   // 画面構築(Components)
@@ -69,7 +70,6 @@ class MyGame extends FlameGame {
 
     // イベント管理
     add(eventManager = EventManager(this, 0));
-    eventManager.addEvent("on_start");
   }
 
   // 状態のリセット

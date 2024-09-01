@@ -59,15 +59,16 @@ class MemoryDB {
 // SaveLoad用テーブル内データ一括コピー
 void copyTable(CommonDatabase src, String srcTable, CommonDatabase dist,
     String distTable) {
-  dist.execute("delete from $distTable where book_id = 1");
+  // 削除して全部入れ替える
+  dist.execute("DELETE FROM $distTable");
 
-  var result = src.select("select * from $srcTable where book_id = 1");
+  var result = src.select("SELECT * FROM $srcTable");
   if (result.isEmpty) return;
 
   for (var data in result) {
     var keys = data.keys.join(",");
     var placeholders = List<String>.filled(data.length, "?").join(",");
     dist.execute(
-        "insert into $distTable ($keys) values ($placeholders)", data.values);
+        "INSERT INTO $distTable ($keys) VALUES ($placeholders)", data.values);
   }
 }
