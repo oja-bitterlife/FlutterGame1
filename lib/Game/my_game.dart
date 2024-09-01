@@ -78,41 +78,14 @@ class MyGame extends FlameGame {
     init(); // 再構築
   }
 
-  @override
-  void update(double dt) {
-    var cursor =
-        const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
+  // @override
+  // void update(double dt) {
+  //   // 別のことを実行中
+  //   if (eventManager.hasChildren || player.isMoving) {
+  //     super.update(dt);
+  //     return;
+  //   }
 
-    // 別のことを実行中
-    if (eventManager.hasChildren || player.isMoving) {
-      if (cursor?.isVisible ?? false) cursor!.hide();
-      super.update(dt);
-      return;
-    }
-
-    // 何もなければ操作カーソルを表示する
-    if (!(cursor?.isVisible ?? true)) {
-      // プレイヤーの四方向チェック
-      int blockX = player.getBlockX();
-      int blockY = player.getBlockY();
-      cursor!
-        ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
-        ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
-        ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
-        ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
-
-      // 操作カーソル表示
-      cursor.show(player.position);
-    }
-
-    super.update(dt);
-  }
-
-  PlayerCursorType checkBlock(int blockX, int blockY) {
-    return switch (map.checkEventType(blockX, blockY)) {
-      MapEventType.event => PlayerCursorType.find,
-      MapEventType.wall => PlayerCursorType.none,
-      _ => PlayerCursorType.move
-    };
-  }
+  //   super.update(dt);
+  // }
 }

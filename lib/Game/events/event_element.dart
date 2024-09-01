@@ -4,6 +4,8 @@ import '../my_game.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
+// キュー方式で順番に子イベントを実行する
+// 子が無くなったら自分
 class EventElement extends Component with HasGameRef<MyGame> {
   String name;
   String? next;
@@ -23,6 +25,20 @@ class EventElement extends Component with HasGameRef<MyGame> {
     }
 
     onUpdate();
+  }
+
+  // キューなので先頭1つだけ実行する
+  @override
+  void updateTree(double dt) {
+    // 子を一つ実行
+    if (hasChildren) {
+      EventElement element = children.first as EventElement;
+      element.updateTree(dt);
+    }
+    // キューが空なら自分を実行
+    else {
+      update(dt);
+    }
   }
 
   // 強制終了
@@ -54,22 +70,4 @@ class EventElement extends Component with HasGameRef<MyGame> {
 
   // 終了時
   void onFinish() {}
-}
-
-class EventQueue extends EventElement {
-  EventQueue(super.name, [super.next, super.nofity = true]);
-
-  // キューなので先頭1つだけ実行する
-  @override
-  void updateTree(double dt) {
-    super.update(dt);
-
-    if (hasChildren) {
-      EventElement element = children.first as EventElement;
-      element.updateTree(dt);
-    } else {
-      // キューが空っぽになった
-      finish();
-    }
-  }
 }

@@ -1,3 +1,5 @@
+import 'package:my_app/Game/events/event_data/event_move.dart';
+
 import 'level_base.dart';
 import 'package:my_app/Game/events/event_element.dart';
 
@@ -6,13 +8,6 @@ import '../../../my_logger.dart';
 
 class Level0 extends LevelEventBase {
   Level0(super.myGame);
-
-  @override
-  void onMoveFinish(int blockX, int blockY) {
-    if (myGame.map.getGid("trap", blockX, blockY) != 0) {
-      myGame.eventManager.addEvent("trap");
-    }
-  }
 
   @override
   void onEventFinish(EventElement event) {
@@ -26,6 +21,14 @@ class Level0 extends LevelEventBase {
 
     if (event.name == "trap") {
       log.info("game over");
+    }
+
+    if (event is EventMove) {
+      if (myGame.map.getGid(
+              "trap", myGame.player.getBlockX(), myGame.player.getBlockY()) !=
+          0) {
+        myGame.eventManager.addEvent("trap");
+      }
     }
   }
 }

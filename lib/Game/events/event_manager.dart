@@ -22,8 +22,13 @@ class EventManager extends Component with HasGameRef<MyGame> {
   int level;
   LevelEventBase levelEvent;
 
+  EventElement eventQueue;
+
   EventManager(MyGame myGame, this.level)
-      : levelEvent = getLevelEvent(myGame, level)!;
+      : levelEvent = getLevelEvent(myGame, level)!,
+        eventQueue = EventElement("EventManager") {
+    add(eventQueue);
+  }
 
   // イベントをDBから読み出して追加する
   void addEvent(String eventName) {
@@ -40,7 +45,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
       // イベントが見つかった
       if (result.isNotEmpty) {
         // イベント登録
-        add(info.func(
+        eventQueue.add(info.func(
             eventName, result.first[info.data], result.first["next"]));
         return;
       }
@@ -55,11 +60,6 @@ class EventManager extends Component with HasGameRef<MyGame> {
     if (name != null) {
       addEvent(changeMapEvent(gameRef, name));
     }
-  }
-
-  // 通常移動終了時に呼び出される
-  void onMoveFinish(int blockX, int blockY) {
-    levelEvent.onMoveFinish(blockX, blockY);
   }
 
   // 登録したイベントが終わった時

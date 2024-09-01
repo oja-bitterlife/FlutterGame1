@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
+import 'package:my_app/Game/events/event_data/event_move.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -69,14 +70,12 @@ class MovePlayerComponent extends PlayerComponent {
     // 移動中処理
     // ------------------------------------------------------------------------
     transTime = min(transTime + dt, needMoveTime); // 行き過ぎないように
-
-    // 座標更新
-    position = (moveValue * transTime / needMoveTime) + srcPos;
-
-    // 移動完了
-    if (!isMoving) {
-      gameRef.eventManager
-          .onMoveFinish(gameRef.player.getBlockX(), gameRef.player.getBlockY());
+    if (isMoving) {
+      // 座標更新
+      position = (moveValue * transTime / needMoveTime) + srcPos;
+    } else {
+      // 座標Fix
+      position = moveValue + srcPos;
     }
   }
 }

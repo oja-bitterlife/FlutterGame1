@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import '../../../UI_Widgets/player_cursor.dart';
+
+import 'package:my_app/Game/events/event_data/event_move.dart';
 import 'package:my_app/Game/player.dart';
 
 import '../event_element.dart';
@@ -8,30 +12,56 @@ import 'package:my_app/my_logger.dart';
 // アクション一つ
 class EventAction extends EventElement {
   String command;
-  EventAction(super.name, this.command);
-
-  @override
-  void onStart() {
-    gameRef.player.setMove(PlayerDir.up);
+  EventAction(super.name, this.command) {
+    switch (command) {
+      case "UP":
+        add(EventMove(PlayerDir.up));
+      case "DOWN":
+        add(EventMove(PlayerDir.down));
+      case "LEFT":
+        add(EventMove(PlayerDir.left));
+      case "RIGHT":
+        add(EventMove(PlayerDir.right));
+    }
   }
 
   @override
   void onUpdate() {
-    // 移動完了
-    if (!gameRef.player.isMoving) {
+    // イベント完了
+    if (!hasChildren) {
       finish();
     }
   }
 }
 
-// 複数アクションを順番に表示
-class EventActionGroup extends EventQueue {
-  EventActionGroup(super.name, String commands, [super.next]) {
-    // データを確認して開始
-    addAll(commands.split(",").map((command) => EventAction(name, command)));
+List<String> formatEventAction(String action) {
+  return action.split(",");
+}
+
+class EventActionRoot extends EventElement {
+  EventActionRoot(super.name, String action,
+      [super.next, super.notify = true]) {
+    addAll(formatEventAction(action).map((text) => EventAction(name, text)));
+  }
+
+  @override
+  void onUpdate() {
+    if (!hasChildren) {
+      finish();
+    }
+  }
+
+  @override
+  void onFinish() {
+    if (next == null) {
+      var cursor =
+          const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
+      cursor?.showFromArea();
+    }
   }
 }
 
 // イベントマネージャ用
-EventActionGroup createEventAction(String name, String action, String? next) =>
-    EventActionGroup(name, action, next);
+EventActionRoot createEventAction(String name, String action, String? next) {
+  return EventActionRoot(name, action, next);
+}

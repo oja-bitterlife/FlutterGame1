@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:my_app/Game/events/event_data/event_move.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
 import '../Game/player.dart';
 import '../Game/my_game.dart';
+import '../Game/map.dart';
 
 enum PlayerCursorType {
   none(-1),
@@ -143,10 +145,13 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
 
   // カーソルが押された時の処理
   void onPlayerCursor(PlayerCursorType type, PlayerDir dir) {
+    // ボタンが押されたら隠す
+    hide();
+
     switch (type) {
       case PlayerCursorType.move:
         // 移動
-        widget.myGame.player.setMove(dir);
+        widget.myGame.eventManager.add(EventMoveToIdle(dir));
       case PlayerCursorType.find:
         // 方向を変えてからイベント
         widget.myGame.player.setDir(dir);
@@ -158,5 +163,28 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
       case PlayerCursorType.none:
         log.shout("あってはいけないエラー");
     }
+  }
+
+  PlayerCursorType checkBlock(int blockX, int blockY) {
+    return switch (widget.myGame.map.checkEventType(blockX, blockY)) {
+      MapEventType.event => PlayerCursorType.find,
+      MapEventType.wall => PlayerCursorType.none,
+      _ => PlayerCursorType.move
+    };
+  }
+
+  // 周りをみてカーソル表示
+  void showFromArea() {
+    // プレイヤーの四方向チェック
+    int blockX = widget.myGame.player.getBlockX();
+    int blockY = widget.myGame.player.getBlockY();
+    this
+      ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
+      ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
+      ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
+      ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
+
+    // 操作カーソル表示
+    show(widget.myGame.player.position);
   }
 }
