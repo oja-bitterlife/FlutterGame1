@@ -22,11 +22,12 @@ class EventManager extends Component with HasGameRef<MyGame> {
   int level;
   LevelEventBase levelEvent;
 
+  // childではなくこっちに登録する
   EventElement eventQueue;
 
   EventManager(MyGame myGame, this.level)
       : levelEvent = getLevelEvent(myGame, level)!,
-        eventQueue = EventElement("EventManager") {
+        eventQueue = EventElement("EventRoot") {
     add(eventQueue);
   }
 
@@ -62,7 +63,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
     }
   }
 
-  // 登録したイベントが終わった時
+  // 通知あり登録したイベントが終わった時
   void onEventFinish(EventElement event) {
     log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
     levelEvent.onEventFinish(event);

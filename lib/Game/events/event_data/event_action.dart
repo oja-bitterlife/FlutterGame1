@@ -28,9 +28,7 @@ class EventAction extends EventElement {
   @override
   void onUpdate() {
     // イベント完了
-    if (!hasChildren) {
-      finish();
-    }
+    if (!hasChildren) finish();
   }
 }
 
@@ -46,9 +44,7 @@ class EventActionRoot extends EventElement {
 
   @override
   void onUpdate() {
-    if (!hasChildren) {
-      finish();
-    }
+    if (!hasChildren) finish();
   }
 
   @override

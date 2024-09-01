@@ -27,12 +27,15 @@ class EventMsg extends EventElement {
 
   @override
   void onUpdate() {
-    if (gameRef.input.isTrgDown) {
-      finish();
-    }
+    if (gameRef.input.isTrgDown) finish();
   }
 }
 
+List<String> formatEventMsg(String text) {
+  return text.replaceAll("\\n", "\n").split("\\0");
+}
+
+// メッセージ複数登録
 class EventMsgRoot extends EventElement {
   EventMsgRoot(super.name, String text, [super.next, super.notify = true]) {
     addAll(formatEventMsg(text).map((text) => EventMsg(name, text)));
@@ -40,27 +43,21 @@ class EventMsgRoot extends EventElement {
 
   @override
   void onUpdate() {
-    if (!hasChildren) {
-      var msgWin = const GlobalObjectKey<MessageWindowState>("MessageWindow")
-          .currentState;
-      msgWin?.hide();
-
-      finish();
-    }
+    if (!hasChildren) finish();
   }
 
   @override
   void onFinish() {
+    var msgWin =
+        const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
+    msgWin?.hide();
+
     if (next == null) {
       var cursor =
           const GlobalObjectKey<PlayerCursorState>("PlayerCursor").currentState;
       cursor?.showFromArea();
     }
   }
-}
-
-List<String> formatEventMsg(String text) {
-  return text.replaceAll("\\n", "\n").split("\\0");
 }
 
 EventMsgRoot createEventMsg(String name, String text, String? next) {
