@@ -1,4 +1,4 @@
-import '../my_game.dart';
+import '../../my_game.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../UI_Widgets/message_window.dart';
+import '../../../UI_Widgets/message_window.dart';
 
-import 'event_element.dart';
+import '../event_element.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
@@ -44,7 +44,5 @@ class EventMsgGroup extends EventQueue {
     var msgWin =
         const GlobalObjectKey<MessageWindowState>("MessageWindow").currentState;
     msgWin?.hide();
-
-    super.onFinish();
   }
 }

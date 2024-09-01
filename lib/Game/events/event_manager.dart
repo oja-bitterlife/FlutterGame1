@@ -4,9 +4,8 @@ import 'package:sqlite3/wasm.dart';
 import '../my_game.dart';
 
 import 'event_element.dart';
-import 'level_msg.dart';
-import 'level_action.dart';
-import 'level_map.dart';
+import 'event_data/event_msg.dart';
+import 'event_data/event_action.dart';
 
 // ignore: unused_import
 import '../../my_logger.dart';
@@ -65,6 +64,31 @@ class EventManager extends Component with HasGameRef<MyGame> {
     levelEvent.onEventFinish(event);
     log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
   }
+}
+
+// itemの状態によってマップイベントを変更する
+String changeMapEvent(MyGame myGame, String name) {
+  var results = myGame.memoryDB.select(
+      "SELECT * FROM event.map WHERE name = ? ORDER BY priority DESC", [name]);
+
+  for (var result in results) {
+    // アイテム保有時
+    if (result["own"] != null) {
+      if (myGame.userData.items.isOwned(result["own"])) {
+        return result["next"];
+      }
+    }
+
+    // アイテム使用時
+    if (result["used"] != null) {
+      if (myGame.userData.items.isUsed(result["used"])) {
+        return result["next"];
+      }
+    }
+  }
+
+  // 元のまま使う
+  return name;
 }
 
 // イベント名の重複チェッカー
