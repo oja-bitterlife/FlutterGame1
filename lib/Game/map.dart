@@ -22,12 +22,12 @@ enum MapEventType {
 
 class TiledMap {
   MyGame myGame;
+  late MapEvent event;
+  late MapMove move;
 
   static const blockSize = 32;
   static late TiledComponent tiled;
   static late TiledAtlas atlas;
-
-  late SpriteBatch eventSprites;
 
   static load(MyGame myGame) async {
     tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
@@ -53,15 +53,14 @@ class TiledMap {
       ..scale = Vector2.all(2);
     myGame.add(overComponent);
 
-    // イベントオブジェクト
-    eventSprites = SpriteBatch(atlas.atlas!);
-    updateEventComponent();
-    myGame.add(SpriteBatchComponent(spriteBatch: eventSprites));
+    // イベント用
+    myGame.add(event = MapEvent(tiled, atlas.atlas!));
+    myGame.add(move = MapMove(tiled));
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
     // イベントチェック
-    var eventGid = getEventName(blockX, blockY);
+    var eventGid = event.getProperty(blockX, blockY);
     if (eventGid != null) return MapEventType.event;
 
     // 移動不可チェック
@@ -70,31 +69,77 @@ class TiledMap {
       // ユーザーデータ優先
       return movable ? MapEventType.floor : MapEventType.wall;
     }
-    var moveGid = getGid("walk-flag", blockX, blockY);
+    var moveGid = move.tiles[blockY][blockX];
     if (moveGid != 0) return MapEventType.wall; // 移動不可
 
     // なにもない(床)
     return MapEventType.floor;
   }
 
-  // イベントタイル表示
-  void updateEventComponent() {
-    eventSprites.clear();
+  // 特殊なデータ取得用
+  int getGid(String layerName, int blockX, int blockY) {
+    // デバッグ用
+    if (layerName == "UnderPlayerEvent" || layerName == "walk-flag") {
+      log.warning("専用のクラス経由でアクセスしてください");
+    }
 
-    var eventTiles = getOrgTiles("UnderPlayerEvent");
+    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
+    var gid = layer?.tileData?[blockY][blockX];
+    return gid!.tile;
+  }
+
+  String? getProperty(String name, int gid, int blockX, int blockY) {
+    if (gid == 0) return null;
+    var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
+    return prop[name]?.value as String?;
+  }
+}
+
+// マップイベント用オブジェクト
+class MapEvent extends MapData {
+  SpriteBatch sprites;
+
+  MapEvent(TiledComponent tiled, Image image)
+      : sprites = SpriteBatch(image),
+        super(tiled, "UnderPlayerEvent") {
+    add(SpriteBatchComponent(spriteBatch: sprites));
+    updateSprites(); // 最初の更新
+  }
+
+  // 現在のタイルの状態で表示を更新
+  void updateSprites() {
+    sprites.clear();
 
     // Spriteの更新
-    for (int y = 0; y < eventTiles.length; y++) {
-      for (int x = 0; x < eventTiles[y].length; x++) {
-        if (eventTiles[y][x] != 0) {
-          int no = eventTiles[y][x] - 1;
-          eventSprites.add(
+    for (int y = 0; y < tiles.length; y++) {
+      for (int x = 0; x < tiles[y].length; x++) {
+        if (tiles[y][x] != 0) {
+          int no = tiles[y][x] - 1;
+          sprites.add(
               source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
               scale: 2.0,
               offset: Vector2(x * 32, y * 32));
         }
       }
     }
+  }
+
+  String? getProperty(int blockX, int blockY) =>
+      _getProperty("event", blockX, blockY);
+}
+
+// 移動データ操作用
+class MapMove extends MapData {
+  MapMove(TiledComponent tiled) : super(tiled, "walk-flag");
+}
+
+// マップデータアクセスクラス
+class MapData extends Component with HasGameRef<MyGame> {
+  TiledComponent tiled;
+  late List<List<int>> tiles;
+
+  MapData(this.tiled, String layerName) {
+    tiles = getOrgTiles(layerName);
   }
 
   List<List<int>> getOrgTiles(String layerName) {
@@ -111,18 +156,10 @@ class TiledMap {
     return tiles;
   }
 
-  int getGid(String layerName, int blockX, int blockY) {
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
-    var gid = layer?.tileData?[blockY][blockX];
-    return gid!.tile;
-  }
-
-  String? getTilesetProperty(int gid, String propName) {
+  String? _getProperty(String name, int blockX, int blockY) {
+    int gid = tiles[blockY][blockX];
     if (gid == 0) return null;
     var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
-    return prop[propName]?.value as String?;
+    return prop[name]?.value as String?;
   }
-
-  String? getEventName(int blockX, int blockY) =>
-      getTilesetProperty(getGid("UnderPlayerEvent", blockX, blockY), "event");
 }

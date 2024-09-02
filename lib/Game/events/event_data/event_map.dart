@@ -40,7 +40,7 @@ class EventFindToIdle extends EventElement {
 
   @override
   void onStart() {
-    String? name = gameRef.map.getEventName(blockX, blockY);
+    String? name = gameRef.map.event.getProperty(blockX, blockY);
     if (name != null) {
       gameRef.eventManager.addEvent(changeMapEvent(name));
     }
@@ -71,5 +71,36 @@ class EventFindToIdle extends EventElement {
 
     // 元のまま使う
     return name;
+  }
+}
+
+// マップ表示変更
+class EventMapEventChange extends EventElement {
+  int blockX, blockY;
+  int gid;
+  EventMapEventChange(this.blockX, this.blockY, this.gid)
+      : super("map event change");
+
+  @override
+  void onStart() {
+    gameRef.map.event.tiles[blockY][blockX] = gid;
+  }
+
+  @override
+  void onFinish() {
+    gameRef.map.event.updateSprites();
+  }
+}
+
+// マップ移動変更
+class EventMapMoveChange extends EventElement {
+  int blockX, blockY;
+  bool movable;
+  EventMapMoveChange(this.blockX, this.blockY, this.movable)
+      : super("map move change");
+
+  @override
+  void onStart() {
+    gameRef.map.move.tiles[blockY][blockX] = movable ? 1 : 0;
   }
 }
