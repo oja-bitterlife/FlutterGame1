@@ -22,7 +22,7 @@ enum MapEventType {
 
 class TiledMap {
   MyGame myGame;
-  late MapEvent event;
+  late MapObj objs;
   late MapMove move;
 
   static const blockSize = 32;
@@ -54,13 +54,14 @@ class TiledMap {
     myGame.add(overComponent);
 
     // イベント用
-    myGame.add(event = MapEvent(tiled, atlas.atlas!));
+    myGame.add(objs = MapObj(tiled, atlas.atlas!));
     myGame.add(move = MapMove(tiled));
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
     // イベントチェック
-    var eventGid = event.getProperty(blockX, blockY);
+    var eventGid =
+        getProperty("event", getGid("UnderPlayerEvent", blockX, blockY));
     if (eventGid != null) return MapEventType.event;
 
     // 移動不可チェック
@@ -78,28 +79,26 @@ class TiledMap {
 
   // 特殊なデータ取得用
   int getGid(String layerName, int blockX, int blockY) {
-    // デバッグ用
-    if (layerName == "UnderPlayerEvent" || layerName == "walk-flag") {
-      log.warning("専用のクラス経由でアクセスしてください");
-    }
-
     TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
     var gid = layer?.tileData?[blockY][blockX];
     return gid!.tile;
   }
 
-  String? getProperty(String name, int gid, int blockX, int blockY) {
+  String? getProperty(String name, int gid) {
     if (gid == 0) return null;
     var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
     return prop[name]?.value as String?;
   }
+
+  String? getEventProperty(int blockX, blockY) =>
+      getProperty("event", getGid("UnderPlayerEvent", blockX, blockY));
 }
 
 // マップイベント用オブジェクト
-class MapEvent extends MapData {
+class MapObj extends MapData {
   SpriteBatch sprites;
 
-  MapEvent(TiledComponent tiled, Image image)
+  MapObj(TiledComponent tiled, Image image)
       : sprites = SpriteBatch(image),
         super(tiled, "UnderPlayerEvent") {
     add(SpriteBatchComponent(spriteBatch: sprites));

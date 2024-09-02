@@ -14,9 +14,15 @@ class Level0 extends LevelEventBase {
   void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
+      myGame.eventManager.add(EventMapObjChange(374,
+          myGame.player.getFowardBlockX(), myGame.player.getFowardBlockY()));
     }
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
+      myGame.eventManager.add(EventMapObjChange(
+          424,
+          myGame.player.getFowardBlockX(),
+          myGame.player.getFowardBlockY() - 1));
     }
 
     if (event.name == "trap") {

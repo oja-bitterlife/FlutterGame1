@@ -9,7 +9,7 @@ class EventMsg extends EventElement {
   // 表示UI
   String text;
 
-  EventMsg(super.name, this.text, [super.next, super.notify]);
+  EventMsg(super.name, this.text);
 
   @override
   void onStart() {

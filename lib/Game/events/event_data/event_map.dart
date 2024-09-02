@@ -8,8 +8,7 @@ import 'package:my_app/my_logger.dart';
 // 移動のみ(アクション用)
 class EventMove extends EventElement {
   PlayerDir dir;
-  EventMove(this.dir, [String? next, bool notify = false])
-      : super("move: ${dir.toString()}", next, notify);
+  EventMove(this.dir) : super("move: ${dir.toString()}");
 
   @override
   void onStart() {
@@ -25,7 +24,7 @@ class EventMove extends EventElement {
 
 // 移動後カーソル表示
 class EventMoveToIdle extends EventMove {
-  EventMoveToIdle(super.dir, [super.next, super.notify = true]);
+  EventMoveToIdle(super.dir);
 
   @override
   void onFinish() {
@@ -40,7 +39,7 @@ class EventFindToIdle extends EventElement {
 
   @override
   void onStart() {
-    String? name = gameRef.map.event.getProperty(blockX, blockY);
+    String? name = gameRef.map.getEventProperty(blockX, blockY);
     if (name != null) {
       gameRef.eventManager.addEvent(changeMapEvent(name));
     }
@@ -75,20 +74,20 @@ class EventFindToIdle extends EventElement {
 }
 
 // マップ表示変更
-class EventMapEventChange extends EventElement {
+class EventMapObjChange extends EventElement {
   int blockX, blockY;
   int gid;
-  EventMapEventChange(this.blockX, this.blockY, this.gid)
+  EventMapObjChange(this.gid, this.blockX, this.blockY)
       : super("map event change");
 
   @override
   void onStart() {
-    gameRef.map.event.tiles[blockY][blockX] = gid;
+    gameRef.map.objs.tiles[blockY][blockX] = gid;
   }
 
   @override
   void onFinish() {
-    gameRef.map.event.updateSprites();
+    gameRef.map.objs.updateSprites();
   }
 }
 
@@ -96,7 +95,7 @@ class EventMapEventChange extends EventElement {
 class EventMapMoveChange extends EventElement {
   int blockX, blockY;
   bool movable;
-  EventMapMoveChange(this.blockX, this.blockY, this.movable)
+  EventMapMoveChange(this.movable, this.blockX, this.blockY)
       : super("map move change");
 
   @override
