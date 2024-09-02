@@ -1,6 +1,5 @@
 import 'package:my_app/Game/events/event_data/event_map.dart';
 import 'package:my_app/Game/player.dart';
-import 'package:my_app/Game/my_game.dart';
 
 import '../../ui_control.dart';
 import '../event_element.dart';
@@ -57,6 +56,6 @@ class EventActionRoot extends EventElement {
 
 // イベントマネージャ用
 EventActionRoot createEventAction(
-    String name, String action, EventElement? next) {
-  return EventActionRoot(name, action, next);
+    String name, String data, EventElement? next) {
+  return EventActionRoot(name, data, next);
 }

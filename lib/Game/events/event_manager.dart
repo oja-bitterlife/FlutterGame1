@@ -57,7 +57,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
   }
 
   // イベントをDBから読み出して作成
-  EventElement fromDB(String eventName) {
+  EventElement createFromDB(String eventName) {
     for (var info in eventInfo) {
       var result = gameRef.memoryDB.select(
           "SELECT * FROM event.${info.table} WHERE level = ? AND name = ?",
@@ -73,10 +73,10 @@ class EventManager extends Component with HasGameRef<MyGame> {
         // nextがあれば用意しておく
         EventElement? next;
         if (result.first["next"] != null) {
-          next = fromDB(result.first["next"]);
+          next = createFromDB(result.first["next"]);
         }
 
-        // イベント
+        // イベント生成
         return info.func(eventName, result.first[info.data], next);
       }
     }

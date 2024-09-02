@@ -34,7 +34,7 @@ class Level0 extends LevelEventBase {
       if (myGame.map.getGid(
               "trap", myGame.player.getBlockX(), myGame.player.getBlockY()) !=
           0) {
-        myGame.event.add(myGame.event.fromDB("trap"));
+        myGame.event.add(myGame.event.createFromDB("trap"));
 
         // UIを消した状態にする
         myGame.uiControl.showUI = ShowUI.none;

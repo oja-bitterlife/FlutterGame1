@@ -41,7 +41,7 @@ class EventFindToIdle extends EventElement {
   void onStart() {
     String? name = gameRef.map.getEventProperty(blockX, blockY);
     if (name != null) {
-      gameRef.event.add(gameRef.event.fromDB(changeMapEvent(name)));
+      gameRef.event.add(gameRef.event.createFromDB(changeMapEvent(name)));
     }
   }
 

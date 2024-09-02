@@ -49,7 +49,7 @@ class MyGame extends FlameGame {
 
     // 全体の初期化
     init();
-    event.add(event.fromDB("on_start"));
+    event.add(event.createFromDB("on_start"));
   }
 
   // 画面構築(Components)
