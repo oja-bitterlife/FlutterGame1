@@ -80,9 +80,17 @@ class EventManager extends Component with HasGameRef<MyGame> {
     log.warning("event not found: $eventName");
   }
 
+  // 通知あり登録したイベントが開始する時
+  void onStartNotice(EventElement event) {
+    log.info(
+        "notice-start ${event.name}(${event.runtimeType}) => ${event.next}");
+    levelEvent.onEventStart(event);
+  }
+
   // 通知あり登録したイベントが終わった時
-  void onEventFinish(EventElement event) {
-    log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
+  void onFinishNitice(EventElement event) {
+    log.info(
+        "notice-finish ${event.name}(${event.runtimeType}) => ${event.next}");
     levelEvent.onEventFinish(event);
   }
 }

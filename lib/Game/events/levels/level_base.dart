@@ -7,6 +7,7 @@ abstract class LevelEventBase {
   MyGame myGame;
   LevelEventBase(this.myGame);
 
+  void onEventStart(EventElement event);
   void onEventFinish(EventElement event);
 }
 

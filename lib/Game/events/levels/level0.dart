@@ -11,6 +11,9 @@ class Level0 extends LevelEventBase {
   Level0(super.myGame);
 
   @override
+  void onEventStart(EventElement event) {}
+
+  @override
   void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");

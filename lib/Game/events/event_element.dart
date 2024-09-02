@@ -17,19 +17,25 @@ class EventElement extends Component with HasGameRef<MyGame> {
 
   @override
   void update(double dt) {
-    // 最初はupdateではなくonStartを実行する
-    if (isStarted == false) {
-      onStart();
-      isStarted = true;
-      return;
-    }
-
     onUpdate();
   }
 
   // キューなので先頭1つだけ実行する
   @override
   void updateTree(double dt) {
+    // 最初はupdateではなくonStartを実行する
+    if (isStarted == false) {
+      isStarted = true; // 初回のみ
+
+      // 開始を通知
+      if (nofity) {
+        gameRef.eventManager.onStartNotice(this);
+      }
+
+      onStart();
+      return;
+    }
+
     // 子を一つ実行
     if (hasChildren) {
       EventElement element = children.first as EventElement;
@@ -58,7 +64,7 @@ class EventElement extends Component with HasGameRef<MyGame> {
 
     // 終了を通知
     if (nofity) {
-      gameRef.eventManager.onEventFinish(this);
+      gameRef.eventManager.onFinishNitice(this);
     }
   }
 
