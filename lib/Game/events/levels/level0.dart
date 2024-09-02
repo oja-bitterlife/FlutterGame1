@@ -39,7 +39,6 @@ class Level0 extends LevelEventBase {
       log.info("game over");
     }
 
-    log.info(event);
     if (event is EventMove) {
       if (myGame.map.getGid(
               "trap", myGame.player.getBlockX(), myGame.player.getBlockY()) !=

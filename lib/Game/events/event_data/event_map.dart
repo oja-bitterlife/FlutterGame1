@@ -9,7 +9,8 @@ import 'package:my_app/my_logger.dart';
 // 移動のみ(アクション用)
 class EventMove extends EventElement {
   PlayerDir dir;
-  EventMove(this.dir) : super("move: ${dir.toString()}");
+  EventMove(this.dir, {bool notice = false})
+      : super("move: ${dir.toString()}", notice: notice);
 
   @override
   void onStart() {
@@ -25,7 +26,7 @@ class EventMove extends EventElement {
 
 // 移動後カーソル表示
 class EventMoveToIdle extends EventMove {
-  EventMoveToIdle(super.dir) : super();
+  EventMoveToIdle(super.dir) : super(notice: true);
 
   @override
   void onFinish() {
@@ -45,6 +46,12 @@ class EventFindToIdle extends EventElement {
     if (name != null) {
       add(gameRef.event.createFromDB(changeMapEvent(name)));
     }
+  }
+
+  @override
+  void onFinish() {
+    // Idleに強制する
+    gameRef.uiControl.showUI = ShowUI.cursor;
   }
 
   // itemの状態によってマップイベントを変更する
@@ -71,12 +78,6 @@ class EventFindToIdle extends EventElement {
 
     // 元のまま使う
     return name;
-  }
-
-  @override
-  void onFinish() {
-    // Idleに強制する
-    gameRef.uiControl.showUI = ShowUI.cursor;
   }
 }
 
