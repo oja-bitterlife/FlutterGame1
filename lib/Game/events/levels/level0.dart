@@ -12,8 +12,8 @@ class Level0 extends LevelEventBase {
 
   @override
   void onEventStart(EventElement event) {
-    // メッセージ表示前に表示変更
     if (event.name == "treasure") {
+      // メッセージ表示前に表示変更
       myGame.event.add(EventMapObjChange(myGame, 374,
           myGame.player.getFowardBlockX(), myGame.player.getFowardBlockY()));
     }
@@ -39,6 +39,7 @@ class Level0 extends LevelEventBase {
       log.info("game over");
     }
 
+    log.info(event);
     if (event is EventMove) {
       if (myGame.map.getGid(
               "trap", myGame.player.getBlockX(), myGame.player.getBlockY()) !=

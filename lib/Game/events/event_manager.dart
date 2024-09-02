@@ -98,14 +98,14 @@ class EventManager extends Component with HasGameRef<MyGame> {
   // 通知あり登録したイベントが開始する時
   void onStartNotice(EventElement event) {
     log.info(
-        "notice-start ${event.name}(${event.runtimeType}) => ${event.next}");
+        "notice_start ${event.name}(${event.runtimeType}) => ${event.next}");
     levelEvent.onEventStart(event);
   }
 
   // 通知あり登録したイベントが終わった時
   void onFinishNitice(EventElement event) {
     log.info(
-        "notice-finish ${event.name}(${event.runtimeType}) => ${event.next}");
+        "notice_finish ${event.name}(${event.runtimeType}) => ${event.next}");
     levelEvent.onEventFinish(event);
   }
 }

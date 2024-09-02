@@ -25,7 +25,7 @@ class EventMove extends EventElement {
 
 // 移動後カーソル表示
 class EventMoveToIdle extends EventMove {
-  EventMoveToIdle(super.dir);
+  EventMoveToIdle(super.dir) : super();
 
   @override
   void onFinish() {

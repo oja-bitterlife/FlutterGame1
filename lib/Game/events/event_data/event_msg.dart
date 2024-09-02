@@ -29,7 +29,7 @@ List<String> formatEventMsg(String text) {
 
 // 一連のメッセージ表示
 class EventMsgRoot extends EventElement {
-  EventMsgRoot(super.name, String text, [super.next, super.notify = true]) {
+  EventMsgRoot(super.name, String text, {super.next, super.notice = true}) {
     addAll(formatEventMsg(text).map((text) => EventMsg(name, text)));
   }
 
@@ -41,5 +41,5 @@ class EventMsgRoot extends EventElement {
 
 // イベントマネージャ用
 EventMsgRoot createEventMsg(String name, String data, EventElement? next) {
-  return EventMsgRoot(name, data, next);
+  return EventMsgRoot(name, data, next: next);
 }
