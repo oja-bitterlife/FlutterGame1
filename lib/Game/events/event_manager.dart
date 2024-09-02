@@ -51,6 +51,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
     if (component is EventElement) {
       return eventQueue.add(component);
     } else {
+      log.warning("event以外がaddされました: ${component.runtimeType}");
       return super.add(component);
     }
   }
