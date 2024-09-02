@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:sqlite3/wasm.dart';
 
@@ -14,23 +15,24 @@ import 'levels/level_base.dart';
 
 // イベント登録用情報
 const eventInfo = [
-  (type: "msg", data: "text", func: createEventMsg),
-  (type: "action", data: "action", func: createEventAction),
+  (table: "msg", data: "text", func: createEventMsg),
+  (table: "action", data: "action", func: createEventAction),
 ];
 
+// EventMangerに付けるイベントツリーのRoot
 class EventRoot extends EventElement {
   EventRoot() : super("EventRoot");
+
   @override
-  void onUpdate() {
-    // Finishしないように
-  }
+  void onUpdate() {} // Finishしないように
 }
 
+// イベント自動実行マネージャー
 class EventManager extends Component with HasGameRef<MyGame> {
   int level;
   LevelEventBase levelEvent;
 
-  // childではなくこっちに登録する(childは全部実行される)
+  // イベントはchildではなくこっちに登録する(childは全部実行される)
   EventElement eventQueue;
 
   EventManager(MyGame myGame, this.level)
@@ -39,11 +41,25 @@ class EventManager extends Component with HasGameRef<MyGame> {
     add(eventQueue);
   }
 
+  // イベントの場合はeventQueueに追加するように
+  @override
+  FutureOr<void> add(Component component) {
+    if (component is EventRoot) {
+      return super.add(component);
+    }
+
+    if (component is EventElement) {
+      return eventQueue.add(component);
+    } else {
+      return super.add(component);
+    }
+  }
+
   // イベントをDBから読み出して追加する
   void addEvent(String eventName) {
     for (var info in eventInfo) {
       var result = gameRef.memoryDB.select(
-          "SELECT * FROM event.${info.type} WHERE level = ? AND name = ?",
+          "SELECT * FROM event.${info.table} WHERE level = ? AND name = ?",
           [gameRef.eventManager.level, eventName]);
 
       // イベントが複数あってはいけない
@@ -54,7 +70,7 @@ class EventManager extends Component with HasGameRef<MyGame> {
       // イベントが見つかった
       if (result.isNotEmpty) {
         // イベント登録
-        eventQueue.add(info.func(
+        add(info.func(
             eventName, result.first[info.data], result.first["next"]));
         return;
       }
@@ -70,14 +86,14 @@ class EventManager extends Component with HasGameRef<MyGame> {
   }
 }
 
-// イベント名の重複チェッカー
+// [デバッグ用]イベント名の重複チェッカー
 void checkDBEvents(CommonDatabase db, int level) {
   List<String> eventNames = [];
 
   for (var info in eventInfo) {
     // イベント名重複チェック
-    var resultSet = db
-        .select("SELECT name FROM event.${info.type} WHERE level = ?", [level]);
+    var resultSet = db.select(
+        "SELECT name FROM event.${info.table} WHERE level = ?", [level]);
     for (var result in resultSet) {
       if (eventNames.contains(result["name"])) {
         // イベント名が重複した
