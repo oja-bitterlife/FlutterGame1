@@ -8,14 +8,12 @@ import 'package:my_app/Game/events/event_element.dart';
 import '../../../my_logger.dart';
 
 class Level0 extends LevelEventBase {
-  Level0(super.myGame);
-
   @override
   void onEventStart(EventElement event) {
     if (event.name == "treasure") {
       // メッセージ表示前に表示変更
-      myGame.event.add(EventMapObjChange(myGame, 374,
-          myGame.player.getFowardBlockX(), myGame.player.getFowardBlockY()));
+      myGame.event.add(EventMapObjChange(374, myGame.player.getFowardBlockX(),
+          myGame.player.getFowardBlockY()));
     }
   }
 
@@ -28,10 +26,7 @@ class Level0 extends LevelEventBase {
       myGame.userData.items.use("key");
 
       // 表示変更
-      myGame.event.add(EventMapObjChange(
-          myGame,
-          424,
-          myGame.player.getFowardBlockX(),
+      myGame.event.add(EventMapObjChange(424, myGame.player.getFowardBlockX(),
           myGame.player.getFowardBlockY() - 1));
     }
 

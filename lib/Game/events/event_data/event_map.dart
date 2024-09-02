@@ -1,4 +1,3 @@
-import '../../my_game.dart';
 import '../../ui_control.dart';
 import '../event_element.dart';
 import 'package:my_app/Game/player.dart';
@@ -9,8 +8,7 @@ import 'package:my_app/my_logger.dart';
 // 移動のみ(アクション用)
 class EventMove extends EventElement {
   PlayerDir dir;
-  EventMove(this.dir, {bool notice = false})
-      : super("move: ${dir.toString()}", notice: notice);
+  EventMove(this.dir, {super.notice}) : super("move: ${dir.toString()}");
 
   @override
   void onStart() {
@@ -26,6 +24,7 @@ class EventMove extends EventElement {
 
 // ユーザー入力移動。移動後にカーソル表示
 class EventUserMove extends EventMove {
+  // ユーザー入力イベントは通知を行う
   EventUserMove(super.dir) : super(notice: true);
 
   @override
@@ -35,16 +34,23 @@ class EventUserMove extends EventMove {
 }
 
 // 調べた後カーソル表示
-class EventFind extends EventElement {
+class EventUserFind extends EventElement {
+  String? eventName;
   int blockX, blockY;
-  EventFind(this.blockX, this.blockY) : super("find");
+
+  // ユーザー入力イベントは通知を行う
+  EventUserFind(this.blockX, this.blockY)
+      : super("event not found", notice: true) {
+    eventName = gameRef.map.getEventProperty(blockX, blockY);
+    // イベントがあったので名前をちゃんと設定する
+    if (eventName != null) super.name = eventName!;
+  }
 
   @override
   void onStart() {
     // 調べた先のイベントを再生
-    String? name = gameRef.map.getEventProperty(blockX, blockY);
-    if (name != null) {
-      add(gameRef.event.createFromDB(changeMapEvent(name)));
+    if (eventName != null) {
+      add(manager.createFromDB(changeMapEvent(eventName!)));
     }
   }
 
@@ -85,11 +91,11 @@ class EventFind extends EventElement {
 class EventMapObjChange extends EventElement {
   int blockX, blockY;
   int gid;
-  EventMapObjChange(MyGame myGame, this.gid, this.blockX, this.blockY)
+  EventMapObjChange(this.gid, this.blockX, this.blockY)
       : super("map event change") {
     // オーバーレイを即変更
-    myGame.map.objs.overlay[blockY][blockX] = gid;
-    myGame.map.objs.updateSprites();
+    gameRef.map.objs.overlay[blockY][blockX] = gid;
+    gameRef.map.objs.updateSprites();
   }
 
   @override

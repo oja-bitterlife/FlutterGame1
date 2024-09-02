@@ -166,7 +166,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
         widget.myGame.player.setDir(dir);
 
         // イベント発生
-        widget.myGame.event.add(EventFind(
+        widget.myGame.event.add(EventUserFind(
             widget.myGame.player.getFowardBlockX(),
             widget.myGame.player.getFowardBlockY()));
       case PlayerCursorType.none:

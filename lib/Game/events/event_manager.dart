@@ -40,7 +40,8 @@ class EventManager extends Component {
 
   EventManager(MyGame myGame, this.level)
       : eventQueue = EventRoot(),
-        levelEvent = getLevelEvent(myGame, level)! {
+        levelEvent = getLevelEvent(level)! {
+    // staticなメンバーに保存してEvent関係で使い回す
     // ignore: prefer_initializing_formals
     EventManager.myGame = myGame;
 
