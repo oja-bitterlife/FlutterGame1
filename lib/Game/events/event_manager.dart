@@ -38,7 +38,9 @@ class EventManager extends Component with HasGameRef<MyGame> {
   EventManager(MyGame myGame, this.level)
       : eventQueue = EventRoot(),
         levelEvent = getLevelEvent(myGame, level)! {
-    add(eventQueue);
+    // eventQueueをaddするとeventQueueへのaddがgameにaddするようになる
+    // mountされなければいいのでaddせず、不便なのでgameRefは拾えるようにする
+    eventQueue.game = myGame;
   }
 
   // イベントの場合はeventQueueに追加するように
@@ -54,6 +56,14 @@ class EventManager extends Component with HasGameRef<MyGame> {
       log.warning("event以外がaddされました: ${component.runtimeType}");
       return super.add(component);
     }
+  }
+
+  @override
+  void updateTree(double dt) {
+    super.updateTree(dt);
+
+    // イベントキューはaddしてないので手動で
+    eventQueue.updateTree(dt);
   }
 
   // イベントをDBから読み出して作成

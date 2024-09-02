@@ -39,9 +39,14 @@ class EventFindToIdle extends EventElement {
 
   @override
   void onStart() {
+    log.info(gameRef.children.length);
+
+    // 調べた先のイベントを再生
     String? name = gameRef.map.getEventProperty(blockX, blockY);
     if (name != null) {
-      gameRef.event.add(gameRef.event.createFromDB(changeMapEvent(name)));
+      add(gameRef.event.createFromDB(changeMapEvent(name)));
+      log.info(children);
+      log.info(gameRef.children.length);
     }
   }
 
@@ -73,6 +78,7 @@ class EventFindToIdle extends EventElement {
 
   @override
   void onFinish() {
+    // Idleに強制する
     gameRef.uiControl.showUI = ShowUI.cursor;
   }
 }
@@ -87,10 +93,6 @@ class EventMapObjChange extends EventElement {
   @override
   void onStart() {
     gameRef.map.objs.tiles[blockY][blockX] = gid;
-  }
-
-  @override
-  void onFinish() {
     gameRef.map.objs.updateSprites();
   }
 }

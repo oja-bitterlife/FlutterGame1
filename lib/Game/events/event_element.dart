@@ -41,10 +41,9 @@ class EventElement extends Component with HasGameRef<MyGame> {
       EventElement element = children.first as EventElement;
       element.updateTree(dt);
     }
-    // キューが空なら自分を実行
-    else {
-      update(dt);
-    }
+
+    // キューが空なら自分を実行(updateTreeで空になった場合もすぐ呼ぶ)
+    if (!hasChildren) update(dt);
   }
 
   // 強制終了
