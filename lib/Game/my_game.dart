@@ -18,7 +18,7 @@ class MyGame extends FlameGame {
   late MemoryDB memoryDB;
   late UserData userData;
 
-  late EventManager eventManager;
+  late EventManager event;
   late Input input;
 
   late MovePlayerComponent player;
@@ -49,7 +49,7 @@ class MyGame extends FlameGame {
 
     // 全体の初期化
     init();
-    eventManager.addEvent("on_start");
+    event.add(event.fromDB("on_start"));
   }
 
   // 画面構築(Components)
@@ -67,7 +67,7 @@ class MyGame extends FlameGame {
     uiControl = UIControl();
 
     // イベント管理
-    add(eventManager = EventManager(this, 0));
+    add(event = EventManager(this, 0));
   }
 
   // 状態のリセット

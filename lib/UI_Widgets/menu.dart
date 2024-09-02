@@ -25,7 +25,7 @@ class Menu extends StatelessWidget {
           onTap: () {
             myGame.reset();
             myGame.userData.reset();
-            myGame.eventManager.addEvent("on_start");
+            myGame.event.add(myGame.event.fromDB("on_start"));
             Navigator.of(context).pop(); // メニューは閉じる
           },
         ),

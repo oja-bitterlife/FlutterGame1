@@ -41,9 +41,8 @@ class EventFindToIdle extends EventElement {
   void onStart() {
     String? name = gameRef.map.getEventProperty(blockX, blockY);
     if (name != null) {
-      gameRef.eventManager.addEvent(changeMapEvent(name));
+      gameRef.event.add(gameRef.event.fromDB(changeMapEvent(name)));
     }
-    // finish();
   }
 
   // itemの状態によってマップイベントを変更する
@@ -70,6 +69,11 @@ class EventFindToIdle extends EventElement {
 
     // 元のまま使う
     return name;
+  }
+
+  @override
+  void onFinish() {
+    gameRef.uiControl.showUI = ShowUI.cursor;
   }
 }
 

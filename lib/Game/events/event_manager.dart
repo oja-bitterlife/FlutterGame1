@@ -56,12 +56,12 @@ class EventManager extends Component with HasGameRef<MyGame> {
     }
   }
 
-  // イベントをDBから読み出して追加する
-  void addEvent(String eventName) {
+  // イベントをDBから読み出して作成
+  EventElement fromDB(String eventName) {
     for (var info in eventInfo) {
       var result = gameRef.memoryDB.select(
           "SELECT * FROM event.${info.table} WHERE level = ? AND name = ?",
-          [gameRef.eventManager.level, eventName]);
+          [gameRef.event.level, eventName]);
 
       // イベントが複数あってはいけない
       if (result.length > 1) {
@@ -70,14 +70,19 @@ class EventManager extends Component with HasGameRef<MyGame> {
 
       // イベントが見つかった
       if (result.isNotEmpty) {
-        // イベント登録
-        add(info.func(
-            eventName, result.first[info.data], result.first["next"]));
-        return;
+        // nextがあれば用意しておく
+        EventElement? next;
+        if (result.first["next"] != null) {
+          next = fromDB(result.first["next"]);
+        }
+
+        // イベント
+        return info.func(eventName, result.first[info.data], next);
       }
     }
     // 見知らぬイベント
     log.warning("event not found: $eventName");
+    return EventElement("event not found");
   }
 
   // 通知あり登録したイベントが開始する時

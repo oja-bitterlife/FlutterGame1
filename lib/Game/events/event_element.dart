@@ -8,7 +8,7 @@ import '../../my_logger.dart';
 // 子が無くなったら自分
 class EventElement extends Component with HasGameRef<MyGame> {
   String name;
-  String? next;
+  EventElement? next;
   bool nofity; // EventManagerのonEventFinishを呼び出す
 
   bool isStarted = false;
@@ -29,7 +29,7 @@ class EventElement extends Component with HasGameRef<MyGame> {
 
       // 開始を通知
       if (nofity) {
-        gameRef.eventManager.onStartNotice(this);
+        gameRef.event.onStartNotice(this);
       }
 
       onStart();
@@ -59,12 +59,12 @@ class EventElement extends Component with HasGameRef<MyGame> {
 
     // nextがあれば次のイベントを登録
     if (next != null) {
-      gameRef.eventManager.addEvent(next!);
+      gameRef.event.add(next!);
     }
 
     // 終了を通知
     if (nofity) {
-      gameRef.eventManager.onFinishNitice(this);
+      gameRef.event.onFinishNitice(this);
     }
   }
 

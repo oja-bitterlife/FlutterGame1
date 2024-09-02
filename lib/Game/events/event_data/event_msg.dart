@@ -1,5 +1,6 @@
-import '../event_element.dart';
+import '../../my_game.dart';
 import '../../ui_control.dart';
+import '../event_element.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
@@ -45,6 +46,6 @@ class EventMsgRoot extends EventElement {
 }
 
 // イベントマネージャ用
-EventMsgRoot createEventMsg(String name, String text, String? next) {
+EventMsgRoot createEventMsg(String name, String text, EventElement? next) {
   return EventMsgRoot(name, text, next);
 }
