@@ -36,8 +36,7 @@ List<String> formatEventAction(String action) {
 
 // 一連のアクション設定
 class EventActionRoot extends EventElement {
-  EventActionRoot(super.name, String action,
-      {super.next, super.notice = true}) {
+  EventActionRoot(super.name, String action, {super.next}) {
     addAll(formatEventAction(action).map((text) => EventAction(name, text)));
   }
 

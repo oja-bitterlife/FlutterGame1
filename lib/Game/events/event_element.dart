@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:my_app/Game/events/event_manager.dart';
 import '../my_game.dart';
 
 // ignore: unused_import
@@ -6,14 +7,15 @@ import '../../my_logger.dart';
 
 // キュー方式で順番に子イベントを実行する
 // 子が無くなったら自分
-class EventElement extends Component with HasGameRef<MyGame> {
+class EventElement extends Component {
   String name;
   EventElement? next;
   bool notice; // イベントの開始・終了通知コールバックを呼び出す
 
   bool isStarted = false;
+  MyGame get gameRef => EventManager.myGame;
 
-  EventElement(this.name, {this.notice = false, this.next});
+  EventElement(this.name, {this.next, this.notice = false});
 
   @override
   void update(double dt) {

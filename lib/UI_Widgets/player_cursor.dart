@@ -160,13 +160,13 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
     switch (type) {
       case PlayerCursorType.move:
         // 移動
-        widget.myGame.event.add(EventMoveToIdle(dir));
+        widget.myGame.event.add(EventUserMove(dir));
       case PlayerCursorType.find:
         // 方向を変えてからイベント
         widget.myGame.player.setDir(dir);
 
         // イベント発生
-        widget.myGame.event.add(EventFindToIdle(
+        widget.myGame.event.add(EventFind(
             widget.myGame.player.getFowardBlockX(),
             widget.myGame.player.getFowardBlockY()));
       case PlayerCursorType.none:

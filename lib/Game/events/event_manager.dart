@@ -28,7 +28,10 @@ class EventRoot extends EventElement {
 }
 
 // イベント自動実行マネージャー
-class EventManager extends Component with HasGameRef<MyGame> {
+class EventManager extends Component {
+  // イベント全般で使うゲームオブジェクト
+  static late MyGame myGame;
+
   int level;
   LevelEventBase levelEvent;
 
@@ -38,9 +41,10 @@ class EventManager extends Component with HasGameRef<MyGame> {
   EventManager(MyGame myGame, this.level)
       : eventQueue = EventRoot(),
         levelEvent = getLevelEvent(myGame, level)! {
-    // eventQueueをaddするとeventQueueへのaddがgameにaddするようになる
-    // mountされなければいいのでaddせず、不便なのでgameRefは拾えるようにする
-    eventQueue.game = myGame;
+    // ignore: prefer_initializing_formals
+    EventManager.myGame = myGame;
+
+    add(eventQueue);
   }
 
   // イベントの場合はeventQueueに追加するように
@@ -58,20 +62,12 @@ class EventManager extends Component with HasGameRef<MyGame> {
     }
   }
 
-  @override
-  void updateTree(double dt) {
-    super.updateTree(dt);
-
-    // イベントキューはaddしてないので手動で
-    eventQueue.updateTree(dt);
-  }
-
   // イベントをDBから読み出して作成
   EventElement createFromDB(String eventName) {
     for (var info in eventInfo) {
-      var result = gameRef.memoryDB.select(
+      var result = myGame.memoryDB.select(
           "SELECT * FROM event.${info.table} WHERE level = ? AND name = ?",
-          [gameRef.event.level, eventName]);
+          [myGame.event.level, eventName]);
 
       // イベントが複数あってはいけない
       if (result.length > 1) {

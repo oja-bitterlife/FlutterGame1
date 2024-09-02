@@ -24,9 +24,9 @@ class EventMove extends EventElement {
   }
 }
 
-// 移動後カーソル表示
-class EventMoveToIdle extends EventMove {
-  EventMoveToIdle(super.dir) : super(notice: true);
+// ユーザー入力移動。移動後にカーソル表示
+class EventUserMove extends EventMove {
+  EventUserMove(super.dir) : super(notice: true);
 
   @override
   void onFinish() {
@@ -35,9 +35,9 @@ class EventMoveToIdle extends EventMove {
 }
 
 // 調べた後カーソル表示
-class EventFindToIdle extends EventElement {
+class EventFind extends EventElement {
   int blockX, blockY;
-  EventFindToIdle(this.blockX, this.blockY) : super("find");
+  EventFind(this.blockX, this.blockY) : super("find");
 
   @override
   void onStart() {
