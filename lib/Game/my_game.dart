@@ -63,7 +63,7 @@ class MyGame extends FlameGame {
     // マップ表示
     map = TiledMap(this);
 
-    // UIリセット
+    // UI操作
     uiControl = UIControl();
 
     // イベント管理
@@ -76,6 +76,7 @@ class MyGame extends FlameGame {
     init(); // 再構築
   }
 
+  // 状態の更新
   @override
   void update(double dt) {
     super.update(dt);

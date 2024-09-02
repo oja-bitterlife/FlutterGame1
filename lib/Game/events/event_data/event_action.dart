@@ -1,4 +1,4 @@
-import 'package:my_app/Game/events/event_data/event_move.dart';
+import 'package:my_app/Game/events/event_data/event_map.dart';
 import 'package:my_app/Game/player.dart';
 
 import '../../ui_control.dart';

@@ -66,7 +66,9 @@ class EventElement extends Component with HasGameRef<MyGame> {
   void onStart() {}
 
   // 更新用
-  void onUpdate() {}
+  void onUpdate() {
+    finish(); // デフォルトは何もしないでそのまま終了
+  }
 
   // 終了時
   void onFinish() {}

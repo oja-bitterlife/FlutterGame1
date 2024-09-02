@@ -18,16 +18,24 @@ const eventInfo = [
   (type: "action", data: "action", func: createEventAction),
 ];
 
+class EventRoot extends EventElement {
+  EventRoot() : super("EventRoot");
+  @override
+  void onUpdate() {
+    // Finishしないように
+  }
+}
+
 class EventManager extends Component with HasGameRef<MyGame> {
   int level;
   LevelEventBase levelEvent;
 
-  // childではなくこっちに登録する
+  // childではなくこっちに登録する(childは全部実行される)
   EventElement eventQueue;
 
   EventManager(MyGame myGame, this.level)
-      : levelEvent = getLevelEvent(myGame, level)!,
-        eventQueue = EventElement("EventRoot") {
+      : eventQueue = EventRoot(),
+        levelEvent = getLevelEvent(myGame, level)! {
     add(eventQueue);
   }
 
@@ -55,44 +63,11 @@ class EventManager extends Component with HasGameRef<MyGame> {
     log.warning("event not found: $eventName");
   }
 
-  // Findアイコンが押された(イベントオブジェクトがある)
-  void onFind(int blockX, int blockY) {
-    String? name = gameRef.map.getEventName(blockX, blockY);
-    if (name != null) {
-      addEvent(changeMapEvent(gameRef, name));
-    }
-  }
-
   // 通知あり登録したイベントが終わった時
   void onEventFinish(EventElement event) {
     log.info("finish ${event.name}(${event.runtimeType}) => ${event.next}");
     levelEvent.onEventFinish(event);
   }
-}
-
-// itemの状態によってマップイベントを変更する
-String changeMapEvent(MyGame myGame, String name) {
-  var results = myGame.memoryDB.select(
-      "SELECT * FROM event.map WHERE name = ? ORDER BY priority DESC", [name]);
-
-  for (var result in results) {
-    // アイテム保有時
-    if (result["own"] != null) {
-      if (myGame.userData.items.isOwned(result["own"])) {
-        return result["next"];
-      }
-    }
-
-    // アイテム使用時
-    if (result["used"] != null) {
-      if (myGame.userData.items.isUsed(result["used"])) {
-        return result["next"];
-      }
-    }
-  }
-
-  // 元のまま使う
-  return name;
 }
 
 // イベント名の重複チェッカー

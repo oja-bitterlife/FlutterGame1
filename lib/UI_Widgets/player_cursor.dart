@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import 'package:my_app/Game/events/event_data/event_move.dart';
+import 'package:my_app/Game/events/event_data/event_map.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -166,9 +166,9 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
         widget.myGame.player.setDir(dir);
 
         // イベント発生
-        int blockX = widget.myGame.player.getFowardBlockX();
-        int blockY = widget.myGame.player.getFowardBlockY();
-        widget.myGame.eventManager.onFind(blockX, blockY);
+        widget.myGame.eventManager.add(EventFindToIdle(
+            widget.myGame.player.getFowardBlockX(),
+            widget.myGame.player.getFowardBlockY()));
       case PlayerCursorType.none:
         log.shout("あってはいけないエラー");
     }
