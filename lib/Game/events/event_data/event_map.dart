@@ -1,3 +1,4 @@
+import '../../my_game.dart';
 import '../../ui_control.dart';
 import '../event_element.dart';
 import 'package:my_app/Game/player.dart';
@@ -39,14 +40,10 @@ class EventFindToIdle extends EventElement {
 
   @override
   void onStart() {
-    log.info(gameRef.children.length);
-
     // 調べた先のイベントを再生
     String? name = gameRef.map.getEventProperty(blockX, blockY);
     if (name != null) {
       add(gameRef.event.createFromDB(changeMapEvent(name)));
-      log.info(children);
-      log.info(gameRef.children.length);
     }
   }
 
@@ -87,13 +84,17 @@ class EventFindToIdle extends EventElement {
 class EventMapObjChange extends EventElement {
   int blockX, blockY;
   int gid;
-  EventMapObjChange(this.gid, this.blockX, this.blockY)
-      : super("map event change");
+  EventMapObjChange(MyGame myGame, this.gid, this.blockX, this.blockY)
+      : super("map event change") {
+    // オーバーレイを即変更
+    myGame.map.objs.overlay[blockY][blockX] = gid;
+    myGame.map.objs.updateSprites();
+  }
 
   @override
   void onStart() {
-    gameRef.map.objs.tiles[blockY][blockX] = gid;
-    gameRef.map.objs.updateSprites();
+    // 確定させる
+    gameRef.map.objs.applyOverlay();
   }
 }
 

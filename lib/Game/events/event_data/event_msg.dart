@@ -35,7 +35,6 @@ class EventMsgRoot extends EventElement {
 
   @override
   void onFinish() {
-    log.info("msg finish idle");
     gameRef.uiControl.showUI = ShowUI.cursor;
   }
 }

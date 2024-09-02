@@ -97,12 +97,29 @@ class TiledMap {
 // マップイベント用オブジェクト
 class MapObj extends MapData {
   SpriteBatch sprites;
+  late List<List<int>> overlay;
 
   MapObj(TiledComponent tiled, Image image)
       : sprites = SpriteBatch(image),
         super(tiled, "UnderPlayerEvent") {
+    // 表示用
     add(SpriteBatchComponent(spriteBatch: sprites));
+    // 一時表示用
+    overlay =
+        tiles.map((element) => List<int>.filled(element.length, 0)).toList();
+
     updateSprites(); // 最初の更新
+  }
+
+  void applyOverlay() {
+    for (int y = 0; y < tiles.length; y++) {
+      for (int x = 0; x < tiles[y].length; x++) {
+        if (overlay[y][x] != 0) {
+          tiles[y][x] = overlay[y][x];
+          overlay[y][x] = 0;
+        }
+      }
+    }
   }
 
   // 現在のタイルの状態で表示を更新
@@ -112,10 +129,11 @@ class MapObj extends MapData {
     // Spriteの更新
     for (int y = 0; y < tiles.length; y++) {
       for (int x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] != 0) {
-          int no = tiles[y][x] - 1;
+        int gid = overlay[y][x] > 0 ? overlay[y][x] : tiles[y][x];
+        if (gid != 0) {
           sprites.add(
-              source: Rect.fromLTWH(no % 12 * 16, no ~/ 12 * 16, 16, 16),
+              source: Rect.fromLTWH(
+                  (gid - 1) % 12 * 16, (gid - 1) ~/ 12 * 16, 16, 16),
               scale: 2.0,
               offset: Vector2(x * 32, y * 32));
         }

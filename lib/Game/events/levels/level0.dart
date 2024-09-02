@@ -11,18 +11,27 @@ class Level0 extends LevelEventBase {
   Level0(super.myGame);
 
   @override
-  void onEventStart(EventElement event) {}
+  void onEventStart(EventElement event) {
+    // メッセージ表示前に表示変更
+    if (event.name == "treasure") {
+      myGame.event.add(EventMapObjChange(myGame, 374,
+          myGame.player.getFowardBlockX(), myGame.player.getFowardBlockY()));
+    }
+  }
 
   @override
   void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
-      myGame.event.add(EventMapObjChange(374, myGame.player.getFowardBlockX(),
-          myGame.player.getFowardBlockY()));
     }
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
-      myGame.event.add(EventMapObjChange(424, myGame.player.getFowardBlockX(),
+
+      // 表示変更
+      myGame.event.add(EventMapObjChange(
+          myGame,
+          424,
+          myGame.player.getFowardBlockX(),
           myGame.player.getFowardBlockY() - 1));
     }
 
