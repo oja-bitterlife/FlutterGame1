@@ -100,15 +100,26 @@ class UserData {
     debugPrintMemoryDB();
   }
 
-  void _debugPrint(CommonDatabase db) {
-    var resultPlayer = db.select("select * from ${UserDataPlayer.tableName}");
+  // DBの内容を表示する
+  void _debugPrint(CommonDatabase db, String option) {
+    var resultPlayer =
+        db.select("select * from ${UserDataPlayer.tableName} $option");
     resultPlayer.forEach(log.info);
-    var resultItems = db.select("select * from ${UserDataItems.tableName}");
+    var resultItems =
+        db.select("select * from ${UserDataItems.tableName} $option");
     resultItems.forEach(log.info);
-    var resultMovable = db.select("select * from ${UserDataMovable.tableName}");
+    var resultMovable =
+        db.select("select * from ${UserDataMovable.tableName} $option");
     resultMovable.forEach(log.info);
   }
 
-  void debugPrintMemoryDB() => _debugPrint(memoryDB.db);
-  void debugPrintUserDB() => _debugPrint(userDB);
+  void debugPrintMemoryDB() {
+    log.info("print DB: memoryDB");
+    _debugPrint(memoryDB.db, "");
+  }
+
+  void debugPrintUserDB() {
+    log.info("print DB: userDB");
+    _debugPrint(userDB, "ORDER BY book");
+  }
 }
