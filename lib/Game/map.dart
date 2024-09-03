@@ -65,12 +65,7 @@ class TiledMap {
     if (eventGid != null) return MapEventType.event;
 
     // 移動不可チェック
-    var movable = myGame.userData.movable.get(blockX, blockY);
-    if (movable != null) {
-      // ユーザーデータ優先
-      return movable ? MapEventType.floor : MapEventType.wall;
-    }
-    var moveGid = move.tiles[blockY][blockX];
+    var moveGid = getGid("walk-flag", blockX, blockY);
     if (moveGid != 0) return MapEventType.wall; // 移動不可
 
     // なにもない(床)
@@ -173,10 +168,22 @@ class MapData extends Component with HasGameRef<MyGame> {
     return tiles;
   }
 
-  String? _getProperty(String name, int blockX, int blockY) {
+  String? _getProperty(String propName, int blockX, int blockY) {
     int gid = tiles[blockY][blockX];
     if (gid == 0) return null;
     var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
-    return prop[name]?.value as String?;
+    return prop[propName]?.value as String?;
+  }
+
+  List<({int gid, int x, int y})> getGidList() {
+    List<({int gid, int x, int y})> list = [];
+
+    for (int y = 0; y < tiles.length; y++) {
+      for (int x = 0; x < tiles[y].length; x++) {
+        list.add((gid: tiles[y][x], x: x, y: y));
+      }
+    }
+
+    return list;
   }
 }

@@ -5,7 +5,7 @@ import '../my_game.dart';
 
 import 'user_data_player.dart';
 import 'user_data_items.dart';
-import 'user_data_movable.dart';
+import 'user_data_map.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
@@ -21,7 +21,7 @@ class UserData {
   // 各アクセス用クラス
   late UserDataPlayer player;
   late UserDataItems items;
-  late UserDataMovable movable;
+  late UserDataMap mapData;
 
   UserData(this.myGame, this.userDB) : memoryDB = myGame.memoryDB {
     // memoryDBのユーザーデータテーブルをuserDBに移植する
@@ -40,7 +40,7 @@ class UserData {
     // 各アクセス用クラス
     player = UserDataPlayer(memoryDB);
     items = UserDataItems(memoryDB);
-    movable = UserDataMovable(memoryDB);
+    mapData = UserDataMap(memoryDB);
   }
 
   // 初期化
@@ -59,7 +59,7 @@ class UserData {
   void reset() {
     memoryDB.execute("DELETE FROM user.${UserDataPlayer.tableName}");
     memoryDB.execute("DELETE FROM user.${UserDataItems.tableName}");
-    memoryDB.execute("DELETE FROM user.${UserDataMovable.tableName}");
+    memoryDB.execute("DELETE FROM user.${UserDataMap.tableName}");
   }
 
   bool hasSave(int book) {
@@ -78,13 +78,14 @@ class UserData {
 
   void save(int book) {
     player.savePreProcess(myGame);
+    mapData.savePreProcess(myGame);
 
     copyTable(memoryDB.db, "user.${UserDataPlayer.tableName}", null, userDB,
         UserDataPlayer.tableName, book);
     copyTable(memoryDB.db, "user.${UserDataItems.tableName}", null, userDB,
         UserDataItems.tableName, book);
-    copyTable(memoryDB.db, "user.${UserDataMovable.tableName}", null, userDB,
-        UserDataMovable.tableName, book);
+    copyTable(memoryDB.db, "user.${UserDataMap.tableName}", null, userDB,
+        UserDataMap.tableName, book);
 
     debugPrintUserDB();
   }
@@ -94,33 +95,35 @@ class UserData {
         "user.${UserDataPlayer.tableName}", null);
     copyTable(userDB, UserDataItems.tableName, book, memoryDB.db,
         "user.${UserDataItems.tableName}", null);
-    copyTable(userDB, UserDataMovable.tableName, book, memoryDB.db,
-        "user.${UserDataMovable.tableName}", null);
+    copyTable(userDB, UserDataMap.tableName, book, memoryDB.db,
+        "user.${UserDataMap.tableName}", null);
 
     player.loadPostProcess(myGame);
+    mapData.loadPostProcess(myGame);
+
     debugPrintMemoryDB();
   }
 
   // DBの内容を表示する
-  void _debugPrint(CommonDatabase db, String option) {
+  void _debugPrint(CommonDatabase db, String dbName, String option) {
     var resultPlayer =
-        db.select("select * from ${UserDataPlayer.tableName} $option");
+        db.select("select * from $dbName${UserDataPlayer.tableName} $option");
     resultPlayer.forEach(log.info);
     var resultItems =
-        db.select("select * from ${UserDataItems.tableName} $option");
+        db.select("select * from $dbName${UserDataItems.tableName} $option");
     resultItems.forEach(log.info);
-    var resultMovable =
-        db.select("select * from ${UserDataMovable.tableName} $option");
-    resultMovable.forEach(log.info);
+    var resultMapData =
+        db.select("select * from $dbName${UserDataMap.tableName} $option");
+    resultMapData.forEach(log.info);
   }
 
   void debugPrintMemoryDB() {
     log.info("print DB: memoryDB");
-    _debugPrint(memoryDB.db, "");
+    _debugPrint(memoryDB.db, "user.", "");
   }
 
   void debugPrintUserDB() {
     log.info("print DB: userDB");
-    _debugPrint(userDB, "ORDER BY book");
+    _debugPrint(userDB, "", "ORDER BY book");
   }
 }
