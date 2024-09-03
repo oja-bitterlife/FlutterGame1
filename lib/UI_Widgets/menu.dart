@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../Game/ui_control.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -32,20 +33,22 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('Save'),
           onTap: () {
-            myGame.userData.save();
+            myGame.userData.save(1);
             Navigator.of(context).pop(); // メニューは閉じる
           },
         ),
         ListTile(
           title: const Text('Load'),
           onTap: () {
-            if (myGame.userData.hasSave()) {
+            if (myGame.userData.hasSave(1)) {
+              myGame.uiControl.showUI = ShowUI.none;
               myGame.reset();
-              myGame.userData.load();
+              myGame.userData.load(1);
+              myGame.uiControl.showUI = ShowUI.cursor;
             }
             Navigator.of(context).pop(); // メニューは閉じる
           },
-          subtitle: Text(myGame.userData.getTime()),
+          subtitle: Text(myGame.userData.getTime(1)),
         ),
       ],
     );

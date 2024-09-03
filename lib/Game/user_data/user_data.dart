@@ -12,6 +12,8 @@ import 'package:my_app/my_logger.dart';
 
 // IndexedDBに保存するユーザーデータ
 class UserData {
+  static const currentVersion = "v1";
+
   late MyGame myGame;
   late MemoryDB memoryDB;
   CommonDatabase userDB;
@@ -26,9 +28,12 @@ class UserData {
     var schemas =
         memoryDB.select("SELECT * FROM user.sqlite_master WHERE type='table'");
     for (var schema in schemas) {
-      // userDB.execute("""DROP TABLE IF EXISTS ${schema["name"]}""");
+      userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
       userDB.execute((schema["sql"] as String)
           .replaceFirst("CREATE TABLE", "CREATE TABLE IF NOT EXISTS"));
+
+      userDB
+          .execute("ALTER TABLE ${schema["tbl_name"]} ADD book INTEGER FIRST");
     }
 
     // 各アクセス用クラス
@@ -40,7 +45,8 @@ class UserData {
   // 初期化
   static Future<UserData> init(MyGame myGame) async {
     // IndexedDB上にDBを作成する
-    final fileSystem = await IndexedDbFileSystem.open(dbName: 'fluuter_game1');
+    final fileSystem =
+        await IndexedDbFileSystem.open(dbName: 'fluuter_game1_$currentVersion');
     final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
     sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
     var db = sqlite3.open("user.sqlite");
@@ -55,37 +61,54 @@ class UserData {
     memoryDB.execute("DELETE FROM user.${UserDataMovable.tableName}");
   }
 
-  bool hasSave() {
-    return userDB.select("SELECT time FROM player").isNotEmpty;
+  bool hasSave(int book) {
+    return userDB
+        .select("SELECT time FROM player where book = ?", [book]).isNotEmpty;
   }
 
-  String getTime() {
-    var result = userDB.select("SELECT time FROM player");
+  String getTime(int book) {
+    var result =
+        userDB.select("SELECT time FROM player where book = ?", [book]);
     if (result.isEmpty) {
       return "----/--/-- --:--:--";
     }
     return result.first["time"];
   }
 
-  void save() {
+  void save(int book) {
     player.savePreProcess(myGame);
 
-    copyTable(memoryDB.db, "user.${UserDataPlayer.tableName}", userDB,
-        UserDataPlayer.tableName);
-    copyTable(memoryDB.db, "user.${UserDataItems.tableName}", userDB,
-        UserDataItems.tableName);
-    copyTable(memoryDB.db, "user.${UserDataMovable.tableName}", userDB,
-        UserDataMovable.tableName);
+    copyTable(memoryDB.db, "user.${UserDataPlayer.tableName}", null, userDB,
+        UserDataPlayer.tableName, book);
+    copyTable(memoryDB.db, "user.${UserDataItems.tableName}", null, userDB,
+        UserDataItems.tableName, book);
+    copyTable(memoryDB.db, "user.${UserDataMovable.tableName}", null, userDB,
+        UserDataMovable.tableName, book);
+
+    debugPrintUserDB();
   }
 
-  void load() {
-    copyTable(userDB, UserDataPlayer.tableName, memoryDB.db,
-        "user.${UserDataPlayer.tableName}");
-    copyTable(userDB, UserDataItems.tableName, memoryDB.db,
-        "user.${UserDataItems.tableName}");
-    copyTable(userDB, UserDataMovable.tableName, memoryDB.db,
-        "user.${UserDataMovable.tableName}");
+  void load(int book) {
+    copyTable(userDB, UserDataPlayer.tableName, book, memoryDB.db,
+        "user.${UserDataPlayer.tableName}", null);
+    copyTable(userDB, UserDataItems.tableName, book, memoryDB.db,
+        "user.${UserDataItems.tableName}", null);
+    copyTable(userDB, UserDataMovable.tableName, book, memoryDB.db,
+        "user.${UserDataMovable.tableName}", null);
 
     player.loadPostProcess(myGame);
+    debugPrintMemoryDB();
   }
+
+  void _debugPrint(CommonDatabase db) {
+    var resultPlayer = db.select("select * from ${UserDataPlayer.tableName}");
+    resultPlayer.forEach(log.info);
+    var resultItems = db.select("select * from ${UserDataItems.tableName}");
+    resultItems.forEach(log.info);
+    var resultMovable = db.select("select * from ${UserDataMovable.tableName}");
+    resultMovable.forEach(log.info);
+  }
+
+  void debugPrintMemoryDB() => _debugPrint(memoryDB.db);
+  void debugPrintUserDB() => _debugPrint(userDB);
 }

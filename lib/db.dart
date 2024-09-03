@@ -57,18 +57,31 @@ class MemoryDB {
 }
 
 // SaveLoad用テーブル内データ一括コピー
-void copyTable(CommonDatabase src, String srcTable, CommonDatabase dist,
-    String distTable) {
+void copyTable(CommonDatabase src, String srcTable, int? srcBook,
+    CommonDatabase dist, String distTable, int? distBook) {
   // 削除して全部入れ替える
   dist.execute("DELETE FROM $distTable");
 
-  var result = src.select("SELECT * FROM $srcTable");
+  var srcWhere = srcBook != null ? "where book = $srcBook" : "";
+  var result = src.select("SELECT * FROM $srcTable $srcWhere");
   if (result.isEmpty) return;
 
   for (var data in result) {
-    var keys = data.keys.join(",");
-    var placeholders = List<String>.filled(data.length, "?").join(",");
-    dist.execute(
-        "INSERT INTO $distTable ($keys) VALUES ($placeholders)", data.values);
+    // 扱いやすいよう一旦Dictに
+    Map<String, dynamic> mapData = {
+      for (var entry in data.entries) entry.key: entry.value
+    };
+
+    // book操作
+    if (distBook == null) {
+      mapData.remove("book");
+    } else {
+      mapData["book"] = distBook;
+    }
+
+    var columns = mapData.keys.join(",");
+    var placeholders = List<String>.filled(mapData.length, "?").join(",");
+    dist.execute("INSERT INTO $distTable ($columns) VALUES ($placeholders)",
+        mapData.values.toList());
   }
 }
