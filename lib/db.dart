@@ -65,24 +65,26 @@ void copyTable(CommonDatabase src, String srcTable, int? srcBook,
   var distWhere = distBook != null ? "where book = ?" : "";
   var distParams = distBook != null ? [distBook] : [];
 
+  // srcからデータを拾う
   var result = src.select("SELECT * FROM $srcTable $srcWhere", srcParams);
   if (result.isEmpty) return;
 
-  // 削除して全部入れ替える
+  // distは削除して全部入れ替える
   dist.execute("DELETE FROM $distTable $distWhere", distParams);
 
   for (var data in result) {
     // 扱いやすいよう一旦Dictに
-    Map<String, dynamic> mapData = {
+    Map<String, dynamic> params = {
       for (var entry in data.entries) entry.key: entry.value
     };
 
-    // book操作
-    if (distBook != null) mapData["book"] = distBook;
+    // book対応
+    if (distBook != null) params["book"] = distBook;
 
-    var columns = mapData.keys.join(",");
-    var placeholders = List<String>.filled(mapData.length, "?").join(",");
+    // 削除済みなので単純なinsertでいい
+    var columns = params.keys.join(",");
+    var placeholders = List<String>.filled(params.length, "?").join(",");
     dist.execute("INSERT INTO $distTable ($columns) VALUES ($placeholders)",
-        mapData.values.toList());
+        params.values.toList());
   }
 }
