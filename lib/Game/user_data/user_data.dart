@@ -32,16 +32,9 @@ class UserData {
       // デバッグ用
       // userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
 
-      // テーブル存在確認
-      var userSchemas = userDB.select(
-          "SELECT * FROM sqlite_master WHERE type='table' AND tbl_name='${schema["tbl_name"]}'");
-      if (userSchemas.isEmpty) {
-        // テーブルが無ければ新規作成する
-        userDB.execute(schema["sql"]);
-        // 複数保存できるようにbookを追加
-        userDB.execute(
-            "ALTER TABLE ${schema["tbl_name"]} ADD book INTEGER FIRST");
-      }
+      // テーブル作成
+      userDB.execute((schema["sql"] as String)
+          .replaceFirst("CREATE TABLE", "CREATE TABLE IF NOT EXISTS"));
     }
 
     // 各アクセス用クラス

@@ -59,13 +59,17 @@ class MemoryDB {
 // SaveLoad用テーブル内データ一括コピー
 void copyTable(CommonDatabase src, String srcTable, int? srcBook,
     CommonDatabase dist, String distTable, int? distBook) {
-  // 削除して全部入れ替える
-  dist.execute("DELETE FROM $distTable");
-
+  // book対応
   var srcWhere = srcBook != null ? "where book = ?" : "";
-  var srcValues = srcBook != null ? [srcBook] : [];
-  var result = src.select("SELECT * FROM $srcTable $srcWhere", srcValues);
+  var srcParams = srcBook != null ? [srcBook] : [];
+  var distWhere = distBook != null ? "where book = ?" : "";
+  var distParams = distBook != null ? [distBook] : [];
+
+  var result = src.select("SELECT * FROM $srcTable $srcWhere", srcParams);
   if (result.isEmpty) return;
+
+  // 削除して全部入れ替える
+  dist.execute("DELETE FROM $distTable $distWhere", distParams);
 
   for (var data in result) {
     // 扱いやすいよう一旦Dictに
@@ -74,11 +78,7 @@ void copyTable(CommonDatabase src, String srcTable, int? srcBook,
     };
 
     // book操作
-    if (distBook == null) {
-      mapData.remove("book");
-    } else {
-      mapData["book"] = distBook;
-    }
+    if (distBook != null) mapData["book"] = distBook;
 
     var columns = mapData.keys.join(",");
     var placeholders = List<String>.filled(mapData.length, "?").join(",");
