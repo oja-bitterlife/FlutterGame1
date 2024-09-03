@@ -41,9 +41,9 @@ class Menu extends StatelessWidget {
           title: const Text('Load'),
           onTap: () {
             if (myGame.userData.hasSave(1)) {
-              myGame.uiControl.showUI = ShowUI.none;
               myGame.reset();
               myGame.userData.load(1);
+              myGame.uiControl.cursor?.visible = true;
               myGame.uiControl.showUI = ShowUI.cursor;
             }
             Navigator.of(context).pop(); // メニューは閉じる

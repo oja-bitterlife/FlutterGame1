@@ -62,8 +62,9 @@ void copyTable(CommonDatabase src, String srcTable, int? srcBook,
   // 削除して全部入れ替える
   dist.execute("DELETE FROM $distTable");
 
-  var srcWhere = srcBook != null ? "where book = $srcBook" : "";
-  var result = src.select("SELECT * FROM $srcTable $srcWhere");
+  var srcWhere = srcBook != null ? "where book = ?" : "";
+  var srcValues = srcBook != null ? [srcBook] : [];
+  var result = src.select("SELECT * FROM $srcTable $srcWhere", srcValues);
   if (result.isEmpty) return;
 
   for (var data in result) {
