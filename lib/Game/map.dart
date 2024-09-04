@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
+import 'package:tiled/tiled.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
@@ -22,8 +23,8 @@ enum MapEventType {
 
 class TiledMap {
   MyGame myGame;
-  late MapObj objs;
-  late MapMove move;
+  late MapDiffObj objs;
+  late MapDiffMove move;
 
   static const blockSize = 32;
   static late TiledComponent tiled;
@@ -54,8 +55,8 @@ class TiledMap {
     myGame.add(overComponent);
 
     // イベント用
-    myGame.add(objs = MapObj(tiled, atlas.atlas!));
-    myGame.add(move = MapMove(tiled));
+    myGame.add(objs = MapDiffObj(tiled, atlas.atlas!));
+    myGame.add(move = MapDiffMove(tiled));
   }
 
   MapEventType checkEventType(int blockX, int blockY) {
@@ -90,27 +91,26 @@ class TiledMap {
 }
 
 // マップイベント用オブジェクト
-class MapObj extends MapData {
+class MapDiffObj extends MapDiff {
   SpriteBatch sprites;
   late List<List<int>> overlay;
 
-  MapObj(TiledComponent tiled, Image image)
+  MapDiffObj(TiledComponent tiled, Image image)
       : sprites = SpriteBatch(image),
         super(tiled, "UnderPlayerEvent") {
     // 表示用
     add(SpriteBatchComponent(spriteBatch: sprites));
     // 一時表示用
-    overlay =
-        tiles.map((element) => List<int>.filled(element.length, 0)).toList();
+    overlay = List.generate(layer.height, (i) => List.filled(layer.width, 0));
 
     updateSprites(); // 最初の更新
   }
 
   void applyOverlay() {
-    for (int y = 0; y < tiles.length; y++) {
-      for (int x = 0; x < tiles[y].length; x++) {
+    for (int y = 0; y < diffTiles.length; y++) {
+      for (int x = 0; x < diffTiles[y].length; x++) {
         if (overlay[y][x] != 0) {
-          tiles[y][x] = overlay[y][x];
+          diffTiles[y][x] = overlay[y][x];
           overlay[y][x] = 0;
         }
       }
@@ -122,9 +122,9 @@ class MapObj extends MapData {
     sprites.clear();
 
     // Spriteの更新
-    for (int y = 0; y < tiles.length; y++) {
-      for (int x = 0; x < tiles[y].length; x++) {
-        int gid = overlay[y][x] > 0 ? overlay[y][x] : tiles[y][x];
+    for (int y = 0; y < layer.height; y++) {
+      for (int x = 0; x < layer.width; x++) {
+        int gid = overlay[y][x] > 0 ? overlay[y][x] : getGid(x, y);
         if (gid != 0) {
           sprites.add(
               source: Rect.fromLTWH(
@@ -135,52 +135,36 @@ class MapObj extends MapData {
       }
     }
   }
-
-  String? getProperty(int blockX, int blockY) =>
-      _getProperty("event", blockX, blockY);
 }
 
 // 移動データ操作用
-class MapMove extends MapData {
-  MapMove(TiledComponent tiled) : super(tiled, "walk-flag");
+class MapDiffMove extends MapDiff {
+  MapDiffMove(TiledComponent tiled) : super(tiled, "walk-flag");
 }
 
-// マップデータアクセスクラス
-class MapData extends Component with HasGameRef<MyGame> {
-  TiledComponent tiled;
-  late List<List<int>> tiles;
+// マップデータ変更管理クラス
+class MapDiff extends Component {
+  TileLayer layer;
+  late List<List<int>> diffTiles;
 
-  MapData(this.tiled, String layerName) {
-    tiles = getOrgTiles(layerName);
+  MapDiff(TiledComponent tiled, String layerName)
+      : layer = tiled.tileMap.getLayer<TileLayer>(layerName)! {
+    diffTiles = List.generate(layer.height, (i) => List.filled(layer.width, 0));
   }
 
-  List<List<int>> getOrgTiles(String layerName) {
-    TileLayer? layer = tiled.tileMap.getLayer<TileLayer>(layerName);
-    var tiles =
-        List.generate(layer!.height, (i) => List.filled(layer.width, 0));
-
-    for (int y = 0; y < layer.height; y++) {
-      for (int x = 0; x < layer.width; x++) {
-        var gid = layer.tileData?[y][x];
-        tiles[y][x] = gid!.tile;
-      }
-    }
-    return tiles;
+  int getGid(int blockX, int blockY) {
+    return diffTiles[blockY][blockX] != 0
+        ? diffTiles[blockY][blockX]
+        : layer.tileData?[blockY][blockX].tile ?? 0;
   }
 
-  String? _getProperty(String propName, int blockX, int blockY) {
-    int gid = tiles[blockY][blockX];
-    if (gid == 0) return null;
-    var prop = tiled.tileMap.map.tilesets[0].tiles[gid - 1].properties;
-    return prop[propName]?.value as String?;
-  }
-
-  List<({int gid, int x, int y})> getGidList() {
+  // 差分を拾う
+  List<({int gid, int x, int y})> getGidDiff() {
     List<({int gid, int x, int y})> list = [];
 
-    for (int y = 0; y < tiles.length; y++) {
-      for (int x = 0; x < tiles[y].length; x++) {
-        list.add((gid: tiles[y][x], x: x, y: y));
+    for (int y = 0; y < diffTiles.length; y++) {
+      for (int x = 0; x < diffTiles[y].length; x++) {
+        if (diffTiles[y][x] != 0) list.add((gid: diffTiles[y][x], x: x, y: y));
       }
     }
 

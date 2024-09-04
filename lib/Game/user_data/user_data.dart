@@ -12,11 +12,9 @@ import 'package:my_app/my_logger.dart';
 
 // IndexedDBに保存するユーザーデータ
 class UserData {
-  static const currentVersion = "v1";
-
   late MyGame myGame;
   late MemoryDB memoryDB;
-  CommonDatabase userDB;
+  late UserDB userDB;
 
   // 各アクセス用クラス
   late UserDataPlayer player;
@@ -45,14 +43,7 @@ class UserData {
 
   // 初期化
   static Future<UserData> init(MyGame myGame) async {
-    // IndexedDB上にDBを作成する
-    final fileSystem =
-        await IndexedDbFileSystem.open(dbName: 'fluuter_game1_$currentVersion');
-    final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
-    sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
-    var db = sqlite3.open("user.sqlite");
-
-    return UserData(myGame, db);
+    return UserData(myGame, await UserDB.create());
   }
 
   // 保持情報のクリア
@@ -80,22 +71,22 @@ class UserData {
     player.savePreProcess(myGame);
     mapData.savePreProcess(myGame);
 
-    copyTable(memoryDB.db, "user.${UserDataPlayer.tableName}", null, userDB,
+    copyTable(memoryDB, "user.${UserDataPlayer.tableName}", null, userDB,
         UserDataPlayer.tableName, book);
-    copyTable(memoryDB.db, "user.${UserDataItems.tableName}", null, userDB,
+    copyTable(memoryDB, "user.${UserDataItems.tableName}", null, userDB,
         UserDataItems.tableName, book);
-    copyTable(memoryDB.db, "user.${UserDataMap.tableName}", null, userDB,
+    copyTable(memoryDB, "user.${UserDataMap.tableName}", null, userDB,
         UserDataMap.tableName, book);
 
     debugPrintUserDB();
   }
 
   void load(int book) {
-    copyTable(userDB, UserDataPlayer.tableName, book, memoryDB.db,
+    copyTable(userDB, UserDataPlayer.tableName, book, memoryDB,
         "user.${UserDataPlayer.tableName}", null);
-    copyTable(userDB, UserDataItems.tableName, book, memoryDB.db,
+    copyTable(userDB, UserDataItems.tableName, book, memoryDB,
         "user.${UserDataItems.tableName}", null);
-    copyTable(userDB, UserDataMap.tableName, book, memoryDB.db,
+    copyTable(userDB, UserDataMap.tableName, book, memoryDB,
         "user.${UserDataMap.tableName}", null);
 
     player.loadPostProcess(myGame);
@@ -105,21 +96,21 @@ class UserData {
   }
 
   // DBの内容を表示する
-  void _debugPrint(CommonDatabase db, String dbName, String option) {
+  void _debugPrint(SQLiteDB db, String dbName, String option) {
     var resultPlayer =
         db.select("select * from $dbName${UserDataPlayer.tableName} $option");
-    resultPlayer.forEach(log.info);
+    log.info("${db.runtimeType}: $resultPlayer");
     var resultItems =
         db.select("select * from $dbName${UserDataItems.tableName} $option");
-    resultItems.forEach(log.info);
+    log.info("${db.runtimeType}: $resultItems");
     var resultMapData =
         db.select("select * from $dbName${UserDataMap.tableName} $option");
-    resultMapData.forEach(log.info);
+    log.info("${db.runtimeType}: $resultMapData");
   }
 
   void debugPrintMemoryDB() {
     log.info("print DB: memoryDB");
-    _debugPrint(memoryDB.db, "user.", "");
+    _debugPrint(memoryDB, "user.", "");
   }
 
   void debugPrintUserDB() {

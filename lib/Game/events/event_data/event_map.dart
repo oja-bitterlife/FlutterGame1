@@ -114,6 +114,6 @@ class EventMapMoveChange extends EventElement {
 
   @override
   void onStart() {
-    gameRef.map.move.tiles[blockY][blockX] = movable ? 1 : 0;
+    gameRef.map.move.diffTiles[blockY][blockX] = movable ? 1 : 0;
   }
 }

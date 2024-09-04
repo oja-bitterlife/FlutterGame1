@@ -4,39 +4,43 @@ import 'package:sqlite3/wasm.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 
-// 統括データベース
-class MemoryDB {
+class SQLiteDB {
   // SQLite3接続用
-  final InMemoryFileSystem fileSystem;
   final WasmSqlite3 sqlite3;
   final CommonDatabase db;
 
-  MemoryDB(this.sqlite3, this.fileSystem, this.db);
+  SQLiteDB(this.sqlite3, this.db);
 
   // wrapper
   ResultSet Function(String, [List<Object?>]) get select => db.select;
   void Function(String, [List<Object?>]) get execute => db.execute;
   CommonPreparedStatement Function(String) get prepare => db.prepare;
+}
+
+// 統括データベース
+class MemoryDB extends SQLiteDB {
+  MemoryDB._(super.sqlite3, super.db);
 
   // 初期化
   static Future<MemoryDB> create() async {
     var fileSystem = InMemoryFileSystem();
-    final sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+    var sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
     sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
     var db = sqlite3.openInMemory();
 
-    var self = MemoryDB(sqlite3, fileSystem, db);
+    var self = MemoryDB._(sqlite3, db);
 
     // 初期データ読み込み
-    await self.loadDB("event", "assets/data/event.sqlite");
-    await self.loadDB("data", "assets/data/data.sqlite");
-    await self.loadDB("user", "assets/data/user.sqlite");
+    await self._loadDB(fileSystem, "event", "assets/data/event.sqlite");
+    await self._loadDB(fileSystem, "data", "assets/data/data.sqlite");
+    await self._loadDB(fileSystem, "user", "assets/data/user.sqlite");
 
     return self;
   }
 
   // DBのロード
-  Future<void> loadDB(String dbName, String path) async {
+  Future<void> _loadDB(
+      InMemoryFileSystem fileSystem, String dbName, String path) async {
     // assetからデータの読み込み
     ByteData data = await rootBundle.load(path);
     Uint8List bytes =
@@ -56,9 +60,28 @@ class MemoryDB {
   }
 }
 
+class UserDB extends SQLiteDB {
+  static const currentVersion = "v1";
+
+  UserDB._(super.sqlite3, super.db);
+
+  // 初期化
+  static Future<UserDB> create() async {
+    // IndexedDB上にDBを作成する
+    var fileSystem =
+        await IndexedDbFileSystem.open(dbName: 'fluuter_game1_$currentVersion');
+    var sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
+    sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
+    var db = sqlite3.open("user.sqlite");
+
+    var self = UserDB._(sqlite3, db);
+    return self;
+  }
+}
+
 // SaveLoad用テーブル内データ一括コピー
-void copyTable(CommonDatabase src, String srcTable, int? srcBook,
-    CommonDatabase dist, String distTable, int? distBook) {
+void copyTable(SQLiteDB src, String srcTable, int? srcBook, SQLiteDB dist,
+    String distTable, int? distBook) {
   // book対応
   var srcWhere = srcBook != null ? "where book = ?" : "";
   var srcParams = srcBook != null ? [srcBook] : [];
@@ -67,11 +90,11 @@ void copyTable(CommonDatabase src, String srcTable, int? srcBook,
 
   // srcからデータを拾う
   var result = src.select("SELECT * FROM $srcTable $srcWhere", srcParams);
-  if (result.isEmpty) return;
 
   // distは削除して全部入れ替える
   dist.execute("DELETE FROM $distTable $distWhere", distParams);
 
+  // データコピー
   for (var data in result) {
     // 扱いやすいよう一旦Dictに
     Map<String, dynamic> params = {
