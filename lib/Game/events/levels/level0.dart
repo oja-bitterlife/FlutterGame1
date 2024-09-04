@@ -43,7 +43,7 @@ class Level0 extends LevelEventBase {
 
     if (event.name == "trap") {
       log.info("game over");
-      super.onEventFinish(event);
+      myGame.uiControl.showUI = ShowUI.none;
     }
 
     // 移動終わりイベント
@@ -53,9 +53,14 @@ class Level0 extends LevelEventBase {
           0) {
         var trapEvent = myGame.event.createFromDB("trap");
         trapEvent.notice = true;
-        event.next = trapEvent;
-        // myGame.event.add(trapEvent);
+        myGame.event.add(trapEvent);
 
+        // UIを消した状態にする
+        myGame.uiControl.showUI = ShowUI.none;
+      }
+
+      if (myGame.player.getBlockX() == 7 && myGame.player.getBlockY() == 3) {
+        log.info("clear");
         // UIを消した状態にする
         myGame.uiControl.showUI = ShowUI.none;
       }
