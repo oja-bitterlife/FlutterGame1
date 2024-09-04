@@ -66,7 +66,7 @@ class TiledMap {
     if (eventGid != null) return MapEventType.event;
 
     // 移動不可チェック
-    var moveGid = getGid("walk-flag", blockX, blockY);
+    var moveGid = move.getGid(blockX, blockY);
     if (moveGid != 0) return MapEventType.wall; // 移動不可
 
     // なにもない(床)
@@ -144,6 +144,19 @@ class MapDiffObj extends MapDiff {
 // 移動データ操作用
 class MapDiffMove extends MapDiff {
   MapDiffMove(TiledComponent tiled) : super(tiled, "walk-flag");
+
+  void setMovable(bool movable, int blockX, int blockY) {
+    diffTiles[blockY][blockX] = movable ? -1 : 1;
+  }
+
+  @override
+  int getGid(int blockX, int blockY) {
+    // -1は移動可能への変更
+    if (diffTiles[blockY][blockX] == -1) {
+      return 0;
+    }
+    return super.getGid(blockX, blockY);
+  }
 }
 
 // マップデータ変更管理クラス

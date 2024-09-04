@@ -31,6 +31,8 @@ class Level0 extends LevelEventBase {
       // ドア表示切り替え
       myGame.event.add(EventMapObjChange(178, 7, 2));
       myGame.event.add(EventMapObjChange(190, 7, 3));
+      // 移動切り替え
+      myGame.event.add(EventMapMoveChange(true, 7, 3));
     }
 
     if (event.name == "trap") {

@@ -111,13 +111,14 @@ class EventMapObjChange extends EventElement {
 
 // マップ移動変更
 class EventMapMoveChange extends EventElement {
-  int blockX, blockY;
   bool movable;
+  int blockX, blockY;
+
   EventMapMoveChange(this.movable, this.blockX, this.blockY)
       : super("map_move_change");
 
   @override
   void onStart() {
-    gameRef.map.move.diffTiles[blockY][blockX] = movable ? 1 : 0;
+    gameRef.map.move.setMovable(movable, blockX, blockY);
   }
 }
