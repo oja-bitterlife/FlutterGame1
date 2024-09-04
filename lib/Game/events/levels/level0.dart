@@ -12,8 +12,9 @@ class Level0 extends LevelEventBase {
   void onEventStart(EventElement event) {
     if (event.name == "treasure") {
       // メッセージ表示前にマップ表示変更
-      myGame.event.add(EventMapObjChange(374, myGame.player.getFowardBlockX(),
-          myGame.player.getFowardBlockY()));
+      myGame.event.add(EventMapObjChange([
+        (374, myGame.player.getFowardBlockX(), myGame.player.getFowardBlockY())
+      ]));
     }
   }
 
@@ -26,13 +27,18 @@ class Level0 extends LevelEventBase {
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
       // センサー表示切り替え
-      myGame.event.add(EventMapObjChange(424, myGame.player.getFowardBlockX(),
-          myGame.player.getFowardBlockY() - 1));
+      myGame.event.add(EventMapObjChange([
+        (
+          424,
+          myGame.player.getFowardBlockX(),
+          myGame.player.getFowardBlockY() - 1
+        )
+      ]));
       // ドア表示切り替え
-      myGame.event.add(EventMapObjChange(178, 7, 2));
-      myGame.event.add(EventMapObjChange(190, 7, 3));
+      myGame.event.add(EventMapObjChange([(178, 7, 2)]));
+      myGame.event.add(EventMapObjChange([(190, 7, 3)]));
       // 移動切り替え
-      myGame.event.add(EventMapMoveChange(true, 7, 3));
+      myGame.event.add(EventMapMoveChange([(true, 7, 3)]));
     }
 
     if (event.name == "trap") {

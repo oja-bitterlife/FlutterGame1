@@ -44,20 +44,22 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
     });
   }
 
+  void setAreaCursors() {
+    // プレイヤーの四方向チェック
+    int blockX = widget.myGame.player.getBlockX();
+    int blockY = widget.myGame.player.getBlockY();
+    // 周りをみてカーソル設定
+    this
+      ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
+      ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
+      ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
+      ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
+  }
+
   // カーソル表示
   set visible(bool visible) {
     // 表示の時は準備が必要
-    if (visible) {
-      // プレイヤーの四方向チェック
-      int blockX = widget.myGame.player.getBlockX();
-      int blockY = widget.myGame.player.getBlockY();
-      // 周りをみてカーソル設定
-      this
-        ..setCursorType(checkBlock(blockX - 1, blockY), PlayerDir.left)
-        ..setCursorType(checkBlock(blockX + 1, blockY), PlayerDir.right)
-        ..setCursorType(checkBlock(blockX, blockY - 1), PlayerDir.up)
-        ..setCursorType(checkBlock(blockX, blockY + 1), PlayerDir.down);
-    }
+    if (visible) setAreaCursors();
 
     setState(() {
       cursorPos.setFrom(widget.myGame.player.position);

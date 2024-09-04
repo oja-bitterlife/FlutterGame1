@@ -92,13 +92,13 @@ class EventUserFind extends EventElement {
 
 // マップ表示変更
 class EventMapObjChange extends EventElement {
-  int gid;
-  int blockX, blockY;
+  List<(int gid, int x, int y)> changeList = [];
 
-  EventMapObjChange(this.gid, this.blockX, this.blockY)
-      : super("map_objs_change") {
+  EventMapObjChange(this.changeList) : super("map_objs_change") {
     // オーバーレイを即変更
-    gameRef.map.objs.overlay[blockY][blockX] = gid;
+    for (var data in changeList) {
+      gameRef.map.objs.overlay[data.$3][data.$2] = data.$1;
+    }
     gameRef.map.objs.updateSprites();
   }
 
@@ -111,14 +111,13 @@ class EventMapObjChange extends EventElement {
 
 // マップ移動変更
 class EventMapMoveChange extends EventElement {
-  bool movable;
-  int blockX, blockY;
+  List<(bool movable, int x, int y)> changeList = [];
 
-  EventMapMoveChange(this.movable, this.blockX, this.blockY)
-      : super("map_move_change");
-
-  @override
-  void onStart() {
-    gameRef.map.move.setMovable(movable, blockX, blockY);
+  EventMapMoveChange(this.changeList) : super("map_move_change") {
+    // 移動も即変更(カーソル表示切り替え)
+    for (var data in changeList) {
+      gameRef.map.move.setMovable(data.$1, data.$2, data.$3);
+    }
+    gameRef.uiControl.cursor?.setAreaCursors();
   }
 }
