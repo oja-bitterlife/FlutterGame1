@@ -103,7 +103,6 @@ class EventMapObjChange extends EventElement {
   void onStart() {
     // 確定させる
     gameRef.map.objs.applyOverlay();
-    log.info("apply map");
   }
 }
 
