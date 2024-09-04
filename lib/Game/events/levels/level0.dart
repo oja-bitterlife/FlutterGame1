@@ -25,9 +25,8 @@ class Level0 extends LevelEventBase {
     }
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
-
-      // 表示変更
-      myGame.map.objs.applyOverlay();
+      myGame.event.add(EventMapObjChange(424, myGame.player.getFowardBlockX(),
+          myGame.player.getFowardBlockY() - 1));
       return true;
     }
 

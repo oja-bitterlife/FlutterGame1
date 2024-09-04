@@ -42,6 +42,7 @@ class EventUserFind extends EventElement {
   EventUserFind(this.blockX, this.blockY)
       : super("event not found", notice: true) {
     eventName = gameRef.map.getEventProperty(blockX, blockY);
+
     // イベントがあったので名前をちゃんと設定する
     if (eventName != null) super.name = eventName!;
   }
@@ -50,7 +51,9 @@ class EventUserFind extends EventElement {
   void onStart() {
     // 調べた先のイベントを再生
     if (eventName != null) {
-      add(eventRef.createFromDB(changeMapEvent(eventName!)));
+      var event = eventRef.createFromDB(changeMapEvent(eventName!));
+      event.notice = true; // Findの一環なので通知をONに
+      add(event);
     }
   }
 

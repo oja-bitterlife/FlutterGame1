@@ -174,6 +174,7 @@ class PlayerCursorState extends State<PlayerCursorWidget> {
     }
   }
 
+  // どのアイコンを表示するかを決定する
   PlayerCursorType checkBlock(int blockX, int blockY) {
     return switch (widget.myGame.map.checkEventType(blockX, blockY)) {
       MapEventType.event => PlayerCursorType.find,
