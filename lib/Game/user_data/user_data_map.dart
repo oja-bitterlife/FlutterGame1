@@ -33,11 +33,9 @@ class UserDataMap {
       log.info(data);
       switch (data["type"]) {
         case "objs":
-          myGame.map.objs.diffTiles[data["blockY"]][data["blockX"]] =
-              data["gid"];
+          myGame.map.objs.setDiff(data["gid"], data["blockX"], data["blockY"]);
         case "move":
-          myGame.map.move.diffTiles[data["blockY"]][data["blockX"]] =
-              data["gid"];
+          myGame.map.move.setDiff(data["gid"], data["blockX"], data["blockY"]);
       }
     }
 

@@ -106,6 +106,10 @@ class MapDiffObj extends MapDiff {
     updateSprites(); // 最初の更新
   }
 
+  void setOverlay(int gid, int blockX, int blockY) {
+    overlay[blockY][blockX] = gid;
+  }
+
   void applyOverlay() {
     for (int y = 0; y < diffTiles.length; y++) {
       for (int x = 0; x < diffTiles[y].length; x++) {
@@ -156,6 +160,10 @@ class MapDiff extends Component {
     return diffTiles[blockY][blockX] != 0
         ? diffTiles[blockY][blockX]
         : layer.tileData?[blockY][blockX].tile ?? 0;
+  }
+
+  void setDiff(int gid, int blockX, int blockY) {
+    diffTiles[blockY][blockX] = gid;
   }
 
   // 差分を拾う

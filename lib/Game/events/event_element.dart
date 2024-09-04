@@ -15,7 +15,7 @@ class EventElement extends Component {
   bool isStarted = false;
 
   MyGame get gameRef => EventManager.myGame;
-  EventManager get manager => EventManager.myGame.event;
+  EventManager get eventRef => EventManager.myGame.event;
 
   EventElement(this.name, {this.next, this.notice = false});
 
@@ -33,7 +33,7 @@ class EventElement extends Component {
 
       // 開始を通知
       if (notice) {
-        manager.onStartNotice(this);
+        eventRef.onStartNotice(this);
       }
 
       onStart();
@@ -60,14 +60,14 @@ class EventElement extends Component {
     removeFromParent();
     onFinish();
 
-    // nextがあれば次のイベントを登録
-    if (next != null) {
-      manager.add(next!);
-    }
-
     // 終了を通知
     if (notice) {
-      manager.onFinishNitice(this);
+      eventRef.onFinishNitice(this);
+    }
+
+    // nextがあれば次のイベントを登録
+    if (next != null) {
+      eventRef.add(next!);
     }
   }
 

@@ -9,40 +9,53 @@ import '../../../my_logger.dart';
 
 class Level0 extends LevelEventBase {
   @override
-  void onEventStart(EventElement event) {
+  bool onEventStart(EventElement event) {
     if (event.name == "treasure") {
-      // メッセージ表示前に表示変更
-      myGame.event.add(EventMapObjChange(374, myGame.player.getFowardBlockX(),
-          myGame.player.getFowardBlockY()));
+      // メッセージ表示前にマップ表示変更
+      myGame.map.objs.overlay[myGame.player.getFowardBlockY()]
+          [myGame.player.getFowardBlockX()] = 374;
+      myGame.map.objs.updateSprites();
+      return true;
     }
+    return false;
   }
 
   @override
-  void onEventFinish(EventElement event) {
+  bool onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
+      return true;
     }
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
 
       // 表示変更
-      myGame.event.add(EventMapObjChange(424, myGame.player.getFowardBlockX(),
-          myGame.player.getFowardBlockY() - 1));
+      myGame.map.objs.applyOverlay();
+      return true;
     }
 
     if (event.name == "trap") {
       log.info("game over");
+      return false;
     }
 
+    // 移動終わりイベント
     if (event is EventUserMove) {
       if (myGame.map.getGid(
               "trap", myGame.player.getBlockX(), myGame.player.getBlockY()) !=
           0) {
-        myGame.event.add(myGame.event.createFromDB("trap"));
+        var trapEvent = myGame.event.createFromDB("trap");
+        trapEvent.notice = true;
+        event.next = trapEvent;
+        // myGame.event.add(trapEvent);
 
         // UIを消した状態にする
         myGame.uiControl.showUI = ShowUI.none;
+        return true;
       }
+      return false;
     }
+
+    return false;
   }
 }

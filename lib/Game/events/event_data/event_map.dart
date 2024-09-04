@@ -50,7 +50,7 @@ class EventUserFind extends EventElement {
   void onStart() {
     // 調べた先のイベントを再生
     if (eventName != null) {
-      add(manager.createFromDB(changeMapEvent(eventName!)));
+      add(eventRef.createFromDB(changeMapEvent(eventName!)));
     }
   }
 
@@ -84,24 +84,6 @@ class EventUserFind extends EventElement {
 
     // 元のまま使う
     return name;
-  }
-}
-
-// マップ表示変更
-class EventMapObjChange extends EventElement {
-  int blockX, blockY;
-  int gid;
-  EventMapObjChange(this.gid, this.blockX, this.blockY)
-      : super("map event change") {
-    // オーバーレイを即変更
-    gameRef.map.objs.overlay[blockY][blockX] = gid;
-    gameRef.map.objs.updateSprites();
-  }
-
-  @override
-  void onStart() {
-    // 確定させる
-    gameRef.map.objs.applyOverlay();
   }
 }
 
