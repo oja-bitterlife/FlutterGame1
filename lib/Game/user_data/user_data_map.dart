@@ -1,4 +1,4 @@
-import '../../db.dart';
+import 'package:my_app/db.dart';
 import '../my_game.dart';
 
 // ignore: unused_import
@@ -26,5 +26,22 @@ class UserDataMap {
     });
   }
 
-  void loadPostProcess(MyGame myGame) {}
+  void loadPostProcess(MyGame myGame) {
+    var result = memoryDB.select("SELECT * FROM user.$tableName");
+
+    for (var data in result) {
+      log.info(data);
+      switch (data["type"]) {
+        case "objs":
+          myGame.map.objs.diffTiles[data["blockY"]][data["blockX"]] =
+              data["gid"];
+        case "move":
+          myGame.map.move.diffTiles[data["blockY"]][data["blockX"]] =
+              data["gid"];
+      }
+    }
+
+    // 表示復活
+    myGame.map.objs.updateSprites();
+  }
 }

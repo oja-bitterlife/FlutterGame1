@@ -1,5 +1,3 @@
-import 'package:sqlite3/wasm.dart';
-
 import '../../db.dart';
 import '../my_game.dart';
 
@@ -99,13 +97,13 @@ class UserData {
   void _debugPrint(SQLiteDB db, String dbName, String option) {
     var resultPlayer =
         db.select("select * from $dbName${UserDataPlayer.tableName} $option");
-    log.info("${db.runtimeType}: $resultPlayer");
+    log.info("Player: $resultPlayer");
     var resultItems =
         db.select("select * from $dbName${UserDataItems.tableName} $option");
-    log.info("${db.runtimeType}: $resultItems");
+    log.info("Items: $resultItems");
     var resultMapData =
         db.select("select * from $dbName${UserDataMap.tableName} $option");
-    log.info("${db.runtimeType}: $resultMapData");
+    log.info("Map: $resultMapData");
   }
 
   void debugPrintMemoryDB() {
