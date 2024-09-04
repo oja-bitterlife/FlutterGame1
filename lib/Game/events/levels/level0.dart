@@ -9,15 +9,12 @@ import '../../../my_logger.dart';
 
 class Level0 extends LevelEventBase {
   @override
-  bool onEventStart(EventElement event) {
+  void onEventStart(EventElement event) {
     if (event.name == "treasure") {
       // メッセージ表示前にマップ表示変更
-      myGame.map.objs.overlay[myGame.player.getFowardBlockY()]
-          [myGame.player.getFowardBlockX()] = 374;
-      myGame.map.objs.updateSprites();
-      return true;
+      myGame.event.add(EventMapObjChange(374, myGame.player.getFowardBlockX(),
+          myGame.player.getFowardBlockY()));
     }
-    return false;
   }
 
   @override

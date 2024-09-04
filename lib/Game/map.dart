@@ -167,7 +167,7 @@ class MapDiff extends Component {
   }
 
   // 差分を拾う
-  List<({int gid, int x, int y})> getGidDiff() {
+  List<({int gid, int x, int y})> getDiffList() {
     List<({int gid, int x, int y})> list = [];
 
     for (int y = 0; y < diffTiles.length; y++) {
@@ -176,6 +176,7 @@ class MapDiff extends Component {
       }
     }
 
+    log.info(list);
     return list;
   }
 }

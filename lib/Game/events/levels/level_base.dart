@@ -8,7 +8,7 @@ abstract class LevelEventBase {
   MyGame get myGame => EventManager.myGame;
   LevelEventBase();
 
-  bool onEventStart(EventElement event);
+  void onEventStart(EventElement event);
   bool onEventFinish(EventElement event);
 }
 

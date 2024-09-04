@@ -94,17 +94,14 @@ class EventManager extends Component {
 
   // 通知あり登録したイベントが開始する時
   void onStartNotice(EventElement event) {
-    if (levelEvent.onEventStart(event)) {
-      log.info(
-          "notice_start ${event.name}(${event.runtimeType}) =>  ${event.next?.name}(${event.next.runtimeType})");
-    }
+    levelEvent.onEventStart(event);
   }
 
   // 通知あり登録したイベントが終わった時
   void onFinishNitice(EventElement event) {
     if (levelEvent.onEventFinish(event)) {
       log.info(
-          "notice_finish ${event.name}(${event.runtimeType}) => ${event.next?.name}(${event.next.runtimeType})");
+          "finish_notice ${event.name}(${event.runtimeType}) => ${event.next?.name}(${event.next.runtimeType})");
     }
   }
 }

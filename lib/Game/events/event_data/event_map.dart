@@ -87,12 +87,32 @@ class EventUserFind extends EventElement {
   }
 }
 
+// マップ表示変更
+class EventMapObjChange extends EventElement {
+  int gid;
+  int blockX, blockY;
+
+  EventMapObjChange(this.gid, this.blockX, this.blockY)
+      : super("map_objs_change") {
+    // オーバーレイを即変更
+    gameRef.map.objs.overlay[blockY][blockX] = gid;
+    gameRef.map.objs.updateSprites();
+  }
+
+  @override
+  void onStart() {
+    // 確定させる
+    gameRef.map.objs.applyOverlay();
+    log.info("apply map");
+  }
+}
+
 // マップ移動変更
 class EventMapMoveChange extends EventElement {
   int blockX, blockY;
   bool movable;
   EventMapMoveChange(this.movable, this.blockX, this.blockY)
-      : super("map move change");
+      : super("map_move_change");
 
   @override
   void onStart() {

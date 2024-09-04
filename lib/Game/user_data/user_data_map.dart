@@ -13,13 +13,13 @@ class UserDataMap {
   void savePreProcess(MyGame myGame) {
     memoryDB.execute("DELETE FROM user.$tableName");
 
-    myGame.map.objs.getGidDiff().forEach((data) {
+    myGame.map.objs.getDiffList().forEach((data) {
       memoryDB.execute(
           "INSERT INTO user.$tableName (type,gid,blockX,blockY) VALUES (?,?,?,?)",
           ["objs", data.gid, data.x, data.y]);
     });
 
-    myGame.map.move.getGidDiff().forEach((data) {
+    myGame.map.move.getDiffList().forEach((data) {
       memoryDB.execute(
           "INSERT INTO user.$tableName (type,gid,blockX,blockY) VALUES (?,?,?,?)",
           ["move", data.gid, data.x, data.y]);
