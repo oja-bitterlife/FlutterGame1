@@ -96,7 +96,7 @@ class EventManager extends Component {
   void onStartNotice(EventElement event) {
     if (levelEvent.onEventStart(event)) {
       log.info(
-          "notice_start ${event.name}(${event.runtimeType}) => ${event.next.runtimeType}");
+          "notice_start ${event.name}(${event.runtimeType}) =>  ${event.next?.name}(${event.next.runtimeType})");
     }
   }
 
@@ -104,7 +104,7 @@ class EventManager extends Component {
   void onFinishNitice(EventElement event) {
     if (levelEvent.onEventFinish(event)) {
       log.info(
-          "notice_finish ${event.name}(${event.runtimeType}) => ${event.next?.name}(${event.next?.runtimeType})");
+          "notice_finish ${event.name}(${event.runtimeType}) => ${event.next?.name}(${event.next.runtimeType})");
     }
   }
 }
