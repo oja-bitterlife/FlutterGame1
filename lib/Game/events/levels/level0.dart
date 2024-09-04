@@ -18,21 +18,24 @@ class Level0 extends LevelEventBase {
   }
 
   @override
-  bool onEventFinish(EventElement event) {
+  void onEventFinish(EventElement event) {
     if (event.name == "treasure") {
       myGame.userData.items.obtain("key");
-      return true;
     }
+
     if (event.name == "gate_with_key") {
       myGame.userData.items.use("key");
+      // センサー表示切り替え
       myGame.event.add(EventMapObjChange(424, myGame.player.getFowardBlockX(),
           myGame.player.getFowardBlockY() - 1));
-      return true;
+      // ドア表示切り替え
+      myGame.event.add(EventMapObjChange(178, 7, 2));
+      myGame.event.add(EventMapObjChange(190, 7, 3));
     }
 
     if (event.name == "trap") {
       log.info("game over");
-      return false;
+      super.onEventFinish(event);
     }
 
     // 移動終わりイベント
@@ -47,11 +50,7 @@ class Level0 extends LevelEventBase {
 
         // UIを消した状態にする
         myGame.uiControl.showUI = ShowUI.none;
-        return true;
       }
-      return false;
     }
-
-    return false;
   }
 }

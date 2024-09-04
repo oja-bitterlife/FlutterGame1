@@ -99,10 +99,7 @@ class EventManager extends Component {
 
   // 通知あり登録したイベントが終わった時
   void onFinishNitice(EventElement event) {
-    if (levelEvent.onEventFinish(event)) {
-      log.info(
-          "finish_notice ${event.name}(${event.runtimeType}) => ${event.next?.name}(${event.next.runtimeType})");
-    }
+    levelEvent.onEventFinish(event);
   }
 }
 
