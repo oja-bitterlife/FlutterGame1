@@ -73,8 +73,8 @@ class SaveLoadDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
-      shape: const RoundedRectangleBorder(
+    return const SimpleDialog(
+      shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0))),
       title: Text('Save/Load'),
       alignment: Alignment.topLeft,
@@ -84,7 +84,10 @@ class SaveLoadDialog extends StatelessWidget {
         ),
         SimpleDialogOption(
           child: SaveLoadCard(),
-        )
+        ),
+        SimpleDialogOption(
+          child: SaveLoadCard(),
+        ),
       ],
     );
   }
@@ -96,35 +99,49 @@ class SaveLoadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shadowColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        side: BorderSide(color: Colors.lightGreen, width: 2),
-      ),
-      color: Colors.transparent,
-      child: Row(
-        children: [
-          Text("Image"),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        shadowColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          side: BorderSide(color: Colors.lightGreen, width: 2),
+        ),
+        color: Colors.transparent,
+        child: SizedBox(
+          height: 80,
+          child: Row(
             children: [
-              const Text(
-                "--/--/-- --:--:--",
-                style: TextStyle(fontSize: 20),
-              ),
-              Row(
+              const SizedBox(width: 80, height: 80),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ElevatedButton(onPressed: () {}, child: const Text("Save")),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlue),
-                      onPressed: () {},
-                      child: const Text("Load"))
+                  const SizedBox(height: 4),
+                  const Row(children: [
+                    SizedBox(width: 8),
+                    Text(
+                      "--/--/-- --:--:--",
+                      style: TextStyle(fontSize: 20),
+                    )
+                  ]),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepOrange[300],
+                              foregroundColor: Colors.white),
+                          onPressed: () {},
+                          child: const Text("Save")),
+                      const SizedBox(width: 4),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.lightBlue[300],
+                              foregroundColor: Colors.white),
+                          onPressed: () {},
+                          child: const Text("Load"))
+                    ],
+                  ),
                 ],
               ),
             ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
