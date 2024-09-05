@@ -1,4 +1,6 @@
+import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import '../Game/ui_control.dart';
 
 // ignore: unused_import
@@ -50,7 +52,79 @@ class Menu extends StatelessWidget {
           },
           subtitle: Text(myGame.userData.getTime(1)),
         ),
+        ListTile(
+            title: const Text('Save/Load'),
+            onTap: () async {
+              Navigator.of(context).pop(); // メニューは閉じる
+
+              await showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const SaveLoadDialog();
+                  });
+            }),
       ],
+    );
+  }
+}
+
+class SaveLoadDialog extends StatelessWidget {
+  const SaveLoadDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+      title: Text('Save/Load'),
+      alignment: Alignment.topLeft,
+      children: [
+        SimpleDialogOption(
+          child: SaveLoadCard(),
+        ),
+        SimpleDialogOption(
+          child: SaveLoadCard(),
+        )
+      ],
+    );
+  }
+}
+
+class SaveLoadCard extends StatelessWidget {
+  const SaveLoadCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shadowColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        side: BorderSide(color: Colors.lightGreen, width: 2),
+      ),
+      color: Colors.transparent,
+      child: Row(
+        children: [
+          Text("Image"),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "--/--/-- --:--:--",
+                style: TextStyle(fontSize: 20),
+              ),
+              Row(
+                children: [
+                  ElevatedButton(onPressed: () {}, child: const Text("Save")),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlue),
+                      onPressed: () {},
+                      child: const Text("Load"))
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
