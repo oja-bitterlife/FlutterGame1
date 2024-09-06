@@ -1,3 +1,8 @@
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
 import '../../db.dart';
 import '../my_game.dart';
 
@@ -18,6 +23,8 @@ class UserData {
   late UserDataPlayer player;
   late UserDataItems items;
   late UserDataMap mapData;
+
+  List<ImageProvider> thumbnails = [];
 
   UserData(this.myGame, this.userDB) : memoryDB = myGame.memoryDB {
     // memoryDBのユーザーデータテーブルをuserDBに移植する
@@ -41,7 +48,22 @@ class UserData {
 
   // 初期化
   static Future<UserData> init(MyGame myGame) async {
-    return UserData(myGame, await UserDB.create());
+    var data = Uint8List(512 * 512 * 4);
+
+    var c = Completer<ui.Image>();
+    ui.decodeImageFromPixels(
+        data, 512, 512, ui.PixelFormat.rgba8888, c.complete);
+    var img = await c.future;
+
+    ByteData? byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List bytes = byteData!.buffer.asUint8List();
+
+    var self = UserData(myGame, await UserDB.create());
+    for (var i = 0; i < 3; i++) {
+      self.thumbnails.add(MemoryImage(bytes));
+    }
+
+    return self;
   }
 
   // 保持情報のクリア

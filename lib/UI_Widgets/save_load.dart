@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:typed_data';
-
+import "dart:ui" as ui;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: unused_import
@@ -59,17 +61,20 @@ class SaveLoadCardState extends State<SaveLoadCard> {
         child: SizedBox(
             height: 80,
             child: Padding(
-              padding: const EdgeInsets.all(0),
+              padding: const EdgeInsets.all(4),
               child: Row(
                 children: [
-                  const SizedBox(width: 80, height: 80), // サムネイル
+                  Image(
+                      image:
+                          widget.myGame.userData.thumbnails[widget.book - 1]),
+                  // const SizedBox(width: 80, height: 80), // サムネイル
                   Padding(
-                    padding: const EdgeInsets.all(0),
+                    padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                            padding: const EdgeInsets.fromLTRB(6, 6, 0, 6),
+                            padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
                             child: Row(children: [
                               Text(
                                 widget.myGame.userData.getTime(widget.book),
@@ -117,10 +122,9 @@ class SaveLoadCardState extends State<SaveLoadCard> {
   }
 
   Future<void> onSave() async {
-    var capture = await MyGameWidget.screenshotController.capture();
-    if (capture != null) {
-      var img = await decodeImageFromList(capture);
-      log.info(img);
+    var bytes = await MyGameWidget.screenshotController.capture();
+    if (bytes != null) {
+      widget.myGame.userData.thumbnails[widget.book - 1] = MemoryImage(bytes);
     }
     widget.myGame.userData.save(widget.book);
   }
