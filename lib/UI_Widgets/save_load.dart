@@ -44,49 +44,54 @@ class SaveLoadCard extends StatelessWidget {
         ),
         color: Colors.transparent,
         child: SizedBox(
-          height: 80,
-          child: Row(
-            children: [
-              const SizedBox(width: 80, height: 80),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.all(0),
+              child: Row(
                 children: [
-                  Row(children: [
-                    const SizedBox(width: 6),
-                    Text(
-                      myGame.userData.getTime(book),
-                      style: const TextStyle(fontSize: 16),
+                  const SizedBox(width: 80, height: 80),
+                  Padding(
+                    padding: const EdgeInsets.all(0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(6, 6, 0, 6),
+                            child: Row(children: [
+                              Text(
+                                myGame.userData.getTime(book),
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                "Lv.${myGame.userData.getLevel(book)}",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ])),
+                        Row(
+                          children: [
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepOrange[300],
+                                    foregroundColor: Colors.white),
+                                onPressed: () {
+                                  myGame.userData.save(book);
+                                },
+                                child: const Text("Save")),
+                            const SizedBox(width: 4),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.lightBlue[300],
+                                    foregroundColor: Colors.white),
+                                onPressed: () {},
+                                child: const Text("Load"))
+                          ],
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16),
-                    Text(
-                      "Lv.${myGame.userData.getLevel(book)}",
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ]),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepOrange[300],
-                              foregroundColor: Colors.white),
-                          onPressed: () {},
-                          child: const Text("Save")),
-                      const SizedBox(width: 4),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.lightBlue[300],
-                              foregroundColor: Colors.white),
-                          onPressed: () {},
-                          child: const Text("Load"))
-                    ],
-                  ),
-                  const SizedBox(height: 4),
+                  )
                 ],
               ),
-            ],
-          ),
-        ));
+            )));
   }
 }

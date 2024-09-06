@@ -26,7 +26,7 @@ class UserData {
 
     for (var schema in schemas) {
       // デバッグ用
-      // userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
+      userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
 
       // テーブル作成
       userDB.execute((schema["sql"] as String)

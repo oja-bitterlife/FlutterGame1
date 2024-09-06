@@ -32,13 +32,6 @@ class Menu extends StatelessWidget {
           },
         ),
         ListTile(
-          title: const Text('Save'),
-          onTap: () {
-            myGame.userData.save(1);
-            Navigator.of(context).pop(); // メニューは閉じる
-          },
-        ),
-        ListTile(
           title: const Text('Load'),
           onTap: () {
             if (myGame.userData.hasSave(1)) {
