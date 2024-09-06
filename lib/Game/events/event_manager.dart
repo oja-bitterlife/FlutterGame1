@@ -36,11 +36,11 @@ class EventManager extends Component {
   LevelEventBase levelEvent;
 
   // イベントはchildではなくこっちに登録する(childは全部実行される)
-  EventElement eventQueue;
+  EventRoot eventQueue = EventRoot();
+  bool get isEmpty => !isNotEmpty;
+  bool get isNotEmpty => eventQueue.hasChildren;
 
-  EventManager(MyGame myGame, this.level)
-      : eventQueue = EventRoot(),
-        levelEvent = getLevelEvent(level)! {
+  EventManager(MyGame myGame, this.level) : levelEvent = getLevelEvent(level)! {
     // staticなメンバーに保存してEvent関係で使い回す
     // ignore: prefer_initializing_formals
     EventManager.myGame = myGame;

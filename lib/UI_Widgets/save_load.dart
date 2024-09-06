@@ -34,6 +34,7 @@ class SaveLoadDialog extends StatelessWidget {
 class SaveLoadCard extends StatefulWidget {
   final MyGame myGame;
   final int book;
+
   const SaveLoadCard(this.myGame, this.book, {super.key});
 
   @override
@@ -41,6 +42,9 @@ class SaveLoadCard extends StatefulWidget {
 }
 
 class SaveLoadCardState extends State<SaveLoadCard> {
+  //　セーブボタンの有効無効状態
+  bool get canSave => widget.myGame.uiControl.cursor?.isVisible ?? false;
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -80,10 +84,14 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.deepOrange[300],
                                     foregroundColor: Colors.white),
-                                onPressed: () {
-                                  onSave();
-                                  Navigator.of(context).pop(); // メニューは閉じる
-                                },
+                                onPressed: !canSave
+                                    ? null
+                                    : () {
+                                        // セーブ可能状態の時だけ有効に
+                                        onSave();
+                                        setState(() {});
+                                        // Navigator.of(context).pop(); // メニューは閉じる
+                                      },
                                 child: const Text("Save")),
                             const SizedBox(width: 4),
                             ElevatedButton(
