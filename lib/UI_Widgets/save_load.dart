@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
 import '../Game/my_game.dart';
 import '../Game/ui_control.dart';
+import '../main.dart';
 
 class SaveLoadDialog extends StatelessWidget {
   final MyGame myGame;
@@ -86,9 +89,9 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                     foregroundColor: Colors.white),
                                 onPressed: !canSave
                                     ? null
-                                    : () {
+                                    : () async {
                                         // セーブ可能状態の時だけ有効に
-                                        onSave();
+                                        await onSave();
                                         setState(() {});
                                         // Navigator.of(context).pop(); // メニューは閉じる
                                       },
@@ -113,7 +116,12 @@ class SaveLoadCardState extends State<SaveLoadCard> {
             )));
   }
 
-  void onSave() {
+  Future<void> onSave() async {
+    var capture = await MyGameWidget.screenshotController.capture();
+    if (capture != null) {
+      var img = await decodeImageFromList(capture);
+      log.info(img);
+    }
     widget.myGame.userData.save(widget.book);
   }
 
