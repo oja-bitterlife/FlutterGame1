@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
-import "dart:ui" as ui;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // ignore: unused_import
@@ -118,6 +115,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
             )));
   }
 
+  // サムネ部分の表示物
   Widget getThumbnail() {
     var thumbnail = widget.myGame.userData.thumbnails[widget.book - 1];
     if (thumbnail != null) {
@@ -126,15 +124,19 @@ class SaveLoadCardState extends State<SaveLoadCard> {
           width: 80,
           height: 80);
     }
+    // データが無かったらiconを出しておく
     return const SizedBox(
         width: 80, height: 80, child: Icon(Icons.highlight_off, size: 64));
   }
 
   Future<void> onSave() async {
+    // サムネイルの保存
     var bytes = await MyGameWidget.screenshotController.capture();
     if (bytes != null) {
       widget.myGame.userData.thumbnails[widget.book - 1] = MemoryImage(bytes);
     }
+
+    // 状態の保存
     widget.myGame.userData.save(widget.book);
   }
 
