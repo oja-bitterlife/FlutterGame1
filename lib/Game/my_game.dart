@@ -18,6 +18,7 @@ class MyGame extends FlameGame {
   late MemoryDB memoryDB;
   late UserData userData;
 
+  int currentLv = 0; // LvっていうかstageNo
   late EventManager event;
   late Input input;
 
@@ -35,12 +36,11 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     // DBロード
     memoryDB = await MemoryDB.create();
-    checkDBEvents(memoryDB.db, 0); // デバッグ用
 
     // データ読み込み
     await PlayerComponent.load();
     await TiledMap.load(this);
-    // 罠(仮)
+    // 罠(仮) 後でTiledに入れるかも
     var trapImg = await images.load("tdrpg_interior.png");
     trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
 
@@ -54,6 +54,9 @@ class MyGame extends FlameGame {
 
   // 画面構築(Components)
   void init() {
+    // デバッグ用
+    checkDBEvents(memoryDB.db, currentLv);
+
     // 入力管理
     add(input = Input(512, 512));
 
@@ -67,7 +70,7 @@ class MyGame extends FlameGame {
     uiControl = UIControl();
 
     // イベント管理
-    add(event = EventManager(this, 0));
+    add(event = EventManager(this, currentLv));
   }
 
   // 状態のリセット

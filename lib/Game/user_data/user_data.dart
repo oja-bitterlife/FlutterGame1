@@ -65,6 +65,15 @@ class UserData {
     return result.first["time"];
   }
 
+  String getLevel(int book) {
+    var result =
+        userDB.select("SELECT level FROM player where book = ?", [book]);
+    if (result.isEmpty) {
+      return "--";
+    }
+    return (result.first["level"] as int).toString();
+  }
+
   void save(int book) {
     player.savePreProcess(myGame);
     mapData.savePreProcess(myGame);

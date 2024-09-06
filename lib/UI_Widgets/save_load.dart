@@ -17,13 +17,13 @@ class SaveLoadDialog extends StatelessWidget {
       alignment: Alignment.topLeft,
       children: [
         SimpleDialogOption(
-          child: SaveLoadCard(myGame),
+          child: SaveLoadCard(myGame, 1),
         ),
         SimpleDialogOption(
-          child: SaveLoadCard(myGame),
+          child: SaveLoadCard(myGame, 2),
         ),
         SimpleDialogOption(
-          child: SaveLoadCard(myGame),
+          child: SaveLoadCard(myGame, 3),
         ),
       ],
     );
@@ -32,7 +32,8 @@ class SaveLoadDialog extends StatelessWidget {
 
 class SaveLoadCard extends StatelessWidget {
   final MyGame myGame;
-  const SaveLoadCard(this.myGame, {super.key});
+  final int book;
+  const SaveLoadCard(this.myGame, this.book, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,23 +49,21 @@ class SaveLoadCard extends StatelessWidget {
             children: [
               const SizedBox(width: 80, height: 80),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 4),
-                  const Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        SizedBox(width: 8),
-                        Text(
-                          "--/--/-- --:--:--",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        SizedBox(width: 16),
-                        Text(
-                          "Lv.0",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ]),
+                  Row(children: [
+                    const SizedBox(width: 6),
+                    Text(
+                      myGame.userData.getTime(book),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      "Lv.${myGame.userData.getLevel(book)}",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ]),
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -83,6 +82,7 @@ class SaveLoadCard extends StatelessWidget {
                           child: const Text("Load"))
                     ],
                   ),
+                  const SizedBox(height: 4),
                 ],
               ),
             ],

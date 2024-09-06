@@ -19,21 +19,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyGameWidget(myGame: MyGame()),
+      home: MyGameWidget(MyGame()),
     );
   }
 }
 
 class MyGameWidget extends StatelessWidget {
   final MyGame myGame;
-  const MyGameWidget({super.key, required this.myGame});
+  const MyGameWidget(this.myGame, {super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Lv.0: Tutorial'),
+          title: Text('Lv.${myGame.currentLv}: Tutorial'),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         body: Stack(alignment: Alignment.topLeft, children: <Widget>[
