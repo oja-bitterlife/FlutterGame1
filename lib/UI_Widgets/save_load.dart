@@ -61,13 +61,10 @@ class SaveLoadCardState extends State<SaveLoadCard> {
         child: SizedBox(
             height: 80,
             child: Padding(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
               child: Row(
                 children: [
-                  Image(
-                      image:
-                          widget.myGame.userData.thumbnails[widget.book - 1]),
-                  // const SizedBox(width: 80, height: 80), // サムネイル
+                  getThumbnail(),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                     child: Column(
@@ -82,7 +79,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                               ),
                               const SizedBox(width: 16),
                               Text(
-                                "Lv.${widget.myGame.userData.getLevel(widget.book)}",
+                                "Lv.${widget.myGame.userData.getLevel(widget.book) ?? "--"}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ])),
@@ -119,6 +116,18 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                 ],
               ),
             )));
+  }
+
+  Widget getThumbnail() {
+    var thumbnail = widget.myGame.userData.thumbnails[widget.book - 1];
+    if (thumbnail != null) {
+      return Image(
+          image: widget.myGame.userData.thumbnails[widget.book - 1]!,
+          width: 80,
+          height: 80);
+    }
+    return const SizedBox(
+        width: 80, height: 80, child: Icon(Icons.highlight_off, size: 64));
   }
 
   Future<void> onSave() async {
