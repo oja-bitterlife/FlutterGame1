@@ -30,11 +30,16 @@ class SaveLoadDialog extends StatelessWidget {
   }
 }
 
-class SaveLoadCard extends StatelessWidget {
+class SaveLoadCard extends StatefulWidget {
   final MyGame myGame;
   final int book;
   const SaveLoadCard(this.myGame, this.book, {super.key});
 
+  @override
+  SaveLoadCardState createState() => SaveLoadCardState();
+}
+
+class SaveLoadCardState extends State<SaveLoadCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -59,12 +64,12 @@ class SaveLoadCard extends StatelessWidget {
                             padding: const EdgeInsets.fromLTRB(6, 6, 0, 6),
                             child: Row(children: [
                               Text(
-                                myGame.userData.getTime(book),
+                                widget.myGame.userData.getTime(widget.book),
                                 style: const TextStyle(fontSize: 16),
                               ),
                               const SizedBox(width: 16),
                               Text(
-                                "Lv.${myGame.userData.getLevel(book)}",
+                                "Lv.${widget.myGame.userData.getLevel(widget.book)}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ])),
@@ -75,7 +80,8 @@ class SaveLoadCard extends StatelessWidget {
                                     backgroundColor: Colors.deepOrange[300],
                                     foregroundColor: Colors.white),
                                 onPressed: () {
-                                  myGame.userData.save(book);
+                                  widget.myGame.userData.save(widget.book);
+                                  setState(() {});
                                 },
                                 child: const Text("Save")),
                             const SizedBox(width: 4),
