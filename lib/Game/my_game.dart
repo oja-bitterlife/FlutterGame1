@@ -48,12 +48,14 @@ class MyGame extends FlameGame {
     userData = await UserData.init(this);
 
     // 全体の初期化
-    init();
+    init(0);
     event.add(event.createFromDB("on_start"));
   }
 
   // 画面構築(Components)
-  void init() {
+  void init(int level) {
+    currentLv = level;
+
     // デバッグ用
     checkDBEvents(memoryDB.db, currentLv);
 
@@ -74,9 +76,11 @@ class MyGame extends FlameGame {
   }
 
   // 状態のリセット
-  void reset() {
+  void reset(int level) {
     removeAll(children); // 一旦全部消す
-    init(); // 再構築
+
+    // レベル指定で再構築
+    init(level); // 再構築
   }
 
   // 状態の更新

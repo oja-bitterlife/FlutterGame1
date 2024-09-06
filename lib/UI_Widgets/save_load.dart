@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // ignore: unused_import
 import '../my_logger.dart';
 import '../Game/my_game.dart';
+import '../Game/ui_control.dart';
 
 class SaveLoadDialog extends StatelessWidget {
   final MyGame myGame;
@@ -54,7 +55,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
               padding: const EdgeInsets.all(0),
               child: Row(
                 children: [
-                  const SizedBox(width: 80, height: 80),
+                  const SizedBox(width: 80, height: 80), // サムネイル
                   Padding(
                     padding: const EdgeInsets.all(0),
                     child: Column(
@@ -80,8 +81,8 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                     backgroundColor: Colors.deepOrange[300],
                                     foregroundColor: Colors.white),
                                 onPressed: () {
-                                  widget.myGame.userData.save(widget.book);
-                                  setState(() {});
+                                  onSave();
+                                  Navigator.of(context).pop(); // メニューは閉じる
                                 },
                                 child: const Text("Save")),
                             const SizedBox(width: 4),
@@ -89,7 +90,10 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.lightBlue[300],
                                     foregroundColor: Colors.white),
-                                onPressed: () {},
+                                onPressed: () {
+                                  onLoad();
+                                  Navigator.of(context).pop(); // メニューは閉じる
+                                },
                                 child: const Text("Load"))
                           ],
                         ),
@@ -99,5 +103,21 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                 ],
               ),
             )));
+  }
+
+  void onSave() {
+    widget.myGame.userData.save(widget.book);
+  }
+
+  void onLoad() {
+    int level = widget.myGame.userData.getLevel(widget.book) ?? 0;
+
+    // 状態の復活
+    widget.myGame.reset(level);
+    widget.myGame.userData.load(widget.book);
+
+    // UIの復活
+    widget.myGame.uiControl.cursor?.visible = true;
+    widget.myGame.uiControl.showUI = ShowUI.cursor;
   }
 }

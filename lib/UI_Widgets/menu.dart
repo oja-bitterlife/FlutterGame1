@@ -25,24 +25,11 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.reset();
+            myGame.reset(myGame.currentLv);
             myGame.userData.reset();
             myGame.event.add(myGame.event.createFromDB("on_start"));
             Navigator.of(context).pop(); // メニューは閉じる
           },
-        ),
-        ListTile(
-          title: const Text('Load'),
-          onTap: () {
-            if (myGame.userData.hasSave(1)) {
-              myGame.reset();
-              myGame.userData.load(1);
-              myGame.uiControl.cursor?.visible = true;
-              myGame.uiControl.showUI = ShowUI.cursor;
-            }
-            Navigator.of(context).pop(); // メニューは閉じる
-          },
-          subtitle: Text(myGame.userData.getTime(1)),
         ),
         ListTile(
             title: const Text('Save/Load'),

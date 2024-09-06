@@ -26,7 +26,7 @@ class UserData {
 
     for (var schema in schemas) {
       // デバッグ用
-      userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
+      // userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
 
       // テーブル作成
       userDB.execute((schema["sql"] as String)
@@ -65,13 +65,13 @@ class UserData {
     return result.first["time"];
   }
 
-  String getLevel(int book) {
+  int? getLevel(int book) {
     var result =
         userDB.select("SELECT level FROM player where book = ?", [book]);
     if (result.isEmpty) {
-      return "--";
+      return null;
     }
-    return (result.first["level"] as int).toString();
+    return result.first["level"];
   }
 
   void save(int book) {
