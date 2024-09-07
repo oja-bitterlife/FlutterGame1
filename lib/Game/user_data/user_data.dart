@@ -65,7 +65,7 @@ class UserDataManager {
   }
 
 // セーブデータのシステム情報を取得する
-  ({String? time, int stage, ImageProvider? image})? getSavedStageData(
+  ({ImageProvider<Object>? image, int stage, String time})? getSavedStageData(
       int book, bool needImage) {
     // imageは重いので引数指定で不要なときは取得しない
     String items = "time,stage";

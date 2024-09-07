@@ -14,8 +14,8 @@ class UserDataSystem extends UserDataElement {
     // サムネイルの保存
     var pngBytes = await MyGameWidget.screenshotController.capture();
     if (pngBytes != null) {
-      memoryDB
-          .execute("INSERT INTO $memoryTable (image) VALUES (?)", [pngBytes]);
+      memoryDB.execute("INSERT INTO $memoryTable (stage,image) VALUES (?,?)",
+          [myGame.currentStage, pngBytes]);
     }
   }
 

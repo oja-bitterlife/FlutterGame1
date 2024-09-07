@@ -47,10 +47,12 @@ class SaveLoadCardState extends State<SaveLoadCard> {
   bool get canSave => widget.myGame.uiControl.cursor?.isVisible ?? false;
 
   // SystemDataキャッシュ
-  ({String time, String stage, ImageProvider thumb})? systemData;
+  ({String time, int stage, ImageProvider<Object>? image})? systemData;
 
   @override
   Widget build(BuildContext context) {
+    systemData ??= widget.myGame.userData.getSavedStageData(widget.book, true);
+
     return Card(
         shadowColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
@@ -93,7 +95,6 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                     : () async {
                                         // セーブ可能状態の時だけ有効に
                                         await onSave();
-                                        setState(() {});
                                         // Navigator.of(context).pop(); // メニューは閉じる
                                       },
                                 child: const Text("Save")),
@@ -104,7 +105,11 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                     foregroundColor: Colors.white),
                                 onPressed: () async {
                                   await onLoad();
-                                  Navigator.of(context).pop(); // メニューは閉じる
+
+                                  // メニューは閉じる
+                                  if (context.mounted) {
+                                    Navigator.of(context).pop();
+                                  }
                                 },
                                 child: const Text("Load"))
                           ],
@@ -119,8 +124,8 @@ class SaveLoadCardState extends State<SaveLoadCard> {
 
   // サムネ部分の表示物
   Widget getThumbnail() {
-    if (systemData?.thumb != null) {
-      return Image(image: systemData!.thumb, width: 80, height: 80);
+    if (systemData?.image != null) {
+      return Image(image: systemData!.image!, width: 80, height: 80);
     }
 
     // データが無かったらiconを出しておく
@@ -145,7 +150,13 @@ class SaveLoadCardState extends State<SaveLoadCard> {
 
   Future<void> onSave() async {
     // 状態の保存
-    widget.myGame.userData.save(widget.book);
+    await widget.myGame.userData.save(widget.book);
+
+    // セーブデータ表示更新
+    setState(() {
+      systemData = widget.myGame.userData.getSavedStageData(widget.book, true);
+    });
+    log.info(systemData);
   }
 
   Future<void> onLoad() async {
@@ -158,7 +169,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
 
     // 状態の復活
     widget.myGame.reset(stageData.stage);
-    widget.myGame.userData.load(widget.book);
+    await widget.myGame.userData.load(widget.book);
 
     // UIの復活
     widget.myGame.uiControl.cursor?.visible = true;
