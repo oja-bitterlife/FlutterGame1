@@ -8,10 +8,12 @@ import '../../my_logger.dart';
 // キュー方式で順番に子イベントを実行する
 // 子が無くなったら自分
 class EventElement extends Component {
+  // イベント管理用
   String name;
   EventElement? next;
   bool notice; // イベントの開始・終了通知コールバックを呼び出す
 
+  // フロー管理用
   bool isStarted = false;
 
   MyGame get gameRef => EventManager.myGame;

@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
 import 'package:my_app/Game/ui_control.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../db.dart';
 import 'events/event_manager.dart';
@@ -72,7 +73,7 @@ class MyGame extends FlameGame {
     uiControl = UIControl();
 
     // イベント管理
-    add(event = EventManager(this, currentStage));
+    add(event = EventManager(this));
   }
 
   // 状態のリセット

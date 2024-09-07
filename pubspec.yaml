@@ -45,6 +45,7 @@ dependencies:
   sqlite3: ^2.4.6
   transparent_pointer: ^1.0.1
   screenshot: ^3.0.0
+  package_info_plus: ^8.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

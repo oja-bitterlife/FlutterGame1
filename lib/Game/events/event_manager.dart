@@ -11,7 +11,7 @@ import 'event_data/event_action.dart';
 // ignore: unused_import
 import '../../my_logger.dart';
 
-import 'levels/level_base.dart';
+import 'stages/stage_base.dart';
 
 // イベント登録用情報
 const eventInfo = [
@@ -32,15 +32,15 @@ class EventManager extends Component {
   // イベント全般で使うゲームオブジェクト
   static late MyGame myGame;
 
-  int level;
-  LevelEventBase levelEvent;
+  StageEventBase stageEvent;
 
   // イベントはchildではなくこっちに登録する(childは全部実行される)
   EventRoot eventQueue = EventRoot();
   bool get isEmpty => !isNotEmpty;
   bool get isNotEmpty => eventQueue.hasChildren;
 
-  EventManager(MyGame myGame, this.level) : levelEvent = getLevelEvent(level)! {
+  EventManager(MyGame myGame)
+      : stageEvent = getStageEvent(myGame.currentStage)! {
     // staticなメンバーに保存してEvent関係で使い回す
     // ignore: prefer_initializing_formals
     EventManager.myGame = myGame;
@@ -67,8 +67,8 @@ class EventManager extends Component {
   EventElement createFromDB(String eventName) {
     for (var info in eventInfo) {
       var result = myGame.memoryDB.select(
-          "SELECT * FROM event.${info.table} WHERE level = ? AND name = ?",
-          [myGame.event.level, eventName]);
+          "SELECT * FROM event.${info.table} WHERE stage = ? AND name = ?",
+          [myGame.currentStage, eventName]);
 
       // イベントが複数あってはいけない
       if (result.length > 1) {
@@ -94,23 +94,23 @@ class EventManager extends Component {
 
   // 通知あり登録したイベントが開始する時
   void onStartNotice(EventElement event) {
-    levelEvent.onEventStart(event);
+    stageEvent.onEventStart(event);
   }
 
   // 通知あり登録したイベントが終わった時
   void onFinishNitice(EventElement event) {
-    levelEvent.onEventFinish(event);
+    stageEvent.onEventFinish(event);
   }
 }
 
 // [デバッグ用]イベント名の重複チェッカー
-void checkDBEvents(CommonDatabase db, int level) {
+void checkDBEvents(CommonDatabase db, int stage) {
   List<String> eventNames = [];
 
   for (var info in eventInfo) {
     // イベント名重複チェック
     var resultSet = db.select(
-        "SELECT name FROM event.${info.table} WHERE level = ?", [level]);
+        "SELECT name FROM event.${info.table} WHERE stage = ?", [stage]);
     for (var result in resultSet) {
       if (eventNames.contains(result["name"])) {
         // イベント名が重複した

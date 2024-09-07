@@ -4,13 +4,16 @@ import 'package:screenshot/screenshot.dart';
 import 'Game/my_game.dart';
 import 'UI_Widgets/message_window.dart';
 import 'UI_Widgets/menu.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp(await PackageInfo.fromPlatform()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final PackageInfo packageInfo;
+  const MyApp(this.packageInfo, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -20,22 +23,24 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyGameWidget(MyGame()),
+      home: MyGameWidget(MyGame(), packageInfo),
     );
   }
 }
 
 class MyGameWidget extends StatelessWidget {
+  final PackageInfo packageInfo;
+
   final MyGame myGame;
   static ScreenshotController screenshotController = ScreenshotController();
-  const MyGameWidget(this.myGame, {super.key});
+  const MyGameWidget(this.myGame, this.packageInfo, {super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Lv.${myGame.currentStage}: Tutorial'),
+          title: Text(packageInfo.appName),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         backgroundColor: Colors.black,

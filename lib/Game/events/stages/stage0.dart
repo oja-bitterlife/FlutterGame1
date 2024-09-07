@@ -1,13 +1,15 @@
 import 'package:my_app/Game/events/event_data/event_map.dart';
 import 'package:my_app/Game/ui_control.dart';
 
-import 'level_base.dart';
+import 'stage_base.dart';
 import 'package:my_app/Game/events/event_element.dart';
 
 // ignore: unused_import
 import '../../../my_logger.dart';
 
-class Level0 extends LevelEventBase {
+class Stage0 extends StageEventBase {
+  Stage0() : super('Tutorial');
+
   @override
   void onEventStart(EventElement event) {
     if (event.name == "treasure") {

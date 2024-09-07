@@ -43,8 +43,9 @@ class SaveLoadCard extends StatefulWidget {
 }
 
 class SaveLoadCardState extends State<SaveLoadCard> {
-  //　セーブボタンの有効無効状態
+  //　ボタンの有効無効状態
   bool get canSave => widget.myGame.uiControl.cursor?.isVisible ?? false;
+  bool get canLoad => systemData != null;
 
   // SystemDataキャッシュ
   ({String time, int stage, ImageProvider<Object>? image})? systemData;
@@ -103,14 +104,16 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.lightBlue[300],
                                     foregroundColor: Colors.white),
-                                onPressed: () async {
-                                  await onLoad();
+                                onPressed: !canLoad
+                                    ? null
+                                    : () async {
+                                        await onLoad();
 
-                                  // メニューは閉じる
-                                  if (context.mounted) {
-                                    Navigator.of(context).pop();
-                                  }
-                                },
+                                        // メニューは閉じる
+                                        if (context.mounted) {
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
                                 child: const Text("Load"))
                           ],
                         ),

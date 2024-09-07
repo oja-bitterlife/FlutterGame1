@@ -5,11 +5,13 @@ import 'package:my_app/Game/my_game.dart';
 // ignore: unused_import
 import '../../../my_logger.dart';
 
-import 'level0.dart';
+import 'stage0.dart';
 
-abstract class LevelEventBase {
+abstract class StageEventBase {
   MyGame get myGame => EventManager.myGame;
-  LevelEventBase();
+
+  String stageTitle;
+  StageEventBase(this.stageTitle);
 
   void onEventStart(EventElement event) {
     log.info(
@@ -22,9 +24,9 @@ abstract class LevelEventBase {
   }
 }
 
-LevelEventBase? getLevelEvent(int level) {
-  return switch (level) {
-    0 => Level0(),
+StageEventBase? getStageEvent(int stage) {
+  return switch (stage) {
+    0 => Stage0(),
     _ => null,
   };
 }
