@@ -22,7 +22,6 @@ enum MapEventType {
 }
 
 class TiledMap {
-  MyGame myGame;
   late MapDiffObj objs;
   late MapDiffMove move;
 
@@ -30,12 +29,12 @@ class TiledMap {
   static late TiledComponent tiled;
   static late TiledAtlas atlas;
 
-  static load(MyGame myGame) async {
+  static load() async {
     tiled = await TiledComponent.load("map.tmx", Vector2.all(16));
     atlas = await TiledAtlas.fromTiledMap(tiled.tileMap.map);
   }
 
-  TiledMap(this.myGame) {
+  TiledMap(MyGame myGame) {
     var imageBatch = ImageBatchCompiler();
 
     // プレイヤの下に表示

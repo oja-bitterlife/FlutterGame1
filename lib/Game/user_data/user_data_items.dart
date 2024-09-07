@@ -4,7 +4,7 @@ import 'package:my_app/Game/user_data/user_data.dart';
 import 'package:my_app/my_logger.dart';
 
 class UserDataItems extends UserDataElement {
-  UserDataItems(super.myGame, super.memoryDB, super.dbName, super._tableName);
+  UserDataItems(super.memoryDB, super.dbName, super._tableName);
 
   bool isOwned(String name) {
     var result =

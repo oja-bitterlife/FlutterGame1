@@ -4,27 +4,25 @@ import 'package:screenshot/screenshot.dart';
 import 'Game/my_game.dart';
 import 'UI_Widgets/message_window.dart';
 import 'UI_Widgets/menu.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  runApp(MyApp(await PackageInfo.fromPlatform()));
+  var myGame = await MyGame.create();
+  runApp(MyApp(myGame));
 }
 
 class MyApp extends StatelessWidget {
-  final PackageInfo packageInfo;
-  const MyApp(this.packageInfo, {super.key});
+  final MyGame myGame;
+  const MyApp(this.myGame, {super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: packageInfo.appName,
+      title: myGame.packageInfo.appName,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyGameWidget(MyGame()),
+      home: MyGameWidget(myGame),
     );
   }
 }
@@ -39,7 +37,7 @@ class MyGameWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("stage:"),
+          title: Text("stage: ${myGame.currentStage}"),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         backgroundColor: Colors.black,

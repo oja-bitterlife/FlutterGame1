@@ -1,3 +1,4 @@
+import 'package:my_app/Game/my_game.dart';
 import 'package:my_app/main.dart';
 import 'user_data.dart';
 
@@ -5,10 +6,10 @@ import 'user_data.dart';
 import 'package:my_app/my_logger.dart';
 
 class UserDataSystem extends UserDataElement {
-  UserDataSystem(super.myGame, super.memoryDB, super.dbName, super._tableName);
+  UserDataSystem(super.memoryDB, super.dbName, super._tableName);
 
   @override
-  Future<void> savePreProcess() async {
+  Future<void> savePreProcess(MyGame myGame) async {
     memoryDB.execute("DELETE FROM $memoryTable");
 
     // サムネイルの保存
@@ -20,7 +21,7 @@ class UserDataSystem extends UserDataElement {
   }
 
   @override
-  Future<void> loadPostProcess() async {
+  Future<void> loadPostProcess(MyGame myGame) async {
     // システムデータを読み込む
     var result = memoryDB.select("SELECT stage FROM $memoryTable");
     if (result.isEmpty) return; // まだセーブされていなかった

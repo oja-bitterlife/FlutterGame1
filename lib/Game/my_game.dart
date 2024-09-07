@@ -16,16 +16,24 @@ import 'map.dart';
 import '../my_logger.dart';
 
 class MyGame extends FlameGame {
-  late MemoryDB memoryDB;
-  late UserDataManager userData;
+  PackageInfo packageInfo;
 
-  int currentStage = 0;
+  MemoryDB memoryDB;
+  UserDataManager userData;
+  MyGame(
+      {required this.packageInfo,
+      required this.memoryDB,
+      required this.userData});
+
+  late SpriteSheet trapSheet;
+
+  // initで初期化するもの(reset対応)
+  late int currentStage;
   late EventManager event;
   late Input input;
 
   late MovePlayerComponent player;
   late TiledMap map;
-  late SpriteSheet trapSheet;
 
   late UIControl uiControl;
 
@@ -34,28 +42,31 @@ class MyGame extends FlameGame {
   }
 
   static Future<MyGame> create() async {
-    var self = MyGame();
-    return self;
-  }
+    WidgetsFlutterBinding.ensureInitialized();
 
-  @override
-  Future<void> onLoad() async {
-    // DBロード
-    memoryDB = await MemoryDB.create();
-
-    // データ読み込み
+    // 表示用データ読み込み
     await PlayerComponent.load();
-    await TiledMap.load(this);
-    // 罠(仮) 後でTiledに入れるかも
-    var trapImg = await images.load("tdrpg_interior.png");
-    trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
+    await TiledMap.load();
 
-    // ユーザーデータの作成
-    userData = await UserDataManager.init(this, withDBDrop: true);
+    var memoryDB = await MemoryDB.create();
+
+    var self = MyGame(
+        // パッケージ情報
+        packageInfo: await PackageInfo.fromPlatform(),
+        // DBロード
+        memoryDB: memoryDB,
+        // ユーザーデータの作成
+        userData: await UserDataManager.create(memoryDB, withDBDrop: true));
+
+    // 罠(仮) 後でTiledに入れるかも
+    var trapImg = await self.images.load("tdrpg_interior.png");
+    self.trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
 
     // 全体の初期化
-    init(0);
-    event.add(event.createFromDB("on_start"));
+    self.init(0);
+    self.event.add(self.event.createFromDB("on_start"));
+
+    return self;
   }
 
   // 画面構築(Components)

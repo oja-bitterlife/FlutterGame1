@@ -153,7 +153,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
 
   Future<void> onSave() async {
     // 状態の保存
-    await widget.myGame.userData.save(widget.book);
+    await widget.myGame.userData.save(widget.myGame, widget.book);
 
     // セーブデータ表示更新
     setState(() {
@@ -172,7 +172,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
 
     // 状態の復活
     widget.myGame.reset(stageData.stage);
-    await widget.myGame.userData.load(widget.book);
+    await widget.myGame.userData.load(widget.myGame, widget.book);
 
     // UIの復活
     widget.myGame.uiControl.cursor?.visible = true;

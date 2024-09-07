@@ -12,8 +12,6 @@ import 'package:my_app/my_logger.dart';
 
 // IndexedDBに保存するユーザーデータ
 class UserDataManager {
-  late MyGame myGame;
-
   // 主にDBを扱う
   late MemoryDB memoryDB;
   late UserDB storageDB;
@@ -25,8 +23,7 @@ class UserDataManager {
   UserDataMap get mapData => manageData["map"] as UserDataMap;
   UserDataItems get items => manageData["items"] as UserDataItems;
 
-  UserDataManager(this.myGame, this.storageDB, bool withDBDrop)
-      : memoryDB = myGame.memoryDB {
+  UserDataManager(this.memoryDB, this.storageDB, bool withDBDrop) {
     // memoryDBのユーザーデータテーブルをuserDBに移植する
     var schemas =
         memoryDB.select("SELECT * FROM user.sqlite_master WHERE type='table'");
@@ -44,17 +41,17 @@ class UserDataManager {
 
     // 各アクセス用クラスの作成
     manageData = {
-      "system": UserDataSystem(myGame, memoryDB, "user", "system"),
-      "player": UserDataPlayer(myGame, memoryDB, "user", "player"),
-      "items": UserDataItems(myGame, memoryDB, "user", "items"),
-      "map": UserDataMap(myGame, memoryDB, "user", "map"),
+      "system": UserDataSystem(memoryDB, "user", "system"),
+      "player": UserDataPlayer(memoryDB, "user", "player"),
+      "items": UserDataItems(memoryDB, "user", "items"),
+      "map": UserDataMap(memoryDB, "user", "map"),
     };
   }
 
   // 初期化
-  static Future<UserDataManager> init(MyGame myGame,
+  static Future<UserDataManager> create(MemoryDB memoryDB,
       {required bool withDBDrop}) async {
-    return UserDataManager(myGame, await UserDB.create(), withDBDrop);
+    return UserDataManager(memoryDB, await UserDB.create(), withDBDrop);
   }
 
   // 保持情報のクリア
@@ -90,10 +87,10 @@ class UserDataManager {
   }
 
   // セーブ
-  Future<void> save(int book) async {
+  Future<void> save(MyGame myGame, int book) async {
     for (var element in manageData.values) {
       // セーブ前の情報回収
-      await element.savePreProcess();
+      await element.savePreProcess(myGame);
 
       // セーブ
       copyTable(memoryDB, element.memoryTable, null, storageDB,
@@ -104,14 +101,14 @@ class UserDataManager {
   }
 
   // ロード
-  Future<void> load(int book) async {
+  Future<void> load(MyGame myGame, int book) async {
     for (var element in manageData.values) {
       // ロード
       copyTable(storageDB, element.storageTable, book, memoryDB,
           element.memoryTable, null);
 
       // ロードしたデータを適用する
-      await element.loadPostProcess();
+      await element.loadPostProcess(myGame);
 
       debugPrintMemoryDB(element.memoryTable);
     }
@@ -140,15 +137,14 @@ class UserDataManager {
 }
 
 class UserDataElement {
-  final MyGame myGame;
   final MemoryDB memoryDB;
   final String dbName, _tableName;
 
-  UserDataElement(this.myGame, this.memoryDB, this.dbName, this._tableName);
+  UserDataElement(this.memoryDB, this.dbName, this._tableName);
 
   String get memoryTable => "$dbName.$_tableName";
   String get storageTable => _tableName;
 
-  Future<void> savePreProcess() async {}
-  Future<void> loadPostProcess() async {}
+  Future<void> savePreProcess(MyGame myGame) async {}
+  Future<void> loadPostProcess(MyGame myGame) async {}
 }
