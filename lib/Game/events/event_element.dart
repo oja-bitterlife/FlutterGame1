@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:my_app/Game/events/event_manager.dart';
+import '/Game/events/event_manager.dart';
 import '../my_game.dart';
 
 // ignore: unused_import

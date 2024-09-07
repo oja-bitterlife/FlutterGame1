@@ -2,7 +2,7 @@ import '../../ui_control.dart';
 import '../event_element.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 // メッセージ1つ表示
 class EventMsg extends EventElement {

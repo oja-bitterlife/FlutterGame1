@@ -1,11 +1,11 @@
-import 'package:my_app/Game/events/event_data/event_map.dart';
-import 'package:my_app/Game/player.dart';
+import '/Game/events/event_data/event_map.dart';
+import '/Game/player.dart';
 
 import '../../ui_control.dart';
 import '../event_element.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 // アクション一つ設定
 class EventAction extends EventElement {

@@ -3,11 +3,12 @@ import 'dart:math';
 import 'package:flame/sprite.dart';
 import 'package:flame/components.dart';
 
-// ignore: unused_import
-import '../my_logger.dart';
 import 'my_game.dart';
 import 'priorities.dart';
 import 'map.dart';
+
+// ignore: unused_import
+import '/my_logger.dart';
 
 enum PlayerDir {
   down(0),

@@ -1,9 +1,9 @@
 import '../../ui_control.dart';
 import '../event_element.dart';
-import 'package:my_app/Game/player.dart';
+import '/Game/player.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 // 移動のみ(アクション用)
 class EventMove extends EventElement {

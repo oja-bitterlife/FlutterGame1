@@ -1,10 +1,10 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/sprite.dart';
-import 'package:my_app/Game/ui_control.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../db.dart';
+import '/Game/ui_control.dart';
+import '/db.dart';
 import 'events/event_manager.dart';
 import 'input.dart';
 
@@ -48,15 +48,18 @@ class MyGame extends FlameGame {
     await PlayerComponent.load();
     await TiledMap.load();
 
+    // パッケージ情報
+    var packageInfo = await PackageInfo.fromPlatform();
+    // DBロード
     var memoryDB = await MemoryDB.create();
+    var storageDB = await StorageDB.create(packageInfo);
+
+    // ユーザーデータの作成
+    var userData =
+        await UserDataManager.create(memoryDB, storageDB, withDBDrop: true);
 
     var self = MyGame(
-        // パッケージ情報
-        packageInfo: await PackageInfo.fromPlatform(),
-        // DBロード
-        memoryDB: memoryDB,
-        // ユーザーデータの作成
-        userData: await UserDataManager.create(memoryDB, withDBDrop: true));
+        packageInfo: packageInfo, memoryDB: memoryDB, userData: userData);
 
     // 罠(仮) 後でTiledに入れるかも
     var trapImg = await self.images.load("tdrpg_interior.png");

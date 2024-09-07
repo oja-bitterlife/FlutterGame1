@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../UI_Widgets/player_cursor.dart';
-import '../UI_Widgets/message_window.dart';
+import '/UI_Widgets/player_cursor.dart';
+import '/UI_Widgets/message_window.dart';
 
 // ignore: unused_import
-import '../my_logger.dart';
+import '/my_logger.dart';
 
 enum ShowUI {
   none(0),

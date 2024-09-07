@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import 'package:my_app/Game/events/event_data/event_map.dart';
+import '/Game/events/event_data/event_map.dart';
 
 // ignore: unused_import
-import '../my_logger.dart';
-import '../Game/player.dart';
-import '../Game/my_game.dart';
-import '../Game/map.dart';
+import '/my_logger.dart';
+import '/Game/player.dart';
+import '/Game/my_game.dart';
+import '/Game/map.dart';
 
 enum PlayerCursorType {
   none(-1),

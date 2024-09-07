@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/UI_Widgets/player_cursor.dart';
 import 'package:screenshot/screenshot.dart';
-import 'Game/my_game.dart';
-import 'UI_Widgets/message_window.dart';
-import 'UI_Widgets/menu.dart';
+import '/UI_Widgets/player_cursor.dart';
+import '/UI_Widgets/message_window.dart';
+import '/UI_Widgets/menu.dart';
+import '/Game/my_game.dart';
 
 Future<void> main() async {
   var myGame = await MyGame.create();

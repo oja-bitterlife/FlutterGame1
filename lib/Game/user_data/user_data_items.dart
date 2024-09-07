@@ -1,7 +1,7 @@
-import 'package:my_app/Game/user_data/user_data.dart';
+import '/Game/user_data/user_data.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 class UserDataItems extends UserDataElement {
   UserDataItems(super.memoryDB, super.dbName, super._tableName);

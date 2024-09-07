@@ -1,8 +1,9 @@
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sqlite3/wasm.dart';
 
 // ignore: unused_import
-import '../my_logger.dart';
+import '/my_logger.dart';
 
 class SQLiteDB {
   // SQLite3接続用
@@ -60,21 +61,21 @@ class MemoryDB extends SQLiteDB {
   }
 }
 
-class UserDB extends SQLiteDB {
+class StorageDB extends SQLiteDB {
   static const currentVersion = "v1";
 
-  UserDB._(super.sqlite3, super.db);
+  StorageDB._(super.sqlite3, super.db);
 
   // 初期化
-  static Future<UserDB> create() async {
+  static Future<StorageDB> create(PackageInfo packageInfo) async {
     // IndexedDB上にDBを作成する
-    var fileSystem =
-        await IndexedDbFileSystem.open(dbName: 'fluuter_game1_$currentVersion');
+    var fileSystem = await IndexedDbFileSystem.open(
+        dbName: '${packageInfo.appName}_$currentVersion');
     var sqlite3 = await WasmSqlite3.loadFromUrl(Uri.parse('sqlite3.wasm'));
     sqlite3.registerVirtualFileSystem(fileSystem, makeDefault: true);
     var db = sqlite3.open("user.sqlite");
 
-    var self = UserDB._(sqlite3, db);
+    var self = StorageDB._(sqlite3, db);
     return self;
   }
 }

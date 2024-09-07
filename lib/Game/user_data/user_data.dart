@@ -8,13 +8,13 @@ import 'user_data_items.dart';
 import 'user_data_map.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 // IndexedDBに保存するユーザーデータ
 class UserDataManager {
   // 主にDBを扱う
-  late MemoryDB memoryDB;
-  late UserDB storageDB;
+  MemoryDB memoryDB;
+  StorageDB storageDB;
 
   // 各アクセス用クラス
   Map<String, UserDataElement> manageData = {};
@@ -49,9 +49,9 @@ class UserDataManager {
   }
 
   // 初期化
-  static Future<UserDataManager> create(MemoryDB memoryDB,
+  static Future<UserDataManager> create(MemoryDB memoryDB, StorageDB storageDB,
       {required bool withDBDrop}) async {
-    return UserDataManager(memoryDB, await UserDB.create(), withDBDrop);
+    return UserDataManager(memoryDB, storageDB, withDBDrop);
   }
 
   // 保持情報のクリア

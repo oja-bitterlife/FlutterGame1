@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '/Game/my_game.dart';
+import '/Game/ui_control.dart';
 
 // ignore: unused_import
-import '../my_logger.dart';
-import '../Game/my_game.dart';
-import '../Game/ui_control.dart';
+import '/my_logger.dart';
 
 class SaveLoadDialog extends StatelessWidget {
   final MyGame myGame;

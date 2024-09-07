@@ -1,9 +1,9 @@
-import 'package:my_app/Game/my_game.dart';
-import 'package:my_app/main.dart';
+import '/Game/my_game.dart';
+import '/main.dart';
 import 'user_data.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 class UserDataSystem extends UserDataElement {
   UserDataSystem(super.memoryDB, super.dbName, super._tableName);

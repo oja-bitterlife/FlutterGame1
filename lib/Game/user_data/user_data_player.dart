@@ -1,10 +1,10 @@
-import 'package:my_app/Game/my_game.dart';
-import 'package:my_app/Game/user_data/user_data.dart';
+import '/Game/my_game.dart';
+import '/Game/user_data/user_data.dart';
 
 import '../player.dart';
 
 // ignore: unused_import
-import 'package:my_app/my_logger.dart';
+import '/my_logger.dart';
 
 class UserDataPlayer extends UserDataElement {
   UserDataPlayer(super.memoryDB, super.dbName, super._tableName);

@@ -1,8 +1,8 @@
-import 'package:my_app/Game/events/event_data/event_map.dart';
-import 'package:my_app/Game/ui_control.dart';
+import '/Game/events/event_data/event_map.dart';
+import '/Game/ui_control.dart';
 
 import 'stage_base.dart';
-import 'package:my_app/Game/events/event_element.dart';
+import '/Game/events/event_element.dart';
 
 // ignore: unused_import
 import '../../../my_logger.dart';

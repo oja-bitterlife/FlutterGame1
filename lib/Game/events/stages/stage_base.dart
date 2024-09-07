@@ -1,6 +1,6 @@
-import 'package:my_app/Game/events/event_element.dart';
-import 'package:my_app/Game/events/event_manager.dart';
-import 'package:my_app/Game/my_game.dart';
+import '/Game/events/event_element.dart';
+import '/Game/events/event_manager.dart';
+import '/Game/my_game.dart';
 
 // ignore: unused_import
 import '../../../my_logger.dart';
