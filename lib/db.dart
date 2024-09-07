@@ -96,10 +96,8 @@ void copyTable(SQLiteDB src, String srcTable, int? srcBook, SQLiteDB dist,
 
   // データコピー
   for (var data in result) {
-    // 扱いやすいよう一旦Dictに
-    Map<String, dynamic> params = {
-      for (var entry in data.entries) entry.key: entry.value
-    };
+    // 扱いやすいよう一旦map
+    var params = data.map((key, value) => MapEntry(key, value));
 
     // book対応
     if (distBook != null) params["book"] = distBook;
