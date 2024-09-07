@@ -62,7 +62,7 @@ class UserDataManager {
   }
 
 // セーブデータのシステム情報を取得する
-  ({ImageProvider<Object>? image, int stage, String time})? getSavedStageData(
+  ({DateTime time, int stage, ImageProvider<Object>? image})? getSavedStageData(
       int book, bool needImage) {
     // imageは重いので引数指定で不要なときは取得しない
     String items = "time,stage";
@@ -79,8 +79,9 @@ class UserDataManager {
       img = MemoryImage(result.first["image"]);
     }
 
+    // DateTimeのparseの引数にz(UTC)を付けて変換されないように
     return (
-      time: result.first["time"],
+      time: DateTime.parse(result.first["time"] + 'z').toLocal(),
       stage: result.first["stage"],
       image: img,
     );

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '/Game/my_game.dart';
 import '/Game/ui_control.dart';
 
@@ -48,7 +49,7 @@ class SaveLoadCardState extends State<SaveLoadCard> {
   bool get canLoad => systemData != null;
 
   // SystemDataキャッシュ
-  ({String time, int stage, ImageProvider<Object>? image})? systemData;
+  ({DateTime time, int stage, ImageProvider<Object>? image})? systemData;
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +141,9 @@ class SaveLoadCardState extends State<SaveLoadCard> {
   }
 
   String getTimeString() {
-    return (systemData?.time == null) ? "--/--/-- --:--:--" : systemData!.time;
+    return (systemData?.time == null)
+        ? "--/--/-- --:--:--"
+        : DateFormat.yMd().add_Hms().format(systemData!.time);
   }
 
   String getStageString() {
