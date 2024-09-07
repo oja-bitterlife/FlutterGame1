@@ -8,6 +8,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp(await PackageInfo.fromPlatform()));
 }
 
@@ -19,28 +20,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: packageInfo.appName,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyGameWidget(MyGame(), packageInfo),
+      home: MyGameWidget(MyGame()),
     );
   }
 }
 
 class MyGameWidget extends StatelessWidget {
-  final PackageInfo packageInfo;
-
   final MyGame myGame;
   static ScreenshotController screenshotController = ScreenshotController();
-  const MyGameWidget(this.myGame, this.packageInfo, {super.key});
+  const MyGameWidget(this.myGame, {super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(packageInfo.appName),
+          title: const Text("stage:"),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         backgroundColor: Colors.black,

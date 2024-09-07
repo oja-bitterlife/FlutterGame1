@@ -33,6 +33,11 @@ class MyGame extends FlameGame {
     return GameWidget(key: const GlobalObjectKey("game"), game: this);
   }
 
+  static Future<MyGame> create() async {
+    var self = MyGame();
+    return self;
+  }
+
   @override
   Future<void> onLoad() async {
     // DBロード
