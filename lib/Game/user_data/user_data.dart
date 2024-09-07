@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../db.dart';
 import '../my_game.dart';
 
+import 'user_data_system.dart';
 import 'user_data_player.dart';
 import 'user_data_items.dart';
 import 'user_data_map.dart';
@@ -10,121 +11,136 @@ import 'user_data_map.dart';
 import 'package:my_app/my_logger.dart';
 
 // IndexedDBに保存するユーザーデータ
-class UserData {
+class UserDataManager {
   late MyGame myGame;
+
+  // 主にDBを扱う
   late MemoryDB memoryDB;
   late UserDB userDB;
 
   // 各アクセス用クラス
-  late UserDataPlayer player;
-  late UserDataItems items;
-  late UserDataMap mapData;
+  Map<String, UserDataElement> manageData = {};
+  UserDataSystem get system => manageData["system"] as UserDataSystem;
+  UserDataPlayer get player => manageData["player"] as UserDataPlayer;
+  UserDataMap get mapData => manageData["mapData"] as UserDataMap;
+  UserDataItems get items => manageData["items"] as UserDataItems;
 
-  List<ImageProvider?> thumbnails = [null, null, null];
-
-  UserData(this.myGame, this.userDB) : memoryDB = myGame.memoryDB {
+  UserDataManager(this.myGame, this.userDB, bool withDBDrop)
+      : memoryDB = myGame.memoryDB {
     // memoryDBのユーザーデータテーブルをuserDBに移植する
     var schemas =
         memoryDB.select("SELECT * FROM user.sqlite_master WHERE type='table'");
 
     for (var schema in schemas) {
       // デバッグ用
-      // userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
+      if (withDBDrop) {
+        userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
+      }
 
       // テーブル作成
       userDB.execute((schema["sql"] as String)
           .replaceFirst("CREATE TABLE", "CREATE TABLE IF NOT EXISTS"));
     }
 
-    // 各アクセス用クラス
-    player = UserDataPlayer(memoryDB);
-    items = UserDataItems(memoryDB);
-    mapData = UserDataMap(memoryDB);
+    // 各アクセス用クラスの作成
+    manageData = {
+      "system": UserDataSystem(myGame, memoryDB, "user.system"),
+      "player": UserDataPlayer(myGame, memoryDB, "user.player"),
+      "items": UserDataItems(myGame, memoryDB, "user.items"),
+      "mapData": UserDataMap(myGame, memoryDB, "user.map"),
+    };
   }
 
   // 初期化
-  static Future<UserData> init(MyGame myGame) async {
-    return UserData(myGame, await UserDB.create());
+  static Future<UserDataManager> init(MyGame myGame,
+      {required bool withDBDrop}) async {
+    return UserDataManager(myGame, await UserDB.create(), withDBDrop);
   }
 
   // 保持情報のクリア
   void reset() {
-    memoryDB.execute("DELETE FROM user.${UserDataPlayer.tableName}");
-    memoryDB.execute("DELETE FROM user.${UserDataItems.tableName}");
-    memoryDB.execute("DELETE FROM user.${UserDataMap.tableName}");
-  }
-
-  bool hasSave(int book) {
-    return userDB
-        .select("SELECT time FROM player where book = ?", [book]).isNotEmpty;
-  }
-
-  String getTime(int book) {
-    var result =
-        userDB.select("SELECT time FROM player where book = ?", [book]);
-    if (result.isEmpty) {
-      return "----/--/-- --:--:--";
+    for (var element in manageData.values) {
+      memoryDB.execute("DELETE FROM ${element.tableName}");
     }
-    return result.first["time"];
   }
 
-  int? getLevel(int book) {
+// セーブデータのシステム情報を取得する
+  ({String? time, int stage, ImageProvider? image})? getSavedStageData(
+      int book, bool needImage) {
+    // imageは重いので引数指定で不要なときは取得しない
+    String items = "time,stage";
+    items += needImage ? ",image" : "";
+
+    // システムデータ取得
     var result =
-        userDB.select("SELECT level FROM player where book = ?", [book]);
-    if (result.isEmpty) {
-      return null;
+        userDB.select("SELECT $items FROM system where book = ?", [book]);
+    if (result.isEmpty) return null;
+
+    // イメージが必要な時は組み立て
+    ImageProvider? img;
+    if (needImage && result.first["image"] != null) {
+      img = MemoryImage(result.first["image"]);
     }
-    return result.first["level"];
+
+    return (
+      time: result.first["time"],
+      stage: result.first["stage"],
+      image: img,
+    );
   }
 
-  void save(int book) {
-    player.savePreProcess(myGame);
-    mapData.savePreProcess(myGame);
+  // セーブ
+  Future<void> save(int book) async {
+    for (var entry in manageData.entries) {
+      // セーブ前の情報回収
+      await entry.value.savePreProcess();
 
-    copyTable(memoryDB, "user.${UserDataPlayer.tableName}", null, userDB,
-        UserDataPlayer.tableName, book);
-    copyTable(memoryDB, "user.${UserDataItems.tableName}", null, userDB,
-        UserDataItems.tableName, book);
-    copyTable(memoryDB, "user.${UserDataMap.tableName}", null, userDB,
-        UserDataMap.tableName, book);
+      // セーブ
+      copyTable(memoryDB, "user.${entry.value.tableName}", null, userDB,
+          entry.value.tableName, book);
 
-    debugPrintUserDB();
+      debugPrintUserDB(entry.key);
+    }
   }
 
-  void load(int book) {
-    copyTable(userDB, UserDataPlayer.tableName, book, memoryDB,
-        "user.${UserDataPlayer.tableName}", null);
-    copyTable(userDB, UserDataItems.tableName, book, memoryDB,
-        "user.${UserDataItems.tableName}", null);
-    copyTable(userDB, UserDataMap.tableName, book, memoryDB,
-        "user.${UserDataMap.tableName}", null);
+  // ロード
+  Future<void> load(int book) async {
+    for (var entry in manageData.entries) {
+      // ロード
+      copyTable(userDB, entry.value.tableName, book, memoryDB,
+          "user.${entry.value.tableName}", null);
 
-    player.loadPostProcess(myGame);
-    mapData.loadPostProcess(myGame);
+      // ロードしたデータを適用する
+      await entry.value.loadPostProcess();
 
-    debugPrintMemoryDB();
+      debugPrintMemoryDB(entry.key);
+    }
   }
 
-  // DBの内容を表示する
-  void _debugPrint(SQLiteDB db, String dbName, String option) {
-    var resultPlayer =
-        db.select("select * from $dbName${UserDataPlayer.tableName} $option");
-    log.info("Player: $resultPlayer");
-    var resultItems =
-        db.select("select * from $dbName${UserDataItems.tableName} $option");
-    log.info("Items: $resultItems");
-    var resultMapData =
-        db.select("select * from $dbName${UserDataMap.tableName} $option");
-    log.info("Map: $resultMapData");
+  // DBの内容を表示する(デバッグ用)
+  void _debugPrint(SQLiteDB db, String tableName, String option) {
+    var result = db.select("select * from $tableName $option");
+    log.info("Player: $result");
   }
 
-  void debugPrintMemoryDB() {
+  void debugPrintMemoryDB(String tableName) {
     log.info("print DB: memoryDB");
-    _debugPrint(memoryDB, "user.", "");
+    _debugPrint(memoryDB, "user.$tableName", "");
   }
 
-  void debugPrintUserDB() {
+  void debugPrintUserDB(String tableName) {
     log.info("print DB: userDB");
-    _debugPrint(userDB, "", "ORDER BY book");
+    _debugPrint(userDB, tableName, "ORDER BY book");
   }
+}
+
+class UserDataElement {
+  final MyGame myGame;
+  final MemoryDB memoryDB;
+  final String tableName;
+
+  UserDataElement(this.myGame, this.memoryDB, this.tableName);
+
+  Future<void> savePreProcess() async {}
+  Future<void> loadPostProcess() async {}
 }

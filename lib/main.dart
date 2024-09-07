@@ -35,7 +35,7 @@ class MyGameWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Lv.${myGame.currentLv}: Tutorial'),
+          title: Text('Lv.${myGame.currentStage}: Tutorial'),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         backgroundColor: Colors.black,

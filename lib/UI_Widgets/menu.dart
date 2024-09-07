@@ -24,7 +24,7 @@ class Menu extends StatelessWidget {
         ListTile(
           title: const Text('リスタート'),
           onTap: () {
-            myGame.reset(myGame.currentLv);
+            myGame.reset(myGame.currentStage);
             myGame.userData.reset();
             myGame.event.add(myGame.event.createFromDB("on_start"));
             Navigator.of(context).pop(); // メニューは閉じる

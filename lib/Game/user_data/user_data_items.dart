@@ -1,31 +1,27 @@
-import '../../db.dart';
+import 'package:my_app/Game/user_data/user_data.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class UserDataItems {
-  static const tableName = "items";
-
-  MemoryDB memoryDB;
-  UserDataItems(this.memoryDB);
+class UserDataItems extends UserDataElement {
+  UserDataItems(super.myGame, super.memoryDB, super.tableName);
 
   bool isOwned(String name) {
-    var result = memoryDB
-        .select("SELECT used FROM user.$tableName WHERE name = ?", [name]);
+    var result =
+        memoryDB.select("SELECT used FROM $tableName WHERE name = ?", [name]);
     return result.isNotEmpty;
   }
 
   bool isUsed(String name) {
-    var result = memoryDB
-        .select("SELECT used FROM user.$tableName WHERE name = ?", [name]);
-    if (result.isEmpty) return false;
-    return result.first["used"] != 0;
+    var result = memoryDB.select(
+        "SELECT used FROM $tableName WHERE name = ? and used != 0", [name]);
+    return result.isNotEmpty;
   }
 
   void _setItem(String name, bool used) {
-    memoryDB.execute("DELETE FROM user.$tableName WHERE name = ?", [name]);
+    memoryDB.execute("DELETE FROM $tableName WHERE name = ?", [name]);
     memoryDB.execute(
-        "INSERT INTO user.$tableName (name,used) VALUES (?, ?)", [name, used]);
+        "INSERT INTO $tableName (name,used) VALUES (?, ?)", [name, used]);
   }
 
   void obtain(String name) => _setItem(name, false);

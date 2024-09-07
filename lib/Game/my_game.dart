@@ -16,9 +16,9 @@ import '../my_logger.dart';
 
 class MyGame extends FlameGame {
   late MemoryDB memoryDB;
-  late UserData userData;
+  late UserDataManager userData;
 
-  int currentLv = 0; // LvっていうかstageNo
+  int currentStage = 0;
   late EventManager event;
   late Input input;
 
@@ -45,7 +45,7 @@ class MyGame extends FlameGame {
     trapSheet = SpriteSheet(image: trapImg, srcSize: Vector2.all(32));
 
     // ユーザーデータの作成
-    userData = await UserData.init(this);
+    userData = await UserDataManager.init(this, withDBDrop: true);
 
     // 全体の初期化
     init(0);
@@ -53,11 +53,11 @@ class MyGame extends FlameGame {
   }
 
   // 画面構築(Components)
-  void init(int level) {
-    currentLv = level;
+  void init(int stageNo) {
+    currentStage = stageNo;
 
     // デバッグ用
-    checkDBEvents(memoryDB.db, currentLv);
+    checkDBEvents(memoryDB.db, currentStage);
 
     // 入力管理
     add(input = Input(512, 512));
@@ -72,15 +72,15 @@ class MyGame extends FlameGame {
     uiControl = UIControl();
 
     // イベント管理
-    add(event = EventManager(this, currentLv));
+    add(event = EventManager(this, currentStage));
   }
 
   // 状態のリセット
-  void reset(int level) {
+  void reset(int stageNo) {
     removeAll(children); // 一旦全部消す
 
     // レベル指定で再構築
-    init(level); // 再構築
+    init(stageNo); // 再構築
   }
 
   // 状態の更新

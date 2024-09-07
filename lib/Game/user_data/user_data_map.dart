@@ -1,17 +1,14 @@
-import 'package:my_app/db.dart';
-import '../my_game.dart';
+import 'package:my_app/Game/user_data/user_data.dart';
 
 // ignore: unused_import
 import 'package:my_app/my_logger.dart';
 
-class UserDataMap {
-  static const tableName = "map";
+class UserDataMap extends UserDataElement {
+  UserDataMap(super.myGame, super.memoryDB, super.tableName);
 
-  MemoryDB memoryDB;
-  UserDataMap(this.memoryDB);
-
-  void savePreProcess(MyGame myGame) {
-    memoryDB.execute("DELETE FROM user.$tableName");
+  @override
+  Future<void> savePreProcess() async {
+    memoryDB.execute("DELETE FROM $tableName");
 
     myGame.map.objs.getDiffList().forEach((data) {
       memoryDB.execute(
@@ -26,8 +23,9 @@ class UserDataMap {
     });
   }
 
-  void loadPostProcess(MyGame myGame) {
-    var result = memoryDB.select("SELECT * FROM user.$tableName");
+  @override
+  Future<void> loadPostProcess() async {
+    var result = memoryDB.select("SELECT * FROM $tableName");
 
     for (var data in result) {
       log.info(data);

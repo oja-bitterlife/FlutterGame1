@@ -20,13 +20,13 @@ class SaveLoadDialog extends StatelessWidget {
       alignment: Alignment.topLeft,
       children: [
         SimpleDialogOption(
+          child: SaveLoadCard(myGame, 0),
+        ),
+        SimpleDialogOption(
           child: SaveLoadCard(myGame, 1),
         ),
         SimpleDialogOption(
           child: SaveLoadCard(myGame, 2),
-        ),
-        SimpleDialogOption(
-          child: SaveLoadCard(myGame, 3),
         ),
       ],
     );
@@ -46,6 +46,9 @@ class SaveLoadCard extends StatefulWidget {
 class SaveLoadCardState extends State<SaveLoadCard> {
   //　セーブボタンの有効無効状態
   bool get canSave => widget.myGame.uiControl.cursor?.isVisible ?? false;
+
+  // SystemDataキャッシュ
+  ({String time, String stage, ImageProvider thumb})? systemData;
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +74,12 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                             padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
                             child: Row(children: [
                               Text(
-                                widget.myGame.userData.getTime(widget.book),
+                                getTimeString(),
                                 style: const TextStyle(fontSize: 16),
                               ),
                               const SizedBox(width: 16),
                               Text(
-                                "Lv.${widget.myGame.userData.getLevel(widget.book) ?? "--"}",
+                                "Stage: ${getStageString()}",
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ])),
@@ -100,8 +103,8 @@ class SaveLoadCardState extends State<SaveLoadCard> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.lightBlue[300],
                                     foregroundColor: Colors.white),
-                                onPressed: () {
-                                  onLoad();
+                                onPressed: () async {
+                                  await onLoad();
                                   Navigator.of(context).pop(); // メニューは閉じる
                                 },
                                 child: const Text("Load"))
@@ -117,34 +120,45 @@ class SaveLoadCardState extends State<SaveLoadCard> {
 
   // サムネ部分の表示物
   Widget getThumbnail() {
-    var thumbnail = widget.myGame.userData.thumbnails[widget.book - 1];
-    if (thumbnail != null) {
-      return Image(
-          image: widget.myGame.userData.thumbnails[widget.book - 1]!,
-          width: 80,
-          height: 80);
+    if (systemData?.thumb != null) {
+      return Image(image: systemData!.thumb, width: 80, height: 80);
     }
+
     // データが無かったらiconを出しておく
     return const SizedBox(
-        width: 80, height: 80, child: Icon(Icons.highlight_off, size: 64));
+        width: 80,
+        height: 80,
+        child:
+            Icon(Icons.highlight_off_sharp, size: 64, color: Colors.black26));
+  }
+
+  String getTimeString() {
+    return (systemData?.time == null) ? "--/--/-- --:--:--" : systemData!.time;
+  }
+
+  String getStageString() {
+    return (systemData?.stage == null) ? "--" : systemData!.stage.toString();
+  }
+
+  void updateSystemData() {
+    widget.myGame.userData.getSavedStageData(widget.book, true);
   }
 
   Future<void> onSave() async {
-    // サムネイルの保存
-    var bytes = await MyGameWidget.screenshotController.capture();
-    if (bytes != null) {
-      widget.myGame.userData.thumbnails[widget.book - 1] = MemoryImage(bytes);
-    }
-
     // 状態の保存
     widget.myGame.userData.save(widget.book);
   }
 
-  void onLoad() {
-    int level = widget.myGame.userData.getLevel(widget.book) ?? 0;
+  Future<void> onLoad() async {
+    var stageData =
+        widget.myGame.userData.getSavedStageData(widget.book, false);
+    if (stageData == null) {
+      log.severe("Loadに失敗しました: book=${widget.book}");
+      return;
+    }
 
     // 状態の復活
-    widget.myGame.reset(level);
+    widget.myGame.reset(stageData.stage);
     widget.myGame.userData.load(widget.book);
 
     // UIの復活
