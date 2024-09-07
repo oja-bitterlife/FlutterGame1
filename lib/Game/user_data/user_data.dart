@@ -96,8 +96,8 @@ class UserDataManager {
       await element.savePreProcess();
 
       // セーブ
-      // copyTable(memoryDB, element.memoryTable, null, storageDB,
-      //     element.storageTable, book);
+      copyTable(memoryDB, element.memoryTable, null, storageDB,
+          element.storageTable, book);
 
       debugPrintStorageDB(element.storageTable);
     }
@@ -120,7 +120,12 @@ class UserDataManager {
   // DBの内容を表示する(デバッグ用)
   void _debugPrint(SQLiteDB db, String tableName, String option) {
     var result = db.select("select * from $tableName $option");
-    log.info("$tableName: $result");
+
+    // imageは邪魔なので表示しない
+    var data = result.map((row) =>
+        row.map((key, value) => MapEntry(key, key == "image" ? [] : value)));
+
+    log.info("$tableName: $data");
   }
 
   void debugPrintMemoryDB(String tableName) {
