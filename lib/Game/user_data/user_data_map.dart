@@ -28,7 +28,6 @@ class UserDataMap extends UserDataElement {
     var result = memoryDB.select("SELECT * FROM $memoryTable");
 
     for (var data in result) {
-      log.info(data);
       switch (data["type"]) {
         case "objs":
           myGame.map.objs.setDiff(data["gid"], data["blockX"], data["blockY"]);

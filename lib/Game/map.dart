@@ -189,7 +189,6 @@ class MapDiff extends Component {
       }
     }
 
-    log.info(list);
     return list;
   }
 }
