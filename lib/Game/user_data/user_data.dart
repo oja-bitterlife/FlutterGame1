@@ -16,16 +16,16 @@ class UserDataManager {
 
   // 主にDBを扱う
   late MemoryDB memoryDB;
-  late UserDB userDB;
+  late UserDB storageDB;
 
   // 各アクセス用クラス
   Map<String, UserDataElement> manageData = {};
   UserDataSystem get system => manageData["system"] as UserDataSystem;
   UserDataPlayer get player => manageData["player"] as UserDataPlayer;
-  UserDataMap get mapData => manageData["mapData"] as UserDataMap;
+  UserDataMap get mapData => manageData["map"] as UserDataMap;
   UserDataItems get items => manageData["items"] as UserDataItems;
 
-  UserDataManager(this.myGame, this.userDB, bool withDBDrop)
+  UserDataManager(this.myGame, this.storageDB, bool withDBDrop)
       : memoryDB = myGame.memoryDB {
     // memoryDBのユーザーデータテーブルをuserDBに移植する
     var schemas =
@@ -34,20 +34,20 @@ class UserDataManager {
     for (var schema in schemas) {
       // デバッグ用
       if (withDBDrop) {
-        userDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
+        storageDB.execute("""DROP TABLE IF EXISTS ${schema["tbl_name"]}""");
       }
 
       // テーブル作成
-      userDB.execute((schema["sql"] as String)
+      storageDB.execute((schema["sql"] as String)
           .replaceFirst("CREATE TABLE", "CREATE TABLE IF NOT EXISTS"));
     }
 
     // 各アクセス用クラスの作成
     manageData = {
-      "system": UserDataSystem(myGame, memoryDB, "user.system"),
-      "player": UserDataPlayer(myGame, memoryDB, "user.player"),
-      "items": UserDataItems(myGame, memoryDB, "user.items"),
-      "mapData": UserDataMap(myGame, memoryDB, "user.map"),
+      "system": UserDataSystem(myGame, memoryDB, "user", "system"),
+      "player": UserDataPlayer(myGame, memoryDB, "user", "player"),
+      "items": UserDataItems(myGame, memoryDB, "user", "items"),
+      "map": UserDataMap(myGame, memoryDB, "user", "map"),
     };
   }
 
@@ -60,7 +60,7 @@ class UserDataManager {
   // 保持情報のクリア
   void reset() {
     for (var element in manageData.values) {
-      memoryDB.execute("DELETE FROM ${element.tableName}");
+      memoryDB.execute("DELETE FROM ${element.memoryTable}");
     }
   }
 
@@ -73,7 +73,7 @@ class UserDataManager {
 
     // システムデータ取得
     var result =
-        userDB.select("SELECT $items FROM system where book = ?", [book]);
+        storageDB.select("SELECT $items FROM system where book = ?", [book]);
     if (result.isEmpty) return null;
 
     // イメージが必要な時は組み立て
@@ -91,29 +91,29 @@ class UserDataManager {
 
   // セーブ
   Future<void> save(int book) async {
-    for (var entry in manageData.entries) {
+    for (var element in manageData.values) {
       // セーブ前の情報回収
-      await entry.value.savePreProcess();
+      await element.savePreProcess();
 
       // セーブ
-      copyTable(memoryDB, "user.${entry.value.tableName}", null, userDB,
-          entry.value.tableName, book);
+      copyTable(memoryDB, element.memoryTable, null, storageDB,
+          element.storageTable, book);
 
-      debugPrintUserDB(entry.key);
+      debugPrintStorageDB(element.storageTable);
     }
   }
 
   // ロード
   Future<void> load(int book) async {
-    for (var entry in manageData.entries) {
+    for (var element in manageData.values) {
       // ロード
-      copyTable(userDB, entry.value.tableName, book, memoryDB,
-          "user.${entry.value.tableName}", null);
+      copyTable(storageDB, element.storageTable, book, memoryDB,
+          element.memoryTable, null);
 
       // ロードしたデータを適用する
-      await entry.value.loadPostProcess();
+      await element.loadPostProcess();
 
-      debugPrintMemoryDB(entry.key);
+      debugPrintMemoryDB(element.memoryTable);
     }
   }
 
@@ -125,21 +125,24 @@ class UserDataManager {
 
   void debugPrintMemoryDB(String tableName) {
     log.info("print DB: memoryDB");
-    _debugPrint(memoryDB, "user.$tableName", "");
+    _debugPrint(memoryDB, tableName, "");
   }
 
-  void debugPrintUserDB(String tableName) {
+  void debugPrintStorageDB(String tableName) {
     log.info("print DB: userDB");
-    _debugPrint(userDB, tableName, "ORDER BY book");
+    _debugPrint(storageDB, tableName, "ORDER BY book");
   }
 }
 
 class UserDataElement {
   final MyGame myGame;
   final MemoryDB memoryDB;
-  final String tableName;
+  final String dbName, _tableName;
 
-  UserDataElement(this.myGame, this.memoryDB, this.tableName);
+  UserDataElement(this.myGame, this.memoryDB, this.dbName, this._tableName);
+
+  String get memoryTable => "$dbName.$_tableName";
+  String get storageTable => _tableName;
 
   Future<void> savePreProcess() async {}
   Future<void> loadPostProcess() async {}

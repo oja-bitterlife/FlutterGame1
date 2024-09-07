@@ -4,24 +4,24 @@ import 'package:my_app/Game/user_data/user_data.dart';
 import 'package:my_app/my_logger.dart';
 
 class UserDataItems extends UserDataElement {
-  UserDataItems(super.myGame, super.memoryDB, super.tableName);
+  UserDataItems(super.myGame, super.memoryDB, super.dbName, super._tableName);
 
   bool isOwned(String name) {
     var result =
-        memoryDB.select("SELECT used FROM $tableName WHERE name = ?", [name]);
+        memoryDB.select("SELECT used FROM $memoryTable WHERE name = ?", [name]);
     return result.isNotEmpty;
   }
 
   bool isUsed(String name) {
     var result = memoryDB.select(
-        "SELECT used FROM $tableName WHERE name = ? and used != 0", [name]);
+        "SELECT used FROM $memoryTable WHERE name = ? and used != 0", [name]);
     return result.isNotEmpty;
   }
 
   void _setItem(String name, bool used) {
-    memoryDB.execute("DELETE FROM $tableName WHERE name = ?", [name]);
+    memoryDB.execute("DELETE FROM $memoryTable WHERE name = ?", [name]);
     memoryDB.execute(
-        "INSERT INTO $tableName (name,used) VALUES (?, ?)", [name, used]);
+        "INSERT INTO $memoryTable (name,used) VALUES (?, ?)", [name, used]);
   }
 
   void obtain(String name) => _setItem(name, false);

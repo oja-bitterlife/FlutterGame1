@@ -4,28 +4,28 @@ import 'package:my_app/Game/user_data/user_data.dart';
 import 'package:my_app/my_logger.dart';
 
 class UserDataMap extends UserDataElement {
-  UserDataMap(super.myGame, super.memoryDB, super.tableName);
+  UserDataMap(super.myGame, super.memoryDB, super.dbName, super._tableName);
 
   @override
   Future<void> savePreProcess() async {
-    memoryDB.execute("DELETE FROM $tableName");
+    memoryDB.execute("DELETE FROM $memoryTable");
 
     myGame.map.objs.getDiffList().forEach((data) {
       memoryDB.execute(
-          "INSERT INTO user.$tableName (type,gid,blockX,blockY) VALUES (?,?,?,?)",
+          "INSERT INTO $memoryTable (type,gid,blockX,blockY) VALUES (?,?,?,?)",
           ["objs", data.gid, data.x, data.y]);
     });
 
     myGame.map.move.getDiffList().forEach((data) {
       memoryDB.execute(
-          "INSERT INTO user.$tableName (type,gid,blockX,blockY) VALUES (?,?,?,?)",
+          "INSERT INTO $memoryTable (type,gid,blockX,blockY) VALUES (?,?,?,?)",
           ["move", data.gid, data.x, data.y]);
     });
   }
 
   @override
   Future<void> loadPostProcess() async {
-    var result = memoryDB.select("SELECT * FROM $tableName");
+    var result = memoryDB.select("SELECT * FROM $memoryTable");
 
     for (var data in result) {
       log.info(data);

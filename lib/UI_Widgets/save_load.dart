@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../my_logger.dart';
 import '../Game/my_game.dart';
 import '../Game/ui_control.dart';
-import '../main.dart';
 
 class SaveLoadDialog extends StatelessWidget {
   final MyGame myGame;

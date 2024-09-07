@@ -5,23 +5,24 @@ import 'user_data.dart';
 import 'package:my_app/my_logger.dart';
 
 class UserDataSystem extends UserDataElement {
-  UserDataSystem(super.myGame, super.memoryDB, super.tableName);
+  UserDataSystem(super.myGame, super.memoryDB, super.dbName, super._tableName);
 
   @override
   Future<void> savePreProcess() async {
-    memoryDB.execute("DELETE FROM system.$tableName");
+    memoryDB.execute("DELETE FROM $memoryTable");
 
     // サムネイルの保存
     var pngBytes = await MyGameWidget.screenshotController.capture();
     if (pngBytes != null) {
-      memoryDB.execute("INSERT INTO $tableName (image) VALUES (?)", [pngBytes]);
+      memoryDB
+          .execute("INSERT INTO $memoryTable (image) VALUES (?)", [pngBytes]);
     }
   }
 
   @override
   Future<void> loadPostProcess() async {
     // システムデータを読み込む
-    var result = memoryDB.select("SELECT stage FROM $tableName");
+    var result = memoryDB.select("SELECT stage FROM $memoryTable");
     if (result.isEmpty) return; // まだセーブされていなかった
 
     myGame.currentStage = result.first["stage"];

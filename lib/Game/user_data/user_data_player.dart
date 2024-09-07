@@ -6,14 +6,14 @@ import '../player.dart';
 import 'package:my_app/my_logger.dart';
 
 class UserDataPlayer extends UserDataElement {
-  UserDataPlayer(super.myGame, super.memoryDB, super.tableName);
+  UserDataPlayer(super.myGame, super.memoryDB, super.dbName, super._tableName);
 
   @override
   Future<void> savePreProcess() async {
     // プレイヤーデータを保存する
-    memoryDB.execute("DELETE FROM user.$tableName"); // 一旦削除
+    memoryDB.execute("DELETE FROM $memoryTable"); // 一旦削除
     memoryDB.execute(
-        "INSERT INTO $tableName (dir, blockX, blockY) VALUES (?, ?, ?)", [
+        "INSERT INTO $memoryTable (dir, blockX, blockY) VALUES (?, ?, ?)", [
       myGame.player.dir.id,
       myGame.player.getBlockX(),
       myGame.player.getBlockY()
@@ -23,7 +23,7 @@ class UserDataPlayer extends UserDataElement {
   @override
   Future<void> loadPostProcess() async {
     // プレイヤーデータを読み込む
-    var result = memoryDB.select("SELECT dir,blockX,blockY FROM $tableName");
+    var result = memoryDB.select("SELECT dir,blockX,blockY FROM $memoryTable");
     if (result.isEmpty) return; // まだセーブされていなかった
 
     // プレイヤーデータを更新
