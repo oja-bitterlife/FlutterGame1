@@ -1,3 +1,4 @@
+import 'package:flame/components.dart';
 import '/Game/events/event_data/event_map.dart';
 import '/Game/ui_control.dart';
 
@@ -6,6 +7,8 @@ import '/Game/events/event_element.dart';
 
 // ignore: unused_import
 import '../../../my_logger.dart';
+
+import '../../priorities.dart';
 
 class Stage0 extends StageEventBase {
   Stage0() : super('Tutorial');
@@ -56,6 +59,14 @@ class Stage0 extends StageEventBase {
         var trapEvent = myGame.event.createFromDB("trap");
         trapEvent.notice = true;
         myGame.event.add(trapEvent);
+
+        // トラップ表示
+        myGame.add(SpriteComponent(
+            priority: Priority.eventOver.index,
+            position: myGame.player.position - Vector2(26, 48),
+            scale: Vector2.all(1.5),
+            sprite: Sprite(myGame.trapSheet.image,
+                srcPosition: Vector2(160, 512), srcSize: Vector2.all(48))));
 
         // UIを消した状態にする
         myGame.uiControl.showUI = ShowUI.none;

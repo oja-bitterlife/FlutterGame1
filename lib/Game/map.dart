@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
-import 'package:tiled/tiled.dart';
 
 // ignore: unused_import
 import '../my_logger.dart';
