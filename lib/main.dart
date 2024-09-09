@@ -39,15 +39,15 @@ class MyGameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        onDrawerChanged: (isOpened) {
-          // メニューを出した時Pause、閉じたときresume
-          isOpened ? myGame.pause() : myGame.resume();
-        },
         appBar: AppBar(
           title: Text("stage: ${myGame.currentStage}"),
         ),
         drawer: Drawer(child: Menu(myGame: myGame)), // menu
         backgroundColor: Colors.black,
+        onDrawerChanged: (isOpened) {
+          // メニューを出した時Pause、閉じたときresume
+          isOpened ? myGame.pause() : myGame.resume();
+        },
         body: SizedBox(
             width: 512,
             height: 512,
