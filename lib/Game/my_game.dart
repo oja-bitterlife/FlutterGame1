@@ -32,6 +32,11 @@ class MyGame extends FlameGame {
   late EventManager event;
   late Input input;
 
+  bool _pause = false;
+  void pause() => _pause = true;
+  void resume() => _pause = false;
+  bool get isPause => _pause;
+
   late MovePlayerComponent player;
   late TiledMap map;
 
@@ -106,6 +111,9 @@ class MyGame extends FlameGame {
   // 状態の更新
   @override
   void update(double dt) {
+    // ポーズ中は更新しない
+    if (isPause) return;
+
     super.update(dt);
     uiControl.update();
   }

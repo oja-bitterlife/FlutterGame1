@@ -39,7 +39,12 @@ class Menu extends StatelessWidget {
               await showDialog(
                   context: context,
                   builder: (context) {
-                    return SaveLoadDialog(myGame);
+                    return PopScope(
+                        // SaveLoadDialogを閉じたらresumeするように
+                        onPopInvoked: (didPop) {
+                          myGame.resume();
+                        },
+                        child: SaveLoadDialog(myGame));
                   });
             }),
       ],

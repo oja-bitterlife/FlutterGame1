@@ -13,6 +13,7 @@ class SaveLoadDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    myGame.pause();
     return SimpleDialog(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0))),

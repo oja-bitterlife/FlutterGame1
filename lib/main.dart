@@ -5,6 +5,9 @@ import '/UI_Widgets/message_window.dart';
 import '/UI_Widgets/menu.dart';
 import '/Game/my_game.dart';
 
+// ignore: unused_import
+import '../my_logger.dart';
+
 Future<void> main() async {
   var myGame = await MyGame.create();
   runApp(MyApp(myGame));
@@ -36,6 +39,10 @@ class MyGameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        onDrawerChanged: (isOpened) {
+          // メニューを出した時Pause、閉じたときresume
+          isOpened ? myGame.pause() : myGame.resume();
+        },
         appBar: AppBar(
           title: Text("stage: ${myGame.currentStage}"),
         ),
