@@ -50,6 +50,10 @@ class Stage0 extends StageEventBase {
       log.info("game over");
       myGame.uiControl.showUI = ShowUI.none;
     }
+    if (event.name == "clear") {
+      log.info("game clear");
+      myGame.uiControl.showUI = ShowUI.none;
+    }
 
     // 移動終わりイベント
     if (event is EventUserMove) {
@@ -72,8 +76,12 @@ class Stage0 extends StageEventBase {
         myGame.uiControl.showUI = ShowUI.none;
       }
 
+      // ゲームクリア表示
       if (myGame.player.getBlockX() == 7 && myGame.player.getBlockY() == 3) {
-        log.info("clear");
+        var clearEvent = EventElement("clear");
+        clearEvent.notice = true;
+        myGame.event.add(clearEvent);
+
         // UIを消した状態にする
         myGame.uiControl.showUI = ShowUI.none;
       }
