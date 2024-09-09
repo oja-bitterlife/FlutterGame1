@@ -11,8 +11,8 @@ import '../../../my_logger.dart';
 
 import '../../priorities.dart';
 
-class Stage0 extends StageEventBase {
-  Stage0() : super('Tutorial');
+class Stage1 extends StageEventBase {
+  Stage1() : super('Tutorial');
 
   @override
   void onEventStart(EventElement event) {

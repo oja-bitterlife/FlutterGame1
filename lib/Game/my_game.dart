@@ -61,7 +61,7 @@ class MyGame extends FlameGame {
 
     // ユーザーデータの作成
     var userData =
-        await UserDataManager.create(memoryDB, storageDB, withDBDrop: true);
+        await UserDataManager.create(memoryDB, storageDB, withDBDrop: false);
 
     var self = MyGame(
         packageInfo: packageInfo, memoryDB: memoryDB, userData: userData);

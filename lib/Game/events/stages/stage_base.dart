@@ -6,6 +6,7 @@ import '/Game/my_game.dart';
 import '../../../my_logger.dart';
 
 import 'stage0.dart';
+import 'stage1.dart';
 
 abstract class StageEventBase {
   MyGame get myGame => EventManager.myGame;
@@ -27,6 +28,7 @@ abstract class StageEventBase {
 StageEventBase? getStageEvent(int stage) {
   return switch (stage) {
     0 => Stage0(),
+    1 => Stage1(),
     _ => null,
   };
 }

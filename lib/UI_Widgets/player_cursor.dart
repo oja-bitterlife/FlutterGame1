@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import '/Game/events/event_data/event_map.dart';
+import '/Game/events/event_data/event_user.dart';
 
 // ignore: unused_import
 import '/my_logger.dart';
